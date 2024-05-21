@@ -4,10 +4,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoreModule } from './core/core_module';
 import ConfigurationService from './core/services/configuration.service';
+import BoxModule from './modules/box/box.module';
 
 @Module({
   imports: [
     CoreModule,
+    BoxModule,
     TypeOrmModule.forRootAsync({
       imports: [CoreModule],
       inject: [ConfigurationService],
