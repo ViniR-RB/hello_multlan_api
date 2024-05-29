@@ -3,7 +3,41 @@ import ServiceException from 'src/core/erros/service.exception';
 import BoxEntity from '../box.entity';
 
 export default interface IUpdateBoxUseCase {
-  call(boxData: UpdateBoxParams): Promise<Either<ServiceException, BoxEntity>>;
+  call(
+    boxData: UpdateBoxParams,
+  ): Promise<Either<ServiceException, UpdateBoxResponse>>;
+}
+
+export class UpdateBoxResponse {
+  constructor(
+    public readonly id: string,
+    public readonly latitude: number,
+    public readonly longitude: number,
+    public readonly freeSpace: number,
+    public readonly filledSpace: number,
+    public readonly listUser: Array<string>,
+    public readonly createdAt: Partial<Date>,
+    public readonly updatedAt: Partial<Date>,
+  ) {}
+
+  static toResponse(box: BoxEntity) {
+    return new UpdateBoxResponse(
+      box.boxId,
+      box.latitude,
+      box.longitude,
+      box.freeSpace,
+      box.filledSpace,
+      box.listUser,
+      box.createdAt,
+      box.updatedAt,
+    );
+  }
+
+  toJson() {
+    return {
+      ...this,
+    };
+  }
 }
 
 export class UpdateBoxParams {
@@ -45,6 +79,7 @@ export class UpdateBoxParams {
         listUser: this.listUser,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
+        image: '',
       },
       this.id,
     );

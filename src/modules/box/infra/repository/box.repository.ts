@@ -65,6 +65,7 @@ export default class BoxRepository implements IBoxRepository {
         createdAt: boxEntity.createdAt,
         updatedAt: boxEntity.updatedAt,
         listUser: boxEntity.listUser,
+        image: boxEntity.imageUrl,
       };
       await this.boxRepository.save(boxdata);
       return right(nil);

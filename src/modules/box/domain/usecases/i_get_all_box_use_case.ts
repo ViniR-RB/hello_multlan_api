@@ -14,7 +14,7 @@ export class GetAllBoxParam {
   listUser: Array<string>;
   createdAt: Partial<Date>;
   updatedAt: Partial<Date>;
-
+  image: string;
   constructor(
     id: string,
     latitude: number,
@@ -24,6 +24,7 @@ export class GetAllBoxParam {
     listUser: Array<string>,
     createdAt: Partial<Date>,
     updatedAt: Partial<Date>,
+    image: string,
   ) {
     this.id = id;
     this.latitude = latitude;
@@ -33,6 +34,7 @@ export class GetAllBoxParam {
     this.listUser = listUser;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.image = image;
   }
 
   static fromEntity(boxEntity: BoxEntity) {
@@ -45,6 +47,7 @@ export class GetAllBoxParam {
       boxEntity.listUser,
       boxEntity.createdAt!,
       boxEntity.updatedAt!,
+      boxEntity.imageUrl,
     );
   }
 }

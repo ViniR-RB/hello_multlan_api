@@ -10,8 +10,14 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { plainToClass } from 'class-transformer';
+import FileEntity from 'src/modules/upload/domain/file.entity';
+import IUploadFile from 'src/modules/upload/domain/usecase/i_upload_file';
+import { UPLOAD_FILE } from 'src/modules/upload/symbols';
 import ICreateBoxUseCase, {
   CreateBoxPrams,
 } from '../domain/usecases/i_create_box_use_case';
@@ -36,12 +42,28 @@ export default class BoxController {
     private readonly getBoxService: IGetAllBoxUseCase,
     @Inject(UPDATE_BOX_SERVICE)
     private readonly updateBoxService: IUpdateBoxUseCase,
+    @Inject(UPLOAD_FILE)
+    private readonly uploadFile: IUploadFile,
   ) {}
 
   @Post('')
   @HttpCode(HttpStatus.CREATED)
-  async createBox(@Body() createBoxDto: CreateBoxDto) {
-    const boxParam = plainToClass(CreateBoxPrams, createBoxDto);
+  @UseInterceptors(FileInterceptor('file'))
+  async createBox(
+    @Body() createBoxDto: CreateBoxDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const uploadFileEntity = new FileEntity(
+      file.originalname,
+      file.buffer,
+      'box',
+    );
+    const boxImageUrl = await this.uploadFile.call(uploadFileEntity);
+    const data = {
+      ...createBoxDto,
+      image: boxImageUrl.url,
+    };
+    const boxParam = plainToClass(CreateBoxPrams, data);
     const result = await this.createBoxService.call(boxParam);
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode);
@@ -58,6 +80,7 @@ export default class BoxController {
   }
 
   @Put(':id')
+  @HttpCode(HttpStatus.OK)
   async updateBox(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatedBoxData: UpdatedBoxDto,
@@ -71,6 +94,6 @@ export default class BoxController {
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
-    return result.value;
+    return result.value.toJson();
   }
 }

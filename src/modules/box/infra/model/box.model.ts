@@ -18,6 +18,8 @@ export default class BoxModel {
   freeSpace: number;
   @Column({ name: 'filled_space' })
   filledSpace: number;
+  @Column({ name: 'image' })
+  image: string;
   @Column({ name: 'list_users', type: 'simple-array' })
   listUser: Array<string>;
   @CreateDateColumn({ name: 'created_at' })
@@ -35,6 +37,7 @@ export default class BoxModel {
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
         listUser: this.listUser,
+        image: this.image,
       },
       this.id,
     );

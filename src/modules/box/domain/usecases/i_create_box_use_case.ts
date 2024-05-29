@@ -11,16 +11,19 @@ export class CreateBoxPrams {
   longitude: number;
   freeSpace: number;
   filledSpace: number;
+  image: string;
   constructor(
     latitude: number,
     longitude: number,
     freeSpace: number,
     filledSpace: number,
+    image: string,
   ) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.freeSpace = freeSpace;
     this.filledSpace = filledSpace;
+    this.image = image;
   }
 
   toEntity(): BoxEntity {
@@ -29,6 +32,7 @@ export class CreateBoxPrams {
       longitude: this.longitude,
       freeSpace: this.freeSpace,
       filledSpace: this.filledSpace,
+      image: this.image,
     });
   }
 }

@@ -6,6 +6,7 @@ interface BoxEntityProps {
   longitude: number;
   freeSpace: number;
   filledSpace: number;
+  image: string;
   listUser?: Partial<Array<string>>;
   createdAt?: Partial<Date>;
   updatedAt?: Partial<Date>;
@@ -57,5 +58,21 @@ export default class BoxEntity {
   }
   get listUser() {
     return this.props.listUser;
+  }
+  get imageUrl() {
+    return this.props.image;
+  }
+
+  updatedBox(
+    boxprops?: Omit<BoxEntityProps, 'createdAt' | 'updatedAt' | 'image'>,
+  ) {
+    return new BoxEntity(
+      {
+        ...this.props,
+        ...boxprops,
+        createdAt: this.createdAt,
+      },
+      this.id,
+    );
   }
 }

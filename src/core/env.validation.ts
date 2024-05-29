@@ -1,5 +1,11 @@
 import { plainToInstance } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString, validateSync } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUrl,
+  validateSync,
+} from 'class-validator';
 
 export default class EnvironmentVariables {
   @IsString()
@@ -21,6 +27,15 @@ export default class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   DATABASE_NAME: string;
+
+  @IsString()
+  @IsUrl()
+  @IsNotEmpty()
+  SUPABASE_URL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  SUPABASE_API_KEY: string;
 }
 
 export function validateEnvironmentVariables(config: Record<string, unknown>) {

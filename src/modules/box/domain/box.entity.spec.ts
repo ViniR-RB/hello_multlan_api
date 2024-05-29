@@ -11,6 +11,7 @@ describe('test in constructor box entity', () => {
       freeSpace: 7,
       filledSpace: 7,
       listUser: [],
+      image: 'image',
     };
     const boxEntity = new BoxEntity(boxPropsConstant);
 
@@ -26,6 +27,7 @@ describe('test in constructor box entity', () => {
       freeSpace: 7,
       filledSpace: 7,
       listUser: [],
+      image: 'image',
     };
     const boxEntity = new BoxEntity(props, id);
 
@@ -42,6 +44,7 @@ describe('test in constructor box entity', () => {
     const updatedAt = new Date();
     const freeSpace = 7;
     const filledSpace = 7;
+    const image = 'image';
     const listUser = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     const boxPropsConstant = {
       latitude,
@@ -51,6 +54,7 @@ describe('test in constructor box entity', () => {
       freeSpace,
       updatedAt,
       listUser,
+      image,
     };
     expect(() => new BoxEntity(boxPropsConstant, id)).toThrow(
       new BoxDomainException(
@@ -67,6 +71,7 @@ describe('test in constructor box entity', () => {
     const freeSpace = 7;
     const filledSpace = 8;
     const listUser = [];
+    const image = 'image';
     const boxPropsConstant = {
       latitude,
       longitude,
@@ -75,6 +80,7 @@ describe('test in constructor box entity', () => {
       freeSpace,
       updatedAt,
       listUser,
+      image,
     };
 
     expect(() => {
@@ -90,6 +96,7 @@ describe('test in constructor box entity', () => {
     const freeSpace = 7;
     const filledSpace = 7;
     const listUser = [];
+    const image = 'image';
     const boxPropsConstant = {
       latitude,
       longitude,
@@ -98,6 +105,7 @@ describe('test in constructor box entity', () => {
       freeSpace,
       updatedAt,
       listUser: listUser,
+      image,
     };
     const boxEntity = new BoxEntity(boxPropsConstant, id);
     expect(boxEntity).toBeDefined();
