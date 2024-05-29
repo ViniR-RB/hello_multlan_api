@@ -1,0 +1,1 @@
+export const LOGIN_USER_SERVICE = Symbol('LOGIN_USER_SERVICE');

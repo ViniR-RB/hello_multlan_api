@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
+import { CoreModule } from 'src/core/core_module';
 import { Repository } from 'typeorm';
 import UploadModule from '../upload/upload.module';
 import IBoxRepository from './adapters/i_box_repository';
@@ -17,7 +18,7 @@ import {
 } from './symbols';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BoxModel]), UploadModule],
+  imports: [TypeOrmModule.forFeature([BoxModel]), UploadModule, CoreModule],
   controllers: [BoxController],
   providers: [
     {

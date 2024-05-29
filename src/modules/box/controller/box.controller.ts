@@ -11,10 +11,12 @@ import {
   Post,
   Put,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { plainToClass } from 'class-transformer';
+import { AuthGuard } from 'src/core/guards/auth.guard';
 import FileEntity from 'src/modules/upload/domain/file.entity';
 import IUploadFile from 'src/modules/upload/domain/usecase/i_upload_file';
 import { UPLOAD_FILE } from 'src/modules/upload/symbols';
@@ -34,6 +36,7 @@ import {
 } from '../symbols';
 
 @Controller('/api/box')
+@UseGuards(AuthGuard)
 export default class BoxController {
   constructor(
     @Inject(CREATE_BOX_SERVICE)

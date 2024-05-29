@@ -36,6 +36,13 @@ export default class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   SUPABASE_API_KEY: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  SALT: number;
+  @IsNotEmpty()
+  @IsString()
+  JWT_SECRET: string;
 }
 
 export function validateEnvironmentVariables(config: Record<string, unknown>) {
