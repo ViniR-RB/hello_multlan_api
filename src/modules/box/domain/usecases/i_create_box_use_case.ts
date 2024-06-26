@@ -12,6 +12,7 @@ export class CreateBoxPrams {
   freeSpace: number;
   filledSpace: number;
   image: string;
+  listUser?: Array<string>;
   constructor(
     latitude: number,
     longitude: number,
@@ -33,6 +34,7 @@ export class CreateBoxPrams {
       freeSpace: this.freeSpace,
       filledSpace: this.filledSpace,
       image: this.image,
+      listUser: this.listUser,
     });
   }
 }
