@@ -74,8 +74,8 @@ export default class BoxEntity {
   ) {
     return new BoxEntity(
       {
-        ...this.props,
         ...boxprops,
+        ...this.props,
         createdAt: this.createdAt,
       },
       this.id,
