@@ -17,6 +17,8 @@ export class UpdateBoxResponse {
     public readonly filledSpace: number,
     public readonly listUser: Array<string>,
     public readonly note: string,
+    public readonly image: string,
+
     public readonly createdAt: Partial<Date>,
     public readonly updatedAt: Partial<Date>,
   ) {}
@@ -30,6 +32,7 @@ export class UpdateBoxResponse {
       box.filledSpace,
       box.listUser,
       box.note,
+      box.imageUrl,
       box.createdAt,
       box.updatedAt,
     );
