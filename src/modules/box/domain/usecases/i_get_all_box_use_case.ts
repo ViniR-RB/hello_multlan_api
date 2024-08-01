@@ -12,6 +12,7 @@ export class GetAllBoxParam {
   freeSpace: number;
   filledSpace: number;
   listUser: Array<string>;
+  note: string;
   createdAt: Partial<Date>;
   updatedAt: Partial<Date>;
   image: string;
@@ -22,6 +23,7 @@ export class GetAllBoxParam {
     freeSpace: number,
     filledSpace: number,
     listUser: Array<string>,
+    note: string,
     createdAt: Partial<Date>,
     updatedAt: Partial<Date>,
     image: string,
@@ -32,6 +34,7 @@ export class GetAllBoxParam {
     this.freeSpace = freeSpace;
     this.filledSpace = filledSpace;
     this.listUser = listUser;
+    this.note = note;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.image = image;
@@ -45,6 +48,7 @@ export class GetAllBoxParam {
       boxEntity.freeSpace,
       boxEntity.filledSpace,
       boxEntity.listUser,
+      boxEntity.note,
       boxEntity.createdAt!,
       boxEntity.updatedAt!,
       boxEntity.imageUrl,

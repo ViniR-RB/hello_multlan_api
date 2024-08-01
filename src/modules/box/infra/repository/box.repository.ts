@@ -22,6 +22,7 @@ export default class BoxRepository implements IBoxRepository {
         longitude: boxEntity.longitude,
         freeSpace: boxEntity.freeSpace,
         filledSpace: boxEntity.filledSpace,
+        note: boxEntity.note,
         createdAt: boxEntity.createdAt,
         updatedAt: boxEntity.updatedAt,
         listUser: boxEntity.listUser,

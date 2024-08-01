@@ -22,6 +22,8 @@ export default class BoxModel {
   image: string;
   @Column({ name: 'list_users', type: 'simple-array' })
   listUser: Array<string>;
+  @Column({ nullable: true, default: '' })
+  note?: string;
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updatedAt' })
@@ -37,6 +39,7 @@ export default class BoxModel {
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
         listUser: this.listUser,
+        note: this.note,
         image: this.image,
       },
       this.id,

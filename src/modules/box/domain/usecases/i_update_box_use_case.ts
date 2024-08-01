@@ -16,6 +16,7 @@ export class UpdateBoxResponse {
     public readonly freeSpace: number,
     public readonly filledSpace: number,
     public readonly listUser: Array<string>,
+    public readonly note: string,
     public readonly createdAt: Partial<Date>,
     public readonly updatedAt: Partial<Date>,
   ) {}
@@ -28,6 +29,7 @@ export class UpdateBoxResponse {
       box.freeSpace,
       box.filledSpace,
       box.listUser,
+      box.note,
       box.createdAt,
       box.updatedAt,
     );
@@ -47,6 +49,7 @@ export class UpdateBoxParams {
   freeSpace: number;
   filledSpace: number;
   listUser: Array<string>;
+  note: string;
   createdAt: Date;
   updatedAt: Date;
   constructor(
@@ -56,6 +59,7 @@ export class UpdateBoxParams {
     freeSpace: number,
     filledSpace: number,
     listUser: Array<string>,
+    note: string,
     createdAt: Date,
     updatedAt: Date,
   ) {
@@ -65,6 +69,7 @@ export class UpdateBoxParams {
     this.freeSpace = freeSpace;
     this.filledSpace = filledSpace;
     this.listUser = listUser;
+    this.note = note;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -77,6 +82,7 @@ export class UpdateBoxParams {
         freeSpace: this.freeSpace,
         filledSpace: this.filledSpace,
         listUser: this.listUser,
+        note: this.note,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
         image: '',

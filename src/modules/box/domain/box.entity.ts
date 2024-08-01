@@ -7,6 +7,7 @@ interface BoxEntityProps {
   freeSpace: number;
   filledSpace: number;
   image: string;
+  note?: Partial<string>;
   listUser?: Partial<Array<string>>;
   createdAt?: Partial<Date>;
   updatedAt?: Partial<Date>;
@@ -22,6 +23,7 @@ export default class BoxEntity {
       createdAt: this.props.createdAt || new Date(),
       updatedAt: this.props.updatedAt || new Date(),
       listUser: this.props.listUser || [],
+      note: this.props.note || '',
     };
     if (this.props.filledSpace > this.props.freeSpace) {
       throw new BoxDomainException(
@@ -61,6 +63,10 @@ export default class BoxEntity {
   }
   get imageUrl() {
     return this.props.image;
+  }
+
+  get note() {
+    return this.props.note;
   }
 
   updatedBox(

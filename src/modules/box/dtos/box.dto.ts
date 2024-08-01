@@ -18,4 +18,6 @@ export default class BoxDto {
   filledSpace: number;
   @IsNotEmpty()
   listUser: Array<string>;
+  @IsNotEmpty()
+  note: string;
 }

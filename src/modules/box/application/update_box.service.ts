@@ -13,8 +13,15 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
     boxData: UpdateBoxParams,
   ): Promise<Either<ServiceException, UpdateBoxResponse>> {
     try {
-      const { id, filledSpace, freeSpace, listUser, latitude, longitude } =
-        boxData;
+      const {
+        id,
+        filledSpace,
+        freeSpace,
+        listUser,
+        latitude,
+        longitude,
+        note,
+      } = boxData;
       const resultSearch = await this.boxRepository.searchBoxFromIdOrThrow(id);
       if (resultSearch.isLeft()) {
         return left(new ServiceException(resultSearch.value.message, 404));
@@ -25,6 +32,7 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
         filledSpace,
         freeSpace,
         listUser,
+        note,
         latitude,
         longitude,
       });
