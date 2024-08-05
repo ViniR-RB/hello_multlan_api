@@ -72,13 +72,18 @@ export default class BoxEntity {
   updatedBox(
     boxprops?: Omit<BoxEntityProps, 'createdAt' | 'updatedAt' | 'image'>,
   ) {
-    return new BoxEntity(
+    const boxEntity: BoxEntity = new BoxEntity(
       {
-        ...boxprops,
         ...this.props,
+        ...Object.fromEntries(
+          Object.entries(boxprops || {}).filter(
+            ([, value]) => value !== undefined,
+          ),
+        ),
         createdAt: this.createdAt,
       },
       this.id,
     );
+    return boxEntity;
   }
 }

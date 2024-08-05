@@ -17,7 +17,7 @@ export default class BoxRepository implements IBoxRepository {
   ): Promise<Either<RepositoryException, Nil>> {
     try {
       const boxdata = {
-        ...boxEntity,
+        id: boxEntity.boxId,
         latitude: boxEntity.latitude,
         longitude: boxEntity.longitude,
         freeSpace: boxEntity.freeSpace,
@@ -26,8 +26,9 @@ export default class BoxRepository implements IBoxRepository {
         createdAt: boxEntity.createdAt,
         updatedAt: boxEntity.updatedAt,
         listUser: boxEntity.listUser,
+        image: boxEntity.imageUrl,
       };
-      await this.boxRepository.save(this.boxRepository.create(boxdata));
+      await this.boxRepository.save(boxdata);
       return right(nil);
     } catch (error) {
       return left(new RepositoryException('Erro ao salvar uma caixa'));
