@@ -18,6 +18,8 @@ export default class BoxModel {
   freeSpace: number;
   @Column({ name: 'filled_space' })
   filledSpace: number;
+  @Column({ name: 'signal', type: 'float' })
+  signal: number;
   @Column({ name: 'image' })
   image: string;
   @Column({ name: 'list_users', type: 'simple-array' })
@@ -36,6 +38,7 @@ export default class BoxModel {
         longitude: this.longitude,
         freeSpace: this.freeSpace,
         filledSpace: this.filledSpace,
+        signal: this.signal,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
         listUser: this.listUser,

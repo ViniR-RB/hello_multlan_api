@@ -1,12 +1,12 @@
+import { AppController } from '@/app.controller';
+import { AppService } from '@/app.service';
+import { CoreModule } from '@/core/core_module';
+import ConfigurationService from '@/core/services/configuration.service';
+import AuthModule from '@/modules/auth/auth.module';
+import BoxModule from '@/modules/box/box.module';
+import UserModule from '@/modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { CoreModule } from './core/core_module';
-import ConfigurationService from './core/services/configuration.service';
-import AuthModule from './modules/auth/auth.module';
-import BoxModule from './modules/box/box.module';
-import UserModule from './modules/user/user.module';
 
 @Module({
   imports: [

@@ -22,6 +22,7 @@ export default class BoxRepository implements IBoxRepository {
         longitude: boxEntity.longitude,
         freeSpace: boxEntity.freeSpace,
         filledSpace: boxEntity.filledSpace,
+        signal: boxEntity.signal,
         note: boxEntity.note,
         createdAt: boxEntity.createdAt,
         updatedAt: boxEntity.updatedAt,
@@ -59,15 +60,7 @@ export default class BoxRepository implements IBoxRepository {
   ): Promise<Either<RepositoryException, Nil>> {
     try {
       const boxdata = {
-        ...boxEntity,
-        latitude: boxEntity.latitude,
-        longitude: boxEntity.longitude,
-        freeSpace: boxEntity.freeSpace,
-        filledSpace: boxEntity.filledSpace,
-        createdAt: boxEntity.createdAt,
-        updatedAt: boxEntity.updatedAt,
-        listUser: boxEntity.listUser,
-        image: boxEntity.imageUrl,
+        ...boxEntity.toObject(),
       };
       await this.boxRepository.save(boxdata);
       return right(nil);

@@ -6,6 +6,7 @@ interface BoxEntityProps {
   longitude: number;
   freeSpace: number;
   filledSpace: number;
+  signal: number;
   image: string;
   note?: Partial<string>;
   listUser?: Partial<Array<string>>;
@@ -42,6 +43,9 @@ export default class BoxEntity {
   }
   get freeSpace() {
     return this.props.freeSpace;
+  }
+  get signal() {
+    return this.props.signal;
   }
   get filledSpace() {
     return this.props.filledSpace;
@@ -85,5 +89,11 @@ export default class BoxEntity {
       this.id,
     );
     return boxEntity;
+  }
+
+  toObject() {
+    return {
+      ...this,
+    };
   }
 }

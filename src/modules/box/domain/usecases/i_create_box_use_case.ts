@@ -11,6 +11,7 @@ export class CreateBoxPrams {
   longitude: number;
   freeSpace: number;
   filledSpace: number;
+  signal: number;
   image: string;
   listUser?: Array<string>;
   constructor(
@@ -18,12 +19,14 @@ export class CreateBoxPrams {
     longitude: number,
     freeSpace: number,
     filledSpace: number,
+    signal: number,
     image: string,
   ) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.freeSpace = freeSpace;
     this.filledSpace = filledSpace;
+    this.signal = signal;
     this.image = image;
   }
 
@@ -32,6 +35,7 @@ export class CreateBoxPrams {
       latitude: this.latitude,
       longitude: this.longitude,
       freeSpace: this.freeSpace,
+      signal: this.signal,
       filledSpace: this.filledSpace,
       image: this.image,
       listUser: this.listUser,

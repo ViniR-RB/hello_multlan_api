@@ -17,6 +17,7 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
         id,
         filledSpace,
         freeSpace,
+        signal,
         listUser,
         latitude,
         longitude,
@@ -31,6 +32,7 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
       const boxModified = boxSearch.updatedBox({
         filledSpace,
         freeSpace,
+        signal,
         listUser,
         note,
         latitude,

@@ -11,6 +11,7 @@ export class GetAllBoxParam {
   longitude: number;
   freeSpace: number;
   filledSpace: number;
+  signal: number;
   listUser: Array<string>;
   note: string;
   createdAt: Partial<Date>;
@@ -22,6 +23,7 @@ export class GetAllBoxParam {
     longitude: number,
     freeSpace: number,
     filledSpace: number,
+    signal: number,
     listUser: Array<string>,
     note: string,
     createdAt: Partial<Date>,
@@ -33,6 +35,7 @@ export class GetAllBoxParam {
     this.longitude = longitude;
     this.freeSpace = freeSpace;
     this.filledSpace = filledSpace;
+    this.signal = signal;
     this.listUser = listUser;
     this.note = note;
     this.createdAt = createdAt;
@@ -47,6 +50,7 @@ export class GetAllBoxParam {
       boxEntity.longitude,
       boxEntity.freeSpace,
       boxEntity.filledSpace,
+      boxEntity.signal,
       boxEntity.listUser,
       boxEntity.note,
       boxEntity.createdAt!,

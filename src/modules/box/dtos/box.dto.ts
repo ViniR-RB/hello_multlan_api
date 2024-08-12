@@ -5,10 +5,8 @@ export default class BoxDto {
   @IsUUID()
   id: string;
   @IsNotEmpty()
-  @IsNumber()
   latitude: number;
   @IsNotEmpty()
-  @IsNumber()
   longitude: number;
   @IsNotEmpty()
   @IsNumber()
@@ -16,6 +14,9 @@ export default class BoxDto {
   @IsNotEmpty()
   @IsNumber()
   filledSpace: number;
+  @IsNotEmpty()
+  @IsNumber()
+  signal: number;
   @IsNotEmpty()
   listUser: Array<string>;
   @IsNotEmpty()

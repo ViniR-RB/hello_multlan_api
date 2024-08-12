@@ -15,6 +15,7 @@ export class UpdateBoxResponse {
     public readonly longitude: number,
     public readonly freeSpace: number,
     public readonly filledSpace: number,
+    public readonly signal: number,
     public readonly listUser: Array<string>,
     public readonly note: string,
     public readonly image: string,
@@ -30,6 +31,7 @@ export class UpdateBoxResponse {
       box.longitude,
       box.freeSpace,
       box.filledSpace,
+      box.signal,
       box.listUser,
       box.note,
       box.imageUrl,
@@ -51,6 +53,7 @@ export class UpdateBoxParams {
   longitude: number;
   freeSpace: number;
   filledSpace: number;
+  signal: number;
   listUser: Array<string>;
   note: string;
   createdAt: Date;
@@ -61,6 +64,7 @@ export class UpdateBoxParams {
     longitude: number,
     freeSpace: number,
     filledSpace: number,
+    signal: number,
     listUser: Array<string>,
     note: string,
     createdAt: Date,
@@ -71,6 +75,7 @@ export class UpdateBoxParams {
     this.longitude = longitude;
     this.freeSpace = freeSpace;
     this.filledSpace = filledSpace;
+    this.signal = signal;
     this.listUser = listUser;
     this.note = note;
     this.createdAt = createdAt;
@@ -84,6 +89,7 @@ export class UpdateBoxParams {
         longitude: this.longitude,
         freeSpace: this.freeSpace,
         filledSpace: this.filledSpace,
+        signal: this.signal,
         listUser: this.listUser,
         note: this.note,
         createdAt: this.createdAt,

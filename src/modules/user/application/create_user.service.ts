@@ -1,12 +1,12 @@
-import { Either, left, right } from 'src/core/either/either';
-import Nil, { nil } from 'src/core/either/nil';
-import ServiceException from 'src/core/erros/service.exception';
-import { EncryptionService } from 'src/core/services/encryption.service';
-import IUserRepository from '../adapters/i_user_repository';
+import { Either, left, right } from '@/core/either/either';
+import Nil, { nil } from '@/core/either/nil';
+import ServiceException from '@/core/erros/service.exception';
+import { EncryptionService } from '@/core/services/encryption.service';
+import IUserRepository from '@/modules/user/adapters/i_user_repository';
 import ICreateUserUseCase, {
   CreateUserParams,
-} from '../domain/usecase/i_create_user_use_case';
-import UserEntity from '../domain/user.entity';
+} from '@/modules/user/domain/usecase/i_create_user_use_case';
+import UserEntity from '@/modules/user/domain/user.entity';
 
 export default class CreateUserService implements ICreateUserUseCase {
   constructor(
