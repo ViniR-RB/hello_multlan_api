@@ -15,6 +15,7 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
     try {
       const {
         id,
+        label,
         filledSpace,
         freeSpace,
         signal,
@@ -31,6 +32,7 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
 
       const boxModified = boxSearch.updatedBox({
         filledSpace,
+        label,
         freeSpace,
         signal,
         listUser,

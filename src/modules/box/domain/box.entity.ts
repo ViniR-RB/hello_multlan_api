@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import BoxDomainException from '../../../core/erros/box.domain.exception';
 
 interface BoxEntityProps {
+  label: string;
   latitude: number;
   longitude: number;
   freeSpace: number;
@@ -73,6 +74,10 @@ export default class BoxEntity {
     return this.props.note;
   }
 
+  get label() {
+    return this.props.label;
+  }
+
   updatedBox(
     boxprops?: Omit<BoxEntityProps, 'createdAt' | 'updatedAt' | 'image'>,
   ) {
@@ -93,7 +98,18 @@ export default class BoxEntity {
 
   toObject() {
     return {
-      ...this,
+      id: this.id,
+      label: this.label,
+      latitude: this.latitude,
+      longitude: this.longitude,
+      freeSpace: this.freeSpace,
+      filledSpace: this.filledSpace,
+      signal: this.signal,
+      image: this.imageUrl,
+      note: this.note,
+      listUser: this.listUser,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     };
   }
 }

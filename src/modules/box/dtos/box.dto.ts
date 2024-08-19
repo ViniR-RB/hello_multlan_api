@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
 
 export default class BoxDto {
   @IsNotEmpty()
@@ -8,6 +8,9 @@ export default class BoxDto {
   latitude: number;
   @IsNotEmpty()
   longitude: number;
+  @IsNotEmpty()
+  @IsString()
+  label: string;
   @IsNotEmpty()
   @IsNumber()
   freeSpace: number;

@@ -7,6 +7,7 @@ export default interface IGetAllBoxUseCase {
 }
 export class GetAllBoxParam {
   id: string;
+  label: string;
   latitude: number;
   longitude: number;
   freeSpace: number;
@@ -19,6 +20,7 @@ export class GetAllBoxParam {
   image: string;
   constructor(
     id: string,
+    label: string,
     latitude: number,
     longitude: number,
     freeSpace: number,
@@ -31,6 +33,7 @@ export class GetAllBoxParam {
     image: string,
   ) {
     this.id = id;
+    this.label = label;
     this.latitude = latitude;
     this.longitude = longitude;
     this.freeSpace = freeSpace;
@@ -46,6 +49,7 @@ export class GetAllBoxParam {
   static fromEntity(boxEntity: BoxEntity) {
     return new GetAllBoxParam(
       boxEntity.boxId,
+      boxEntity.label,
       boxEntity.latitude,
       boxEntity.longitude,
       boxEntity.freeSpace,

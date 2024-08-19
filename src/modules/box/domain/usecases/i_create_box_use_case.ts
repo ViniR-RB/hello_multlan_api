@@ -7,6 +7,7 @@ export default interface ICreateBoxUseCase {
 }
 
 export class CreateBoxPrams {
+  label: string;
   latitude: number;
   longitude: number;
   freeSpace: number;
@@ -15,6 +16,7 @@ export class CreateBoxPrams {
   image: string;
   listUser?: Array<string>;
   constructor(
+    label: string,
     latitude: number,
     longitude: number,
     freeSpace: number,
@@ -22,6 +24,7 @@ export class CreateBoxPrams {
     signal: number,
     image: string,
   ) {
+    this.label = label;
     this.latitude = latitude;
     this.longitude = longitude;
     this.freeSpace = freeSpace;
@@ -32,6 +35,7 @@ export class CreateBoxPrams {
 
   toEntity(): BoxEntity {
     return new BoxEntity({
+      label: this.label,
       latitude: this.latitude,
       longitude: this.longitude,
       freeSpace: this.freeSpace,

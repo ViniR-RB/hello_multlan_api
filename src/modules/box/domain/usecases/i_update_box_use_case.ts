@@ -11,6 +11,7 @@ export default interface IUpdateBoxUseCase {
 export class UpdateBoxResponse {
   constructor(
     public readonly id: string,
+    public readonly label: string,
     public readonly latitude: number,
     public readonly longitude: number,
     public readonly freeSpace: number,
@@ -27,6 +28,7 @@ export class UpdateBoxResponse {
   static toResponse(box: BoxEntity) {
     return new UpdateBoxResponse(
       box.boxId,
+      box.label,
       box.latitude,
       box.longitude,
       box.freeSpace,
@@ -49,6 +51,7 @@ export class UpdateBoxResponse {
 
 export class UpdateBoxParams {
   id: string;
+  label: string;
   latitude: number;
   longitude: number;
   freeSpace: number;
@@ -60,6 +63,7 @@ export class UpdateBoxParams {
   updatedAt: Date;
   constructor(
     id: string,
+    label: string,
     latitude: number,
     longitude: number,
     freeSpace: number,
@@ -71,6 +75,7 @@ export class UpdateBoxParams {
     updatedAt: Date,
   ) {
     this.id = id;
+    this.label = label;
     this.latitude = latitude;
     this.longitude = longitude;
     this.freeSpace = freeSpace;
@@ -85,6 +90,7 @@ export class UpdateBoxParams {
   toEntity() {
     return new BoxEntity(
       {
+        label: this.label,
         latitude: this.latitude,
         longitude: this.longitude,
         freeSpace: this.freeSpace,

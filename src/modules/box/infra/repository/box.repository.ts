@@ -20,6 +20,7 @@ export default class BoxRepository implements IBoxRepository {
         id: boxEntity.boxId,
         latitude: boxEntity.latitude,
         longitude: boxEntity.longitude,
+        label: boxEntity.label,
         freeSpace: boxEntity.freeSpace,
         filledSpace: boxEntity.filledSpace,
         signal: boxEntity.signal,

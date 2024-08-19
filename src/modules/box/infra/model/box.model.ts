@@ -10,6 +10,8 @@ import BoxEntity from '../../domain/box.entity';
 export default class BoxModel {
   @PrimaryColumn()
   id: string;
+  @Column()
+  label: string;
   @Column({ type: 'decimal' })
   latitude: number;
   @Column({ type: 'decimal' })
@@ -34,6 +36,7 @@ export default class BoxModel {
   toEntity() {
     return new BoxEntity(
       {
+        label: this.label,
         latitude: this.latitude,
         longitude: this.longitude,
         freeSpace: this.freeSpace,
