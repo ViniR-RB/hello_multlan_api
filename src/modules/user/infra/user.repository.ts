@@ -1,13 +1,25 @@
 import { Either, left, right } from 'src/core/either/either';
 import Nil, { nil } from 'src/core/either/nil';
 import RepositoryException from 'src/core/erros/repository.exception';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
 import IUserRepository from '../adapters/i_user_repository';
 import UserEntity from '../domain/user.entity';
 import UserModel from './model/user.model';
 
 export default class UserRepository implements IUserRepository {
   constructor(private readonly userRepository: Repository<UserModel>) {}
+  async findOneById(
+    id: string,
+  ): Promise<Either<RepositoryException, UserEntity>> {
+    try {
+      const userFinder = await this.userRepository.findOneBy({ id: id });
+      return right(userFinder.toEntity());
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        return left(new RepositoryException('Usuário não econtrado'));
+      }
+    }
+  }
   async findOneByEmail(
     email: string,
   ): Promise<Either<RepositoryException, UserEntity>> {

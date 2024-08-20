@@ -6,8 +6,9 @@ import IUserRepository from '../user/adapters/i_user_repository';
 import { USER_REPOSITORY } from '../user/symbols';
 import UserModule from '../user/user.module';
 import LoginUserService from './application/login_user.service';
+import ShowMyUserService from './application/show_my_user.service';
 import AuthController from './controller/auth.controller';
-import { LOGIN_USER_SERVICE } from './symbols';
+import { LOGIN_USER_SERVICE, SHOW_MY_USER_SERVICE } from './symbols';
 @Module({
   imports: [UserModule, CoreModule],
 
@@ -26,6 +27,12 @@ import { LOGIN_USER_SERVICE } from './symbols';
           encryptionService,
           jsonWebTokenService,
         ),
+    },
+    {
+      inject: [USER_REPOSITORY],
+      provide: SHOW_MY_USER_SERVICE,
+      useFactory: (userRepository: IUserRepository) =>
+        new ShowMyUserService(userRepository),
     },
   ],
   exports: [],

@@ -8,4 +8,5 @@ export default interface IUserRepository {
   findOneByEmail(
     email: string,
   ): Promise<Either<RepositoryException, UserEntity>>;
+  findOneById(id: string): Promise<Either<RepositoryException, UserEntity>>;
 }

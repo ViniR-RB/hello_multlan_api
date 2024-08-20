@@ -1,11 +1,16 @@
+import { AuthGuard } from '@/core/guards/auth.guard';
+import { JwtVerifyPayload } from '@/core/interfaces/jwt.payload';
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpException,
   HttpStatus,
   Inject,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import ICreateUserUseCase, {
@@ -14,8 +19,11 @@ import ICreateUserUseCase, {
 import CreateUserDto from 'src/modules/user/dto/create_user.dto';
 import { CREATE_USER_SERVICE } from 'src/modules/user/symbols';
 import ILoginUseCase, { LoginParams } from '../domain/usecase/i_login_use_case';
+import IShowMyUserUseCase, {
+  ShowMyUserParam,
+} from '../domain/usecase/i_show_my_user_use_case';
 import LoginUserDto from '../dto/login_user.dto';
-import { LOGIN_USER_SERVICE } from '../symbols';
+import { LOGIN_USER_SERVICE, SHOW_MY_USER_SERVICE } from '../symbols';
 
 @Controller('/api/auth')
 export default class AuthController {
@@ -24,6 +32,8 @@ export default class AuthController {
     private readonly createUserService: ICreateUserUseCase,
     @Inject(LOGIN_USER_SERVICE)
     private readonly loginUserService: ILoginUseCase,
+    @Inject(SHOW_MY_USER_SERVICE)
+    private readonly showMyUserService: IShowMyUserUseCase,
   ) {}
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
@@ -49,5 +59,24 @@ export default class AuthController {
       );
     }
     return resultLoginUser.value;
+  }
+
+  @Get('/me')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async me(@Req() resquest: any) {
+    const user: JwtVerifyPayload = resquest['user'];
+    const showMyUserParam: ShowMyUserParam = plainToClass(
+      ShowMyUserParam,
+      user.sub,
+    );
+    const resultUserFinder = await this.showMyUserService.call(showMyUserParam);
+    if (resultUserFinder.isLeft()) {
+      throw new HttpException(
+        resultUserFinder.value.message,
+        resultUserFinder.value.statusCode,
+      );
+    }
+    return resultUserFinder.value;
   }
 }
