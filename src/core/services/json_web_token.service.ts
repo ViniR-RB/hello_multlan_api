@@ -11,7 +11,10 @@ export default class JsonWebTokenService {
   ) {}
 
   async sign(payload: JwtSignPayload) {
-    return this.jwtService.sign(payload);
+    if (payload.type === 'access') {
+      return this.jwtService.sign(payload);
+    }
+    return this.jwtService.sign(payload, { expiresIn: '15d' });
   }
 
   async verify(token: string): Promise<JwtVerifyPayload> {

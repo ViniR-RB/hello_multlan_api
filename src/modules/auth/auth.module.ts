@@ -6,9 +6,14 @@ import IUserRepository from '../user/adapters/i_user_repository';
 import { USER_REPOSITORY } from '../user/symbols';
 import UserModule from '../user/user.module';
 import LoginUserService from './application/login_user.service';
+import RefreshTokensService from './application/refresh_tokens.service';
 import ShowMyUserService from './application/show_my_user.service';
 import AuthController from './controller/auth.controller';
-import { LOGIN_USER_SERVICE, SHOW_MY_USER_SERVICE } from './symbols';
+import {
+  LOGIN_USER_SERVICE,
+  REFRESH_TOKENS_SERVICE,
+  SHOW_MY_USER_SERVICE,
+} from './symbols';
 @Module({
   imports: [UserModule, CoreModule],
 
@@ -33,6 +38,14 @@ import { LOGIN_USER_SERVICE, SHOW_MY_USER_SERVICE } from './symbols';
       provide: SHOW_MY_USER_SERVICE,
       useFactory: (userRepository: IUserRepository) =>
         new ShowMyUserService(userRepository),
+    },
+    {
+      inject: [USER_REPOSITORY, JsonWebTokenService],
+      provide: REFRESH_TOKENS_SERVICE,
+      useFactory: (
+        userRepository: IUserRepository,
+        jsonWebTokenService: JsonWebTokenService,
+      ) => new RefreshTokensService(userRepository, jsonWebTokenService),
     },
   ],
   exports: [],

@@ -19,11 +19,16 @@ import ICreateUserUseCase, {
 import CreateUserDto from 'src/modules/user/dto/create_user.dto';
 import { CREATE_USER_SERVICE } from 'src/modules/user/symbols';
 import ILoginUseCase, { LoginParams } from '../domain/usecase/i_login_use_case';
+import IRefreshTokenUseCase from '../domain/usecase/I_refresh_tokens_use_case';
 import IShowMyUserUseCase, {
   ShowMyUserParam,
 } from '../domain/usecase/i_show_my_user_use_case';
 import LoginUserDto from '../dto/login_user.dto';
-import { LOGIN_USER_SERVICE, SHOW_MY_USER_SERVICE } from '../symbols';
+import {
+  LOGIN_USER_SERVICE,
+  REFRESH_TOKENS_SERVICE,
+  SHOW_MY_USER_SERVICE,
+} from '../symbols';
 
 @Controller('/api/auth')
 export default class AuthController {
@@ -34,6 +39,8 @@ export default class AuthController {
     private readonly loginUserService: ILoginUseCase,
     @Inject(SHOW_MY_USER_SERVICE)
     private readonly showMyUserService: IShowMyUserUseCase,
+    @Inject(REFRESH_TOKENS_SERVICE)
+    private readonly refreshTokensService: IRefreshTokenUseCase,
   ) {}
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
@@ -78,5 +85,23 @@ export default class AuthController {
       );
     }
     return resultUserFinder.value;
+  }
+
+  @Post('/refresh')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async refresh(@Req() request: any) {
+    const jwtSignPayload = request['user'];
+    const resultRefreshTokens = await this.refreshTokensService.call({
+      sub: jwtSignPayload.sub,
+      type: jwtSignPayload.type,
+    });
+    if (resultRefreshTokens.isLeft()) {
+      throw new HttpException(
+        resultRefreshTokens.value.message,
+        resultRefreshTokens.value.statusCode,
+      );
+    }
+    return resultRefreshTokens.value;
   }
 }
