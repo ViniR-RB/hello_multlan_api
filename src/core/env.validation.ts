@@ -43,6 +43,10 @@ export default class EnvironmentVariables {
   @IsNotEmpty()
   @IsString()
   JWT_SECRET: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  PORT: number;
 }
 
 export function validateEnvironmentVariables(config: Record<string, unknown>) {

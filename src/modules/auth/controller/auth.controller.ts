@@ -24,6 +24,7 @@ import IShowMyUserUseCase, {
   ShowMyUserParam,
 } from '../domain/usecase/i_show_my_user_use_case';
 import LoginUserDto from '../dto/login_user.dto';
+import RefreshTokenDto from '../dto/refresh_token.dto';
 import {
   LOGIN_USER_SERVICE,
   REFRESH_TOKENS_SERVICE,
@@ -90,7 +91,8 @@ export default class AuthController {
   @Post('/refresh')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  async refresh(@Req() request: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async refresh(@Req() request: any, @Body() body: RefreshTokenDto) {
     const jwtSignPayload = request['user'];
     const resultRefreshTokens = await this.refreshTokensService.call({
       sub: jwtSignPayload.sub,

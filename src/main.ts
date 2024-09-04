@@ -1,3 +1,4 @@
+import ConfigurationService from '@/core/services/configuration.service';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -9,6 +10,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  await app.listen(3000);
+  const configurationService = app.get(ConfigurationService);
+  await app.listen(configurationService.get('PORT'));
 }
 bootstrap();
