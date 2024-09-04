@@ -1,4 +1,4 @@
-import { plainToInstance } from 'class-transformer';
+import { plainToInstance, Transform } from 'class-transformer';
 import {
   IsNotEmpty,
   IsNumber,
@@ -37,13 +37,14 @@ export default class EnvironmentVariables {
   @IsNotEmpty()
   SUPABASE_API_KEY: string;
 
+  @Transform(({ value }) => parseInt(value))
   @IsNotEmpty()
   @IsNumber()
   SALT: number;
   @IsNotEmpty()
   @IsString()
   JWT_SECRET: string;
-
+  @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @IsNotEmpty()
   PORT: number;
