@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
       request['user'] = payload;
     } catch (e) {
       console.error('Authentication error:', e);
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Jwt Is invalid');
     }
 
     return true;
