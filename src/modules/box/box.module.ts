@@ -14,8 +14,10 @@ import {
   BOX_REPOSITORY,
   CREATE_BOX_SERVICE,
   GET_ALL_BOXS_SERVICE,
+  GET_SUMMARY_BOX,
   UPDATE_BOX_SERVICE,
 } from './symbols';
+import GetSummaryBoxService from './application/get_summary_box.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BoxModel]), UploadModule, CoreModule],
@@ -45,6 +47,13 @@ import {
       provide: BOX_REPOSITORY,
       useFactory: (boxRepository: Repository<BoxModel>) => {
         return new BoxRepository(boxRepository);
+      },
+    },
+    {
+      inject: [BOX_REPOSITORY],
+      provide: GET_SUMMARY_BOX,
+      useFactory: (boxRepository: IBoxRepository) => {
+        return new GetSummaryBoxService(boxRepository);
       },
     },
   ],

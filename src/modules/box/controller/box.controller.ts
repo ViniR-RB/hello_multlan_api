@@ -32,8 +32,10 @@ import UpdatedBoxDto from '../dtos/updated_box.dto';
 import {
   CREATE_BOX_SERVICE,
   GET_ALL_BOXS_SERVICE,
+  GET_SUMMARY_BOX,
   UPDATE_BOX_SERVICE,
 } from '../symbols';
+import IGetSummaryBoxUseCase from '../domain/usecases/i_get_summary_box_use_case';
 
 @Controller('/api/box')
 @UseGuards(AuthGuard)
@@ -47,6 +49,8 @@ export default class BoxController {
     private readonly updateBoxService: IUpdateBoxUseCase,
     @Inject(UPLOAD_FILE)
     private readonly uploadFile: IUploadFile,
+    @Inject(GET_SUMMARY_BOX)
+    private readonly getSummaryService: IGetSummaryBoxUseCase,
   ) {}
 
   @Post('')
@@ -98,5 +102,15 @@ export default class BoxController {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
     return result.value.toJson();
+  }
+
+  @Get('/summary')
+  @HttpCode(HttpStatus.OK)
+  async summary() {
+    const result = await this.getSummaryService.call();
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode);
+    }
+    return result.value;
   }
 }

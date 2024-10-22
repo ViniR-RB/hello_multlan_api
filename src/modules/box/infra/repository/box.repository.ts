@@ -6,12 +6,28 @@ import { EntityNotFoundError, Repository } from 'typeorm';
 import IBoxRepository from '../../adapters/i_box_repository';
 import BoxEntity from '../../domain/box.entity';
 import BoxModel from '../model/box.model';
+import { AsyncResult } from '@/core/types/async_result';
+import SummaryBoxDto from '../../dtos/summary.dto';
 
 export default class BoxRepository implements IBoxRepository {
   constructor(
     @InjectRepository(BoxModel)
     private readonly boxRepository: Repository<BoxModel>,
   ) {}
+  async summaryBox(): AsyncResult<RepositoryException, SummaryBoxDto> {
+    try {
+      const query = await this.boxRepository.query(
+        `SELECT COUNT(*) AS total_boxes, SUM(array_length(string_to_array(list_users, ','), 1)) AS total_customers FROM box;
+        `,
+      );
+
+      return right(SummaryBoxDto.fromJson(query[0]));
+    } catch (error) {
+      return left(
+        new RepositoryException('Erro em Busca o Resumos das Caixas'),
+      );
+    }
+  }
   async updateBox(
     boxEntity: BoxEntity,
   ): Promise<Either<RepositoryException, Nil>> {
