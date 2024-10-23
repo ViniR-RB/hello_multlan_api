@@ -8,6 +8,8 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  Param,
+  ParseUUIDPipe,
   Post,
   Req,
   UseGuards,
@@ -26,10 +28,15 @@ import IShowMyUserUseCase, {
 import LoginUserDto from '../dto/login_user.dto';
 import RefreshTokenDto from '../dto/refresh_token.dto';
 import {
+  CHANGE_PASSWORD_SERVICE,
+  GET_ALL_USERS_SERVICE,
   LOGIN_USER_SERVICE,
   REFRESH_TOKENS_SERVICE,
   SHOW_MY_USER_SERVICE,
 } from '../symbols';
+import ChangePasswordDto from '@/modules/user/dto/change_password.dto';
+import IChangePasswordUseCase from '@/modules/user/domain/usecase/i_change_password_use_case';
+import IGetAllUsersUseCase from '@/modules/user/domain/usecase/I_get_all_users_use_case';
 
 @Controller('/api/auth')
 export default class AuthController {
@@ -42,6 +49,10 @@ export default class AuthController {
     private readonly showMyUserService: IShowMyUserUseCase,
     @Inject(REFRESH_TOKENS_SERVICE)
     private readonly refreshTokensService: IRefreshTokenUseCase,
+    @Inject(CHANGE_PASSWORD_SERVICE)
+    private readonly changePasswordService: IChangePasswordUseCase,
+    @Inject(GET_ALL_USERS_SERVICE)
+    private readonly getAllUsersService: IGetAllUsersUseCase,
   ) {}
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
@@ -88,6 +99,18 @@ export default class AuthController {
     return resultUserFinder.value;
   }
 
+  @Get('/all')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async getAllUsers() {
+    const result = await this.getAllUsersService.call();
+
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode);
+    }
+    return result.value;
+  }
+
   @Post('/refresh')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
@@ -105,5 +128,22 @@ export default class AuthController {
       );
     }
     return resultRefreshTokens.value;
+  }
+  @Post('/change-password/:id')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async changePassword(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    const result = await this.changePasswordService.call(
+      changePasswordDto.password,
+      id,
+    );
+
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode);
+    }
+    return {};
   }
 }

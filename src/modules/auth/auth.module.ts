@@ -10,10 +10,14 @@ import RefreshTokensService from './application/refresh_tokens.service';
 import ShowMyUserService from './application/show_my_user.service';
 import AuthController from './controller/auth.controller';
 import {
+  CHANGE_PASSWORD_SERVICE,
+  GET_ALL_USERS_SERVICE,
   LOGIN_USER_SERVICE,
   REFRESH_TOKENS_SERVICE,
   SHOW_MY_USER_SERVICE,
 } from './symbols';
+import ChangePasswordService from '../user/application/change_password.service';
+import GetAllUsersService from '../user/application/get_all_users.service';
 @Module({
   imports: [UserModule, CoreModule],
 
@@ -46,6 +50,20 @@ import {
         userRepository: IUserRepository,
         jsonWebTokenService: JsonWebTokenService,
       ) => new RefreshTokensService(userRepository, jsonWebTokenService),
+    },
+    {
+      inject: [USER_REPOSITORY, EncryptionService, JsonWebTokenService],
+      provide: CHANGE_PASSWORD_SERVICE,
+      useFactory: (
+        userRepository: IUserRepository,
+        encryptionService: EncryptionService,
+      ) => new ChangePasswordService(userRepository, encryptionService),
+    },
+    {
+      inject: [USER_REPOSITORY],
+      provide: GET_ALL_USERS_SERVICE,
+      useFactory: (userRepository: IUserRepository) =>
+        new GetAllUsersService(userRepository),
     },
   ],
   exports: [],
