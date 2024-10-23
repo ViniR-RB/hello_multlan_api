@@ -33,4 +33,14 @@ export default class UserEntity {
   get userPassword(): string {
     return this.props.password;
   }
+  get userCreatedAt() {
+    return this.props.createdAt;
+  }
+  get userUpdatedAt() {
+    return this.props.updatedAt;
+  }
+
+  updatePassword(newPassword: string) {
+    this.props.password = newPassword;
+  }
 }

@@ -24,6 +24,7 @@ export default class CreateUserService implements ICreateUserUseCase {
       ...user,
       password: hashedPassword,
     });
+    console.log(userEntity.userCreatedAt);
     const resultSaveUser = await this.userRepository.create(userEntity);
     if (resultSaveUser.isLeft()) {
       return left(new ServiceException(resultSaveUser.value.message, 500));

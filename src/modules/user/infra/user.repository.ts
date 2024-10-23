@@ -5,9 +5,39 @@ import { EntityNotFoundError, Repository } from 'typeorm';
 import IUserRepository from '../adapters/i_user_repository';
 import UserEntity from '../domain/user.entity';
 import UserModel from './model/user.model';
+import { AsyncResult } from '@/core/types/async_result';
 
 export default class UserRepository implements IUserRepository {
   constructor(private readonly userRepository: Repository<UserModel>) {}
+  async updatePassword(
+    userEntity: UserEntity,
+  ): AsyncResult<RepositoryException, Nil> {
+    try {
+      const userData = {
+        password: userEntity.userPassword,
+      };
+      await this.userRepository.update(userEntity.userId, userData);
+
+      return right(nil);
+    } catch (error) {
+      return left(
+        new RepositoryException(
+          `Erro em Modificar a senha do usuário:${userEntity.userId}`,
+        ),
+      );
+    }
+  }
+  async findAll(): AsyncResult<RepositoryException, Array<UserEntity>> {
+    try {
+      const usersModelList = await this.userRepository.find();
+      const usersList = usersModelList.map((user) => user.toEntity());
+      return right(usersList);
+    } catch (error) {
+      return left(
+        new RepositoryException('Houve um Problema em Buscar Todos os Usuário'),
+      );
+    }
+  }
   async findOneById(
     id: string,
   ): Promise<Either<RepositoryException, UserEntity>> {
