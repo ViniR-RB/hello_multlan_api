@@ -55,7 +55,6 @@ export class AuthGuard implements CanActivate {
       }
       request['user'] = payload;
     } catch (e) {
-      console.error('Refresh token verification failed:', e);
       throw new UnauthorizedException('Invalid refresh token');
     }
 
