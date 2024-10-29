@@ -1,3 +1,4 @@
+import { AsyncResult } from '@/core/types/async_result';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Either, left, right } from 'src/core/either/either';
 import Nil, { nil } from 'src/core/either/nil';
@@ -5,9 +6,8 @@ import RepositoryException from 'src/core/erros/repository.exception';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import IBoxRepository from '../../adapters/i_box_repository';
 import BoxEntity from '../../domain/box.entity';
-import BoxModel from '../model/box.model';
-import { AsyncResult } from '@/core/types/async_result';
 import SummaryBoxDto from '../../dtos/summary.dto';
+import BoxModel from '../model/box.model';
 
 export default class BoxRepository implements IBoxRepository {
   constructor(
@@ -17,7 +17,9 @@ export default class BoxRepository implements IBoxRepository {
   async summaryBox(): AsyncResult<RepositoryException, SummaryBoxDto> {
     try {
       const query = await this.boxRepository.query(
-        `SELECT COUNT(*) AS total_boxes, SUM(array_length(string_to_array(list_users, ','), 1)) AS total_customers FROM box;
+        `SELECT COUNT(*) AS total_boxes, COALESCE(SUM(array_length(string_to_array(list_users, ','), 1)), 0) 
+        AS total_customers 
+        FROM box;
         `,
       );
 
@@ -80,12 +82,10 @@ export default class BoxRepository implements IBoxRepository {
       const boxdata = {
         ...boxEntity.toObject(),
       };
-      console.log(boxdata);
 
       await this.boxRepository.save(boxdata);
       return right(nil);
     } catch (error) {
-      console.log(error);
       return left(new RepositoryException('Erro ao salvar uma caixa'));
     }
   }
