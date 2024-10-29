@@ -1,6 +1,6 @@
 import { Either } from 'src/core/either/either';
 import ServiceException from 'src/core/erros/service.exception';
-import BoxEntity from '../box.entity';
+import BoxEntity, { BoxZone } from '../box.entity';
 
 export default interface IGetAllBoxUseCase {
   call(): Promise<Either<ServiceException, Array<GetAllBoxParam>>>;
@@ -18,6 +18,7 @@ export class GetAllBoxParam {
   createdAt: Partial<Date>;
   updatedAt: Partial<Date>;
   image: string;
+  zone: BoxZone;
   constructor(
     id: string,
     label: string,
@@ -28,6 +29,7 @@ export class GetAllBoxParam {
     signal: number,
     listUser: Array<string>,
     note: string,
+    zone: BoxZone,
     createdAt: Partial<Date>,
     updatedAt: Partial<Date>,
     image: string,
@@ -41,6 +43,7 @@ export class GetAllBoxParam {
     this.signal = signal;
     this.listUser = listUser;
     this.note = note;
+    this.zone = zone;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.image = image;
@@ -57,6 +60,7 @@ export class GetAllBoxParam {
       boxEntity.signal,
       boxEntity.listUser,
       boxEntity.note,
+      boxEntity.zone,
       boxEntity.createdAt!,
       boxEntity.updatedAt!,
       boxEntity.imageUrl,

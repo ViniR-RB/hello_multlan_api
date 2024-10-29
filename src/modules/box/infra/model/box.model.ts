@@ -5,7 +5,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import BoxEntity from '../../domain/box.entity';
+import BoxEntity, { BoxZone } from '../../domain/box.entity';
 @Entity('box')
 export default class BoxModel {
   @PrimaryColumn()
@@ -26,6 +26,8 @@ export default class BoxModel {
   image: string;
   @Column({ name: 'list_users', type: 'simple-array' })
   listUser: Array<string>;
+  @Column({ name: 'zone', type: 'enum', enum: BoxZone })
+  zone: BoxZone;
   @Column({ nullable: true, default: '' })
   note?: string;
   @CreateDateColumn({ name: 'created_at' })
@@ -47,6 +49,7 @@ export default class BoxModel {
         listUser: this.listUser,
         note: this.note,
         image: this.image,
+        zone: this.zone,
       },
       this.id,
     );

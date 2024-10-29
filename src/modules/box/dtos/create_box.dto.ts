@@ -1,5 +1,12 @@
 import { Transform } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { BoxZone } from '../domain/box.entity';
 
 export default class CreateBoxDto {
   @IsNotEmpty()
@@ -21,4 +28,7 @@ export default class CreateBoxDto {
   @IsArray({})
   @IsOptional()
   listUser: string[] = [];
+  @IsNotEmpty()
+  @IsEnum(BoxZone)
+  zone: BoxZone;
 }

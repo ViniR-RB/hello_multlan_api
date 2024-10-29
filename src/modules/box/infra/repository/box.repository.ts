@@ -44,6 +44,7 @@ export default class BoxRepository implements IBoxRepository {
         createdAt: boxEntity.createdAt,
         updatedAt: boxEntity.updatedAt,
         listUser: boxEntity.listUser,
+        zone: boxEntity.zone,
         image: boxEntity.imageUrl,
       };
       await this.boxRepository.save(boxdata);
@@ -79,9 +80,12 @@ export default class BoxRepository implements IBoxRepository {
       const boxdata = {
         ...boxEntity.toObject(),
       };
+      console.log(boxdata);
+
       await this.boxRepository.save(boxdata);
       return right(nil);
     } catch (error) {
+      console.log(error);
       return left(new RepositoryException('Erro ao salvar uma caixa'));
     }
   }

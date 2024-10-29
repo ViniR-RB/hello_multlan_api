@@ -1,6 +1,6 @@
 import { Either } from 'src/core/either/either';
 import ServiceException from 'src/core/erros/service.exception';
-import BoxEntity from '../box.entity';
+import BoxEntity, { BoxZone } from '../box.entity';
 
 export default interface IUpdateBoxUseCase {
   call(
@@ -20,7 +20,7 @@ export class UpdateBoxResponse {
     public readonly listUser: Array<string>,
     public readonly note: string,
     public readonly image: string,
-
+    public readonly zone: BoxZone,
     public readonly createdAt: Partial<Date>,
     public readonly updatedAt: Partial<Date>,
   ) {}
@@ -37,6 +37,7 @@ export class UpdateBoxResponse {
       box.listUser,
       box.note,
       box.imageUrl,
+      box.zone,
       box.createdAt,
       box.updatedAt,
     );
@@ -59,6 +60,7 @@ export class UpdateBoxParams {
   signal: number;
   listUser: Array<string>;
   note: string;
+  zone: BoxZone;
   createdAt: Date;
   updatedAt: Date;
   constructor(
@@ -71,6 +73,7 @@ export class UpdateBoxParams {
     signal: number,
     listUser: Array<string>,
     note: string,
+    zone: BoxZone,
     createdAt: Date,
     updatedAt: Date,
   ) {
@@ -83,6 +86,7 @@ export class UpdateBoxParams {
     this.signal = signal;
     this.listUser = listUser;
     this.note = note;
+    this.zone = zone;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -101,6 +105,7 @@ export class UpdateBoxParams {
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
         image: '',
+        zone: this.zone,
       },
       this.id,
     );

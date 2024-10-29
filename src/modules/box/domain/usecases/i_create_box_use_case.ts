@@ -1,6 +1,6 @@
 import { Either } from 'src/core/either/either';
 import ServiceException from 'src/core/erros/service.exception';
-import BoxEntity from '../box.entity';
+import BoxEntity, { BoxZone } from '../box.entity';
 
 export default interface ICreateBoxUseCase {
   call(boxData: CreateBoxPrams): Promise<Either<ServiceException, BoxEntity>>;
@@ -14,6 +14,7 @@ export class CreateBoxPrams {
   filledSpace: number;
   signal: number;
   image: string;
+  zone: BoxZone;
   listUser?: Array<string>;
   constructor(
     label: string,
@@ -23,6 +24,7 @@ export class CreateBoxPrams {
     filledSpace: number,
     signal: number,
     image: string,
+    zone: BoxZone,
   ) {
     this.label = label;
     this.latitude = latitude;
@@ -31,6 +33,7 @@ export class CreateBoxPrams {
     this.filledSpace = filledSpace;
     this.signal = signal;
     this.image = image;
+    this.zone = zone;
   }
 
   toEntity(): BoxEntity {
@@ -43,6 +46,7 @@ export class CreateBoxPrams {
       filledSpace: this.filledSpace,
       image: this.image,
       listUser: this.listUser,
+      zone: this.zone,
     });
   }
 }

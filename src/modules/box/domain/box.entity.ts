@@ -1,6 +1,11 @@
 import { randomUUID } from 'crypto';
 import BoxDomainException from '../../../core/erros/box.domain.exception';
 
+export enum BoxZone {
+  SAFE = 'SAFE',
+  MODERATE = 'MODERATE',
+  DANGER = 'DANGER',
+}
 interface BoxEntityProps {
   label: string;
   latitude: number;
@@ -9,6 +14,7 @@ interface BoxEntityProps {
   filledSpace: number;
   signal: number;
   image: string;
+  zone: BoxZone;
   note?: Partial<string>;
   listUser?: Partial<Array<string>>;
   createdAt?: Partial<Date>;
@@ -26,6 +32,7 @@ export default class BoxEntity {
       updatedAt: this.props.updatedAt || new Date(),
       listUser: this.props.listUser || [],
       note: this.props.note || '',
+      zone: this.props.zone,
     };
     if (this.props.filledSpace > this.props.freeSpace) {
       throw new BoxDomainException(
@@ -69,7 +76,9 @@ export default class BoxEntity {
   get imageUrl() {
     return this.props.image;
   }
-
+  get zone() {
+    return this.props.zone;
+  }
   get note() {
     return this.props.note;
   }
@@ -108,6 +117,7 @@ export default class BoxEntity {
       image: this.imageUrl,
       note: this.note,
       listUser: this.listUser,
+      zone: this.zone,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

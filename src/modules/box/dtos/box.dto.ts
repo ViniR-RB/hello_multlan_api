@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { BoxZone } from '../domain/box.entity';
 
 export default class BoxDto {
   @IsNotEmpty()
@@ -24,4 +31,7 @@ export default class BoxDto {
   listUser: Array<string>;
   @IsNotEmpty()
   note: string;
+  @IsNotEmpty()
+  @IsEnum(BoxZone)
+  zone: BoxZone;
 }
