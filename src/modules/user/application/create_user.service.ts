@@ -17,7 +17,7 @@ export default class CreateUserService implements ICreateUserUseCase {
     const { email, password } = user;
     const userFinder = await this.userRepository.findOneByEmail(email);
     if (userFinder.isRight()) {
-      return left(new ServiceException('User already exists', 401));
+      return left(new ServiceException('User already exists', 400));
     }
     const hashedPassword = await this.encryptionService.hash(password);
     const userEntity = new UserEntity({

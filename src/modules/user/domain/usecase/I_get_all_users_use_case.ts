@@ -7,11 +7,13 @@ export default interface IGetAllUsersUseCase {
 }
 export class GetAllUsersResponse {
   constructor(
+    private readonly id: string,
     private readonly name: string,
     private readonly email: string,
     private readonly createdAt: Partial<Date>,
     private readonly updatedAt: Partial<Date>,
   ) {
+    this.id = id;
     this.name = name;
     this.email = email;
     this.createdAt = createdAt;
@@ -20,6 +22,7 @@ export class GetAllUsersResponse {
 
   static fromUserEntity(user: UserEntity) {
     return new GetAllUsersResponse(
+      user.userId,
       user.userName,
       user.userEmail,
       user.userCreatedAt,
