@@ -14,12 +14,43 @@ export default class BoxRepository implements IBoxRepository {
     @InjectRepository(BoxModel)
     private readonly boxRepository: Repository<BoxModel>,
   ) {}
+  async deleteBox(id: string): AsyncResult<RepositoryException, Nil> {
+    try {
+      const result = await this.searchBoxFromIdOrThrow(id);
+      if (result.isLeft()) {
+        return left(new RepositoryException('Caixa não encontrada'));
+      }
+      await this.boxRepository.delete(id);
+      return right(nil);
+    } catch (e) {
+      return left(new RepositoryException('Erro ao deletar a caixa'));
+    }
+  }
   async summaryBox(): AsyncResult<RepositoryException, SummaryBoxDto> {
     try {
       const query = await this.boxRepository.query(
-        `SELECT COUNT(*) AS total_boxes, COALESCE(SUM(array_length(string_to_array(list_users, ','), 1)), 0) 
-        AS total_customers 
-        FROM box;
+        `
+        WITH box_summray as (
+          SELECT
+            count(*) as total_boxes,
+            coalesce(sum(array_length(string_to_array(list_users, ','), 1)),
+            0) 
+                  as total_customers
+          FROM
+            box
+        ),
+        box_for_zone as (
+          SELECT
+            zone,
+            count(*) as zone_count
+          FROM
+            box
+          GROUP BY
+            zone
+        )
+        SELECT
+            (SELECT jsonb_agg(bs) FROM box_summray bs) AS summary,
+            (SELECT jsonb_agg(bfz) FROM box_for_zone bfz) AS zone_info;
         `,
       );
 

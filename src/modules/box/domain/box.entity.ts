@@ -99,6 +99,7 @@ export default class BoxEntity {
           ),
         ),
         createdAt: this.createdAt,
+        updatedAt: new Date(),
       },
       this.id,
     );

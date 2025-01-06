@@ -5,7 +5,9 @@ import { Repository } from 'typeorm';
 import UploadModule from '../upload/upload.module';
 import IBoxRepository from './adapters/i_box_repository';
 import CreateBoxService from './application/create_box.service';
+import DeleteBoxService from './application/delete_box.service';
 import GetAllBoxService from './application/get_all_box.service';
+import GetSummaryBoxService from './application/get_summary_box.service';
 import UpdateBoxService from './application/update_box.service';
 import BoxController from './controller/box.controller';
 import BoxModel from './infra/model/box.model';
@@ -13,11 +15,11 @@ import BoxRepository from './infra/repository/box.repository';
 import {
   BOX_REPOSITORY,
   CREATE_BOX_SERVICE,
+  DELETE_BOX,
   GET_ALL_BOXS_SERVICE,
   GET_SUMMARY_BOX,
   UPDATE_BOX_SERVICE,
 } from './symbols';
-import GetSummaryBoxService from './application/get_summary_box.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BoxModel]), UploadModule, CoreModule],
@@ -54,6 +56,13 @@ import GetSummaryBoxService from './application/get_summary_box.service';
       provide: GET_SUMMARY_BOX,
       useFactory: (boxRepository: IBoxRepository) => {
         return new GetSummaryBoxService(boxRepository);
+      },
+    },
+    {
+      inject: [BOX_REPOSITORY],
+      provide: DELETE_BOX,
+      useFactory: (boxRepository: IBoxRepository) => {
+        return new DeleteBoxService(boxRepository);
       },
     },
   ],

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpException,
@@ -23,7 +24,9 @@ import { UPLOAD_FILE } from 'src/modules/upload/symbols';
 import ICreateBoxUseCase, {
   CreateBoxPrams,
 } from '../domain/usecases/i_create_box_use_case';
+import IDeleteBoxUseCase from '../domain/usecases/i_delete_box_use_case';
 import IGetAllBoxUseCase from '../domain/usecases/i_get_all_box_use_case';
+import IGetSummaryBoxUseCase from '../domain/usecases/i_get_summary_box_use_case';
 import IUpdateBoxUseCase, {
   UpdateBoxParams,
 } from '../domain/usecases/i_update_box_use_case';
@@ -31,11 +34,11 @@ import CreateBoxDto from '../dtos/create_box.dto';
 import UpdatedBoxDto from '../dtos/updated_box.dto';
 import {
   CREATE_BOX_SERVICE,
+  DELETE_BOX,
   GET_ALL_BOXS_SERVICE,
   GET_SUMMARY_BOX,
   UPDATE_BOX_SERVICE,
 } from '../symbols';
-import IGetSummaryBoxUseCase from '../domain/usecases/i_get_summary_box_use_case';
 
 @Controller('/api/box')
 @UseGuards(AuthGuard)
@@ -51,6 +54,8 @@ export default class BoxController {
     private readonly uploadFile: IUploadFile,
     @Inject(GET_SUMMARY_BOX)
     private readonly getSummaryService: IGetSummaryBoxUseCase,
+    @Inject(DELETE_BOX)
+    private readonly deleteBoxService: IDeleteBoxUseCase,
   ) {}
 
   @Post('')
@@ -112,5 +117,13 @@ export default class BoxController {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
     return result.value;
+  }
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async deleteBox(@Param('id', ParseUUIDPipe) id: string) {
+    const result = await this.deleteBoxService.call(id);
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode);
+    }
   }
 }
