@@ -1,3 +1,4 @@
+import FileEntity from '@/modules/upload/domain/file.entity';
 import { Either } from 'src/core/either/either';
 import ServiceException from 'src/core/erros/service.exception';
 import BoxEntity, { BoxZone } from '../box.entity';
@@ -13,7 +14,7 @@ export class CreateBoxPrams {
   freeSpace: number;
   filledSpace: number;
   signal: number;
-  image: string;
+  image: FileEntity;
   zone: BoxZone;
   listUser?: Array<string>;
   constructor(
@@ -23,7 +24,7 @@ export class CreateBoxPrams {
     freeSpace: number,
     filledSpace: number,
     signal: number,
-    image: string,
+    image: FileEntity,
     zone: BoxZone,
   ) {
     this.label = label;
@@ -44,7 +45,6 @@ export class CreateBoxPrams {
       freeSpace: this.freeSpace,
       signal: this.signal,
       filledSpace: this.filledSpace,
-      image: this.image,
       listUser: this.listUser,
       zone: this.zone,
     });

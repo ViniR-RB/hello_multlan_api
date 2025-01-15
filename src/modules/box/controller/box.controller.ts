@@ -1,3 +1,4 @@
+import FileEntity from '@/modules/upload/domain/file.entity';
 import {
   Body,
   Controller,
@@ -18,9 +19,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { plainToClass } from 'class-transformer';
 import { AuthGuard } from 'src/core/guards/auth.guard';
-import FileEntity from 'src/modules/upload/domain/file.entity';
-import IUploadFile from 'src/modules/upload/domain/usecase/i_upload_file';
-import { UPLOAD_FILE } from 'src/modules/upload/symbols';
 import ICreateBoxUseCase, {
   CreateBoxPrams,
 } from '../domain/usecases/i_create_box_use_case';
@@ -50,8 +48,6 @@ export default class BoxController {
     private readonly getBoxService: IGetAllBoxUseCase,
     @Inject(UPDATE_BOX_SERVICE)
     private readonly updateBoxService: IUpdateBoxUseCase,
-    @Inject(UPLOAD_FILE)
-    private readonly uploadFile: IUploadFile,
     @Inject(GET_SUMMARY_BOX)
     private readonly getSummaryService: IGetSummaryBoxUseCase,
     @Inject(DELETE_BOX)
@@ -65,21 +61,20 @@ export default class BoxController {
     @Body() createBoxDto: CreateBoxDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const uploadFileEntity = new FileEntity(
-      file.originalname,
-      file.buffer,
-      'box',
-    );
-    const boxImageUrl = await this.uploadFile.call(uploadFileEntity);
+    const boxFile = new FileEntity(file.originalname, file.buffer, '');
+
     const data = {
       ...createBoxDto,
-      image: boxImageUrl.url,
+      image: boxFile,
     };
+
     const boxParam = plainToClass(CreateBoxPrams, data);
+
     const result = await this.createBoxService.call(boxParam);
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
+    return result.value.toObject();
   }
   @Get('')
   @HttpCode(HttpStatus.OK)

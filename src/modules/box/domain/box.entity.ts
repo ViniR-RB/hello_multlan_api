@@ -13,7 +13,7 @@ interface BoxEntityProps {
   freeSpace: number;
   filledSpace: number;
   signal: number;
-  image: string;
+  image?: string;
   zone: BoxZone;
   note?: Partial<string>;
   listUser?: Partial<Array<string>>;
@@ -26,6 +26,7 @@ export default class BoxEntity {
     private readonly props: BoxEntityProps,
     private readonly id?: string,
   ) {
+    this.id = id || randomUUID();
     this.props = {
       ...props,
       createdAt: this.props.createdAt || new Date(),
@@ -33,6 +34,7 @@ export default class BoxEntity {
       listUser: this.props.listUser || [],
       note: this.props.note || '',
       zone: this.props.zone,
+      image: this.props.image || this.id + '.webp',
     };
     if (this.props.filledSpace > this.props.freeSpace) {
       throw new BoxDomainException(
@@ -44,7 +46,6 @@ export default class BoxEntity {
         'Free space must be graeter than list user length',
       );
     }
-    this.id = id || randomUUID();
   }
   get boxId() {
     return this.id;
