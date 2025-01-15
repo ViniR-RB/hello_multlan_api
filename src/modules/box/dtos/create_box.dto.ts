@@ -26,6 +26,7 @@ export default class CreateBoxDto {
   @Transform(({ value }) => parseFloat(value))
   signal: number;
   @IsArray({})
+  @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
   @IsOptional()
   listUser: string[] = [];
   @IsNotEmpty()
