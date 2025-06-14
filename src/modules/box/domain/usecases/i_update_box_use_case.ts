@@ -63,6 +63,7 @@ export class UpdateBoxParams {
   zone: BoxZone;
   createdAt: Date;
   updatedAt: Date;
+  routeId: string | null;
   constructor(
     id: string,
     label: string,
@@ -76,6 +77,7 @@ export class UpdateBoxParams {
     zone: BoxZone,
     createdAt: Date,
     updatedAt: Date,
+    routeId: string | null,
   ) {
     this.id = id;
     this.label = label;
@@ -89,6 +91,7 @@ export class UpdateBoxParams {
     this.zone = zone;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.routeId = routeId;
   }
 
   toEntity() {
@@ -106,6 +109,7 @@ export class UpdateBoxParams {
         updatedAt: this.updatedAt,
         image: '',
         zone: this.zone,
+        routeId: this.routeId,
       },
       this.id,
     );

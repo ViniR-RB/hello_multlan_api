@@ -24,6 +24,7 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
         longitude,
         note,
         zone,
+        routeId,
       } = boxData;
       const resultSearch = await this.boxRepository.searchBoxFromIdOrThrow(id);
       if (resultSearch.isLeft()) {
@@ -41,6 +42,7 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
         latitude,
         longitude,
         zone,
+        routeId,
       });
       const resultUpdated = await this.boxRepository.updateBox(boxModified);
       if (resultUpdated.isLeft()) {

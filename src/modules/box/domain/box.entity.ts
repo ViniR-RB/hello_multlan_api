@@ -13,12 +13,13 @@ interface BoxEntityProps {
   freeSpace: number;
   filledSpace: number;
   signal: number;
-  image?: string;
   zone: BoxZone;
-  note?: Partial<string>;
-  listUser?: Partial<Array<string>>;
-  createdAt?: Partial<Date>;
-  updatedAt?: Partial<Date>;
+  routeId?: string | null;
+  image?: string;
+  note?: string;
+  listUser?: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export default class BoxEntity {
@@ -88,6 +89,21 @@ export default class BoxEntity {
     return this.props.label;
   }
 
+  get routeId() {
+    return this.props.routeId;
+  }
+
+  assignToRoute(routeId: string | null) {
+    if (this.props.routeId === routeId) return;
+    this.props.routeId = routeId;
+    this.touch();
+  }
+
+  removeFromRoute() {
+    this.props.routeId = null;
+    this.touch();
+  }
+
   updatedBox(
     boxprops?: Omit<BoxEntityProps, 'createdAt' | 'updatedAt' | 'image'>,
   ) {
@@ -110,18 +126,11 @@ export default class BoxEntity {
   toObject() {
     return {
       id: this.id,
-      label: this.label,
-      latitude: this.latitude,
-      longitude: this.longitude,
-      freeSpace: this.freeSpace,
-      filledSpace: this.filledSpace,
-      signal: this.signal,
-      image: this.imageUrl,
-      note: this.note,
-      listUser: this.listUser,
-      zone: this.zone,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      ...this.props,
     };
+  }
+
+  private touch() {
+    this.props.updatedAt = new Date();
   }
 }

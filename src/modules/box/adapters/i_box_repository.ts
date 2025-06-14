@@ -15,4 +15,5 @@ export default interface IBoxRepository {
   updateBox(boxEntity: BoxEntity): Promise<Either<RepositoryException, Nil>>;
   summaryBox(): AsyncResult<RepositoryException, SummaryBoxDto>;
   deleteBox(id: string): AsyncResult<RepositoryException, Nil>;
+  findByIds(ids: string[]): AsyncResult<RepositoryException, BoxEntity[]>;
 }

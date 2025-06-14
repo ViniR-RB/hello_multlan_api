@@ -17,6 +17,7 @@ export class CreateBoxPrams {
   image: FileEntity;
   zone: BoxZone;
   listUser?: Array<string>;
+  routeId?: Partial<string | null>;
   constructor(
     label: string,
     latitude: number,
@@ -26,6 +27,7 @@ export class CreateBoxPrams {
     signal: number,
     image: FileEntity,
     zone: BoxZone,
+    routeId: Partial<string | null>,
   ) {
     this.label = label;
     this.latitude = latitude;
@@ -35,6 +37,7 @@ export class CreateBoxPrams {
     this.signal = signal;
     this.image = image;
     this.zone = zone;
+    this.routeId = routeId;
   }
 
   toEntity(): BoxEntity {
@@ -47,6 +50,7 @@ export class CreateBoxPrams {
       filledSpace: this.filledSpace,
       listUser: this.listUser,
       zone: this.zone,
+      routeId: this.routeId,
     });
   }
 }

@@ -1,9 +1,10 @@
 import { AsyncResult } from '@/core/types/async_result';
+import { BoxMapper } from '@/modules/box/infra/mapper/box_mapper';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Either, left, right } from 'src/core/either/either';
 import Nil, { nil } from 'src/core/either/nil';
 import RepositoryException from 'src/core/erros/repository.exception';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { EntityNotFoundError, In, Repository } from 'typeorm';
 import IBoxRepository from '../../adapters/i_box_repository';
 import BoxEntity from '../../domain/box.entity';
 import SummaryBoxDto from '../../dtos/summary.dto';
@@ -14,6 +15,19 @@ export default class BoxRepository implements IBoxRepository {
     @InjectRepository(BoxModel)
     private readonly boxRepository: Repository<BoxModel>,
   ) {}
+  async findByIds(
+    ids: string[],
+  ): AsyncResult<RepositoryException, BoxEntity[]> {
+    try {
+      const boxModelList = await this.boxRepository.find({
+        where: { id: In(ids) },
+      });
+
+      return right(boxModelList.map(box => BoxMapper.toEntity(box)));
+    } catch (e) {
+      return left(new RepositoryException('Erro ao buscar caixas por IDs'));
+    }
+  }
   async deleteBox(id: string): AsyncResult<RepositoryException, Nil> {
     try {
       const result = await this.searchBoxFromIdOrThrow(id);
