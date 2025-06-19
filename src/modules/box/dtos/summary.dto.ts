@@ -3,20 +3,20 @@ export default class SummaryBoxDto {
     private readonly totalBoxes: string,
     private readonly totalCustomers: string,
     private readonly zoneInfo: Record<string, number>[],
+    private readonly totalRoutes: number,
   ) {
     this.totalBoxes = totalBoxes;
     this.totalCustomers = totalCustomers;
+    this.zoneInfo = zoneInfo;
+    this.totalRoutes = totalRoutes;
   }
-  static fromJson({ summary, zone_info }): SummaryBoxDto {
+  static fromJson({ summary, zone_info, total_routes }): SummaryBoxDto {
     const { total_boxes, total_customers } = summary[0];
-
-    return new SummaryBoxDto(total_boxes, total_customers, zone_info);
+    return new SummaryBoxDto(
+      total_boxes,
+      total_customers,
+      zone_info,
+      total_routes[0].total_routes,
+    );
   }
 }
-// {
-//   summary: [ { total_boxes: 5, total_customers: 18 } ],
-//   zone_info: [
-//     { zone: 'MODERATE', zone_count: 1 },
-//     { zone: 'SAFE', zone_count: 4 }
-//   ]
-// }

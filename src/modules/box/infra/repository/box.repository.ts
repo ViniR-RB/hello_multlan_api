@@ -44,30 +44,36 @@ export default class BoxRepository implements IBoxRepository {
     try {
       const query = await this.boxRepository.query(
         `
-        WITH box_summray as (
+        WITH box_summary AS (
           SELECT
-            count(*) as total_boxes,
-            coalesce(sum(array_length(string_to_array(list_users, ','), 1)),
-            0) 
-                  as total_customers
+            count(*) AS total_boxes,
+            coalesce(sum(array_length(string_to_array(list_users, ','), 1)), 0) AS total_customers
           FROM
             box
         ),
-        box_for_zone as (
+        box_for_zone AS (
           SELECT
             zone,
-            count(*) as zone_count
+            count(*) AS zone_count,
+            100.0 * count(*) / (SELECT count(*) FROM box) AS zone_percentage
           FROM
             box
           GROUP BY
             zone
+        ),
+        total_routes AS (
+          SELECT
+            count(*) AS total_routes
+          FROM
+            route
         )
         SELECT
-            (SELECT jsonb_agg(bs) FROM box_summray bs) AS summary,
-            (SELECT jsonb_agg(bfz) FROM box_for_zone bfz) AS zone_info;
+          (SELECT jsonb_agg(bs) FROM box_summary bs) AS summary,
+          (SELECT jsonb_agg(bfz) FROM box_for_zone bfz) AS zone_info,
+          (SELECT jsonb_agg(tr) FROM total_routes tr) AS total_routes;
         `,
       );
-
+      console.log(query[0]);
       return right(SummaryBoxDto.fromJson(query[0]));
     } catch (error) {
       return left(
