@@ -1,3 +1,4 @@
+import { USER_ROLE } from '@/modules/user/domain/user.entity';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtSignPayload, JwtVerifyPayload } from '../interfaces/jwt.payload';
@@ -21,6 +22,7 @@ export default class JsonWebTokenService {
     const payload = await this.jwtService.verifyAsync<{
       sub: string;
       iat: string;
+      role: USER_ROLE;
       exp: string;
       type: string;
     }>(token, {

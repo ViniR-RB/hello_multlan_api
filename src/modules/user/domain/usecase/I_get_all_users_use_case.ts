@@ -6,27 +6,11 @@ export default interface IGetAllUsersUseCase {
   call(): AsyncResult<ServiceException, Array<GetAllUsersResponse>>;
 }
 export class GetAllUsersResponse {
-  constructor(
-    private readonly id: string,
-    private readonly name: string,
-    private readonly email: string,
-    private readonly createdAt: Partial<Date>,
-    private readonly updatedAt: Partial<Date>,
-  ) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
   static fromUserEntity(user: UserEntity) {
-    return new GetAllUsersResponse(
-      user.userId,
-      user.userName,
-      user.userEmail,
-      user.userCreatedAt,
-      user.userUpdatedAt,
-    );
+    const { id, password, ...rest } = user.toObject();
+    return {
+      id,
+      ...rest,
+    };
   }
 }

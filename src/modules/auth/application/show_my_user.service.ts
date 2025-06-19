@@ -13,6 +13,7 @@ export default class ShowMyUserService implements IShowMyUserUseCase {
   ): Promise<Either<ServiceException, ShowMyUserResponse>> {
     const { userId } = showMyUserParam;
     const resultUserFinder = await this.userRepository.findOneById(userId);
+    
     if (resultUserFinder.isLeft()) {
       return left(new ServiceException(resultUserFinder.value.message, 404));
     }

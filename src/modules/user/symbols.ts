@@ -1,2 +1,3 @@
 export const CREATE_USER_SERVICE = Symbol('CREATE_USER_SERVICE');
 export const USER_REPOSITORY = Symbol('USER_REPOSITORY');
+export const UPDATE_USER_SERVICE = Symbol('UPDATE_USER_SERVICE');

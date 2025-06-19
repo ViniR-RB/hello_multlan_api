@@ -1,14 +1,37 @@
+import { AsyncResult } from '@/core/types/async_result';
+import UserMapper from '@/modules/user/infra/model/user_mapper';
 import { Either, left, right } from 'src/core/either/either';
 import Nil, { nil } from 'src/core/either/nil';
 import RepositoryException from 'src/core/erros/repository.exception';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { EntityNotFoundError, QueryFailedError, Repository } from 'typeorm';
 import IUserRepository from '../adapters/i_user_repository';
 import UserEntity from '../domain/user.entity';
 import UserModel from './model/user.model';
-import { AsyncResult } from '@/core/types/async_result';
 
 export default class UserRepository implements IUserRepository {
   constructor(private readonly userRepository: Repository<UserModel>) {}
+  async saveUser(
+    userEntity: UserEntity,
+  ): AsyncResult<RepositoryException, UserEntity> {
+    try {
+      const userModel = this.userRepository.create(
+        UserMapper.toModel(userEntity),
+      );
+
+      await this.userRepository.save(userModel);
+
+      return right(UserMapper.toEntity(userModel));
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return left(
+          new RepositoryException(
+            `Erro ao salvar o usuário: ${userEntity.userId}`,
+          ),
+        );
+      }
+      return left(new RepositoryException('Erro ao salvar o usuário'));
+    }
+  }
   async updatePassword(
     userEntity: UserEntity,
   ): AsyncResult<RepositoryException, Nil> {
@@ -30,7 +53,7 @@ export default class UserRepository implements IUserRepository {
   async findAll(): AsyncResult<RepositoryException, Array<UserEntity>> {
     try {
       const usersModelList = await this.userRepository.find();
-      const usersList = usersModelList.map((user) => user.toEntity());
+      const usersList = usersModelList.map(user => user.toEntity());
       return right(usersList);
     } catch (error) {
       return left(

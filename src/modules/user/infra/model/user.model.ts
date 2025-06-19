@@ -1,3 +1,4 @@
+import UserEntity, { USER_ROLE } from '@/modules/user/domain/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -5,8 +6,6 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import UserEntity from '../../domain/user.entity';
-
 @Entity({ name: 'users' })
 export default class UserModel {
   @PrimaryColumn()
@@ -17,6 +16,14 @@ export default class UserModel {
   email: string;
   @Column()
   password: string;
+
+  @Column({
+    name: 'role',
+    default: USER_ROLE.INTERNO,
+    type: 'enum',
+    enum: USER_ROLE,
+  })
+  role: USER_ROLE;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -31,6 +38,7 @@ export default class UserModel {
         password: this.password,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
+        role: this.role,
       },
       this.id,
     );

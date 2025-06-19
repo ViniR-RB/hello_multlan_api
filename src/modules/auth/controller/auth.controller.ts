@@ -1,5 +1,12 @@
 import { AuthGuard } from '@/core/guards/auth.guard';
 import { JwtVerifyPayload } from '@/core/interfaces/jwt.payload';
+import IChangePasswordUseCase from '@/modules/user/domain/usecase/i_change_password_use_case';
+import IGetAllUsersUseCase from '@/modules/user/domain/usecase/I_get_all_users_use_case';
+import IUpdateUserUseCase, {
+  UpdateUserParam,
+} from '@/modules/user/domain/usecase/i_update_user_use_case';
+import ChangePasswordDto from '@/modules/user/dto/change_password.dto';
+import UpdateUserDto from '@/modules/user/dto/update_user.dto';
 import {
   Body,
   Controller,
@@ -19,7 +26,10 @@ import ICreateUserUseCase, {
   CreateUserParams,
 } from 'src/modules/user/domain/usecase/i_create_user_use_case';
 import CreateUserDto from 'src/modules/user/dto/create_user.dto';
-import { CREATE_USER_SERVICE } from 'src/modules/user/symbols';
+import {
+  CREATE_USER_SERVICE,
+  UPDATE_USER_SERVICE,
+} from 'src/modules/user/symbols';
 import ILoginUseCase, { LoginParams } from '../domain/usecase/i_login_use_case';
 import IRefreshTokenUseCase from '../domain/usecase/I_refresh_tokens_use_case';
 import IShowMyUserUseCase, {
@@ -34,9 +44,6 @@ import {
   REFRESH_TOKENS_SERVICE,
   SHOW_MY_USER_SERVICE,
 } from '../symbols';
-import ChangePasswordDto from '@/modules/user/dto/change_password.dto';
-import IChangePasswordUseCase from '@/modules/user/domain/usecase/i_change_password_use_case';
-import IGetAllUsersUseCase from '@/modules/user/domain/usecase/I_get_all_users_use_case';
 
 @Controller('/api/auth')
 export default class AuthController {
@@ -53,6 +60,8 @@ export default class AuthController {
     private readonly changePasswordService: IChangePasswordUseCase,
     @Inject(GET_ALL_USERS_SERVICE)
     private readonly getAllUsersService: IGetAllUsersUseCase,
+    @Inject(UPDATE_USER_SERVICE)
+    private readonly updateUserService: IUpdateUserUseCase,
   ) {}
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
@@ -119,6 +128,7 @@ export default class AuthController {
     const jwtSignPayload = request['user'];
     const resultRefreshTokens = await this.refreshTokensService.call({
       sub: jwtSignPayload.sub,
+      role: jwtSignPayload.role,
       type: jwtSignPayload.type,
     });
     if (resultRefreshTokens.isLeft()) {
@@ -145,5 +155,23 @@ export default class AuthController {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
     return {};
+  }
+
+  @Post('/update-user/:id')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async updateUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUser: UpdateUserDto,
+  ) {
+    const param = plainToClass(UpdateUserParam, {
+      userUpdateData: updateUser,
+      userId: id,
+    });
+    const result = await this.updateUserService.execute(param);
+
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode);
+    }
   }
 }

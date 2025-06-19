@@ -1,4 +1,5 @@
-import { Either, left, right } from 'src/core/either/either';
+import { AsyncResult } from '@/core/types/async_result';
+import { left, right } from 'src/core/either/either';
 import ServiceException from 'src/core/erros/service.exception';
 import { EncryptionService } from 'src/core/services/encryption.service';
 import JsonWebTokenService from 'src/core/services/json_web_token.service';
@@ -15,7 +16,7 @@ export default class LoginUserService implements ILoginUseCase {
   ) {}
   async call(
     loginParams: LoginParams,
-  ): Promise<Either<ServiceException, TokenEntity>> {
+  ): AsyncResult<ServiceException, TokenEntity> {
     const { email } = loginParams;
     const resultUserFinder = await this.userRepository.findOneByEmail(email);
     if (resultUserFinder.isLeft()) {
@@ -32,10 +33,12 @@ export default class LoginUserService implements ILoginUseCase {
     const promiseJwt = await Promise.all([
       this.jwtService.sign({
         sub: resultUserFinder.value.userId,
+        role: resultUserFinder.value.userRole,
         type: 'access',
       }),
       this.jwtService.sign({
         sub: resultUserFinder.value.userId,
+        role: resultUserFinder.value.userRole,
         type: 'refresh',
       }),
     ]);

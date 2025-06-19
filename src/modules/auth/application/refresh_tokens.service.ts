@@ -25,10 +25,12 @@ export default class RefreshTokensService implements IRefreshTokenUseCase {
       const promiseJwt = await Promise.all([
         this.jwtService.sign({
           sub: resultUserFinder.value.userId,
+          role: resultUserFinder.value.userRole,
           type: 'access',
         }),
         this.jwtService.sign({
           sub: resultUserFinder.value.userId,
+          role: resultUserFinder.value.userRole,
           type: 'refresh',
         }),
       ]);

@@ -1,11 +1,11 @@
-import { Either } from '@/core/either/either';
 import ServiceException from '@/core/erros/service.exception';
+import { AsyncResult } from '@/core/types/async_result';
 import UserEntity from '@/modules/user/domain/user.entity';
 
 export default interface IShowMyUserUseCase {
   call(
     showMyUserParam: ShowMyUserParam,
-  ): Promise<Either<ServiceException, ShowMyUserResponse>>;
+  ): AsyncResult<ServiceException, ShowMyUserResponse>;
 }
 
 export class ShowMyUserParam {
@@ -14,17 +14,22 @@ export class ShowMyUserParam {
   }
 }
 export class ShowMyUserResponse {
-  constructor(
-    public readonly id: string,
-    public readonly name: string,
-    public readonly email: string,
-  ) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-  }
-
   static fromEntity(user: UserEntity): ShowMyUserResponse {
-    return new ShowMyUserResponse(user.userId, user.userName, user.userEmail);
+    const {
+      userCreatedAt,
+      userEmail,
+      userId,
+      userName,
+      userRole,
+      userUpdatedAt,
+    } = user;
+    return {
+      id: userId,
+      name: userName,
+      email: userEmail,
+      role: userRole,
+      createdAt: userCreatedAt,
+      updatedAt: userUpdatedAt,
+    };
   }
 }
