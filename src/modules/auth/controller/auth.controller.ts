@@ -2,6 +2,9 @@ import { AuthGuard } from '@/core/guards/auth.guard';
 import { JwtVerifyPayload } from '@/core/interfaces/jwt.payload';
 import IChangePasswordUseCase from '@/modules/user/domain/usecase/i_change_password_use_case';
 import IGetAllUsersUseCase from '@/modules/user/domain/usecase/I_get_all_users_use_case';
+import IGetUserByIdUseCase, {
+  GetUserByIdParam,
+} from '@/modules/user/domain/usecase/i_get_user_by_id_use_case';
 import IUpdateUserUseCase, {
   UpdateUserParam,
 } from '@/modules/user/domain/usecase/i_update_user_use_case';
@@ -27,7 +30,7 @@ import ICreateUserUseCase, {
 } from 'src/modules/user/domain/usecase/i_create_user_use_case';
 import CreateUserDto from 'src/modules/user/dto/create_user.dto';
 import {
-  CREATE_USER_SERVICE,
+  GET_USER_BY_ID_SERVICE,
   UPDATE_USER_SERVICE,
 } from 'src/modules/user/symbols';
 import ILoginUseCase, { LoginParams } from '../domain/usecase/i_login_use_case';
@@ -48,7 +51,7 @@ import {
 @Controller('/api/auth')
 export default class AuthController {
   constructor(
-    @Inject(CREATE_USER_SERVICE)
+    @Inject(GET_USER_BY_ID_SERVICE)
     private readonly createUserService: ICreateUserUseCase,
     @Inject(LOGIN_USER_SERVICE)
     private readonly loginUserService: ILoginUseCase,
@@ -62,6 +65,8 @@ export default class AuthController {
     private readonly getAllUsersService: IGetAllUsersUseCase,
     @Inject(UPDATE_USER_SERVICE)
     private readonly updateUserService: IUpdateUserUseCase,
+    @Inject(GET_USER_BY_ID_SERVICE)
+    private readonly getUserByIdService: IGetUserByIdUseCase,
   ) {}
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
@@ -173,5 +178,17 @@ export default class AuthController {
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
+  }
+
+  @Get('/get-user/:id')
+  async getUserById(@Param('id', ParseUUIDPipe) id: string) {
+    const param = plainToClass(GetUserByIdParam, {
+      userId: id,
+    });
+    const result = await this.getUserByIdService.execute(param);
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode);
+    }
+    return result.value;
   }
 }

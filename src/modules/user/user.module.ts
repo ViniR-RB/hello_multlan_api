@@ -1,3 +1,4 @@
+import GetUserByIdService from '@/modules/user/application/get_user_by_id.service';
 import UpdateUserService from '@/modules/user/application/update_user.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
@@ -10,6 +11,7 @@ import UserModel from './infra/model/user.model';
 import UserRepository from './infra/user.repository';
 import {
   CREATE_USER_SERVICE,
+  GET_USER_BY_ID_SERVICE,
   UPDATE_USER_SERVICE,
   USER_REPOSITORY,
 } from './symbols';
@@ -38,6 +40,12 @@ import {
         encryptionService: EncryptionService,
       ) => new CreateUserService(userRepository, encryptionService),
     },
+    {
+      provide: GET_USER_BY_ID_SERVICE,
+      inject: [USER_REPOSITORY],
+      useFactory: (userRepository: IUserRepository) =>
+        new GetUserByIdService(userRepository),
+    },
   ],
   exports: [
     {
@@ -59,6 +67,12 @@ import {
       inject: [getRepositoryToken(UserModel)],
       useFactory: (userRepository: Repository<UserModel>) =>
         new UserRepository(userRepository),
+    },
+    {
+      provide: GET_USER_BY_ID_SERVICE,
+      inject: [USER_REPOSITORY],
+      useFactory: (userRepository: IUserRepository) =>
+        new GetUserByIdService(userRepository),
     },
   ],
 })
