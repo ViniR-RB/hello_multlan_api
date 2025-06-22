@@ -1,4 +1,5 @@
 import GetUserByIdService from '@/modules/user/application/get_user_by_id.service';
+import ToggleUserService from '@/modules/user/application/toggle_user.service';
 import UpdateUserService from '@/modules/user/application/update_user.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
@@ -12,6 +13,7 @@ import UserRepository from './infra/user.repository';
 import {
   CREATE_USER_SERVICE,
   GET_USER_BY_ID_SERVICE,
+  TOGGLE_USER_SERVICE,
   UPDATE_USER_SERVICE,
   USER_REPOSITORY,
 } from './symbols';
@@ -46,6 +48,12 @@ import {
       useFactory: (userRepository: IUserRepository) =>
         new GetUserByIdService(userRepository),
     },
+    {
+      provide: TOGGLE_USER_SERVICE,
+      inject: [USER_REPOSITORY],
+      useFactory: (userRepository: IUserRepository) =>
+        new ToggleUserService(userRepository),
+    },
   ],
   exports: [
     {
@@ -73,6 +81,12 @@ import {
       inject: [USER_REPOSITORY],
       useFactory: (userRepository: IUserRepository) =>
         new GetUserByIdService(userRepository),
+    },
+    {
+      provide: TOGGLE_USER_SERVICE,
+      inject: [USER_REPOSITORY],
+      useFactory: (userRepository: IUserRepository) =>
+        new ToggleUserService(userRepository),
     },
   ],
 })

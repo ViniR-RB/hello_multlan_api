@@ -14,6 +14,7 @@ export default class UserMapper {
       email: userEntity.userEmail,
       password: userEntity.userPassword,
       role: userEntity.userRole,
+      isActive: userEntity.userActive,
       createdAt: userEntity.userCreatedAt,
       updatedAt: userEntity.userUpdatedAt,
     };

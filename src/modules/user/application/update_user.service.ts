@@ -1,4 +1,5 @@
 import { left, right } from '@/core/either/either';
+import Nil from '@/core/either/nil';
 import ServiceException from '@/core/erros/service.exception';
 import { AsyncResult } from '@/core/types/async_result';
 import IUserRepository from '@/modules/user/adapters/i_user_repository';
@@ -15,6 +16,19 @@ export default class UpdateUserService implements IUpdateUserUseCase {
     param: UpdateUserParam,
   ): AsyncResult<ServiceException, UpdateUserResponse> {
     try {
+      if (param.userUpdateData.email) {
+        const userAlreadyEmail = await this.userRepository.findOneByEmail(
+          param.userUpdateData.email,
+        );
+
+        if (
+          userAlreadyEmail.isRight() &&
+          !(userAlreadyEmail.value instanceof Nil)
+        ) {
+          return left(new ServiceException('E-mail já cadastrado', 409));
+        }
+      }
+
       const userForUpdateResult = await this.userRepository.findOneById(
         param.userId,
       );

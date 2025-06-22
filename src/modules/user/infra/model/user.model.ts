@@ -25,6 +25,9 @@ export default class UserModel {
   })
   role: USER_ROLE;
 
+  @Column({ name: 'is_active', default: true })
+  isActive: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
   @UpdateDateColumn({ name: 'updatedAt' })

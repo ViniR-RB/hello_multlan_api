@@ -11,6 +11,7 @@ interface UserProps {
   email: string;
   password: string;
   role?: USER_ROLE;
+  isActive?: boolean;
   createdAt?: Partial<Date>;
   updatedAt?: Partial<Date>;
 }
@@ -23,6 +24,7 @@ export default class UserEntity {
     this.props = {
       ...props,
       role: props.role || USER_ROLE.INTERNO,
+      isActive: props.isActive ?? true,
       createdAt: props.createdAt || new Date(),
       updatedAt: props.updatedAt || new Date(),
     };
@@ -49,6 +51,10 @@ export default class UserEntity {
   }
   get userRole(): USER_ROLE {
     return this.props.role;
+  }
+
+  get userActive(): boolean {
+    return this.props.isActive!;
   }
 
   updatePassword(newPassword: string) {
@@ -80,6 +86,11 @@ export default class UserEntity {
     this.props.role = data.role;
 
     this.props.email = data.email;
+    this.touch();
+  }
+
+  toggleUser() {
+    this.props.isActive = !this.props.isActive;
     this.touch();
   }
 

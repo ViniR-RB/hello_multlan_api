@@ -8,7 +8,7 @@ export default interface IUserRepository {
   create(user: UserEntity): Promise<Either<RepositoryException, Nil>>;
   findOneByEmail(
     email: string,
-  ): Promise<Either<RepositoryException, UserEntity>>;
+  ): Promise<Either<RepositoryException, UserEntity | Nil>>;
   findOneById(id: string): Promise<Either<RepositoryException, UserEntity>>;
   findAll(): AsyncResult<RepositoryException, Array<UserEntity>>;
   updatePassword(userEntity: UserEntity): AsyncResult<RepositoryException, Nil>;

@@ -53,7 +53,7 @@ export default class UserRepository implements IUserRepository {
   async findAll(): AsyncResult<RepositoryException, Array<UserEntity>> {
     try {
       const usersModelList = await this.userRepository.find();
-      const usersList = usersModelList.map(user => user.toEntity());
+      const usersList = usersModelList.map(user => UserMapper.toEntity(user));
       return right(usersList);
     } catch (error) {
       return left(
@@ -66,7 +66,7 @@ export default class UserRepository implements IUserRepository {
   ): Promise<Either<RepositoryException, UserEntity>> {
     try {
       const userFinder = await this.userRepository.findOneBy({ id: id });
-      return right(userFinder.toEntity());
+      return right(UserMapper.toEntity(userFinder));
     } catch (e) {
       if (e instanceof EntityNotFoundError) {
         return left(new RepositoryException('Usuário não econtrado'));
@@ -75,10 +75,15 @@ export default class UserRepository implements IUserRepository {
   }
   async findOneByEmail(
     email: string,
-  ): Promise<Either<RepositoryException, UserEntity>> {
+  ): Promise<Either<RepositoryException, UserEntity | Nil>> {
     try {
-      return right((await this.userRepository.findOneBy({ email })).toEntity());
+      return right(
+        (await this.userRepository.findOneByOrFail({ email })).toEntity(),
+      );
     } catch (error) {
+      if (error instanceof EntityNotFoundError) {
+        return right(nil);
+      }
       return left(new RepositoryException('Error to find user by email'));
     }
   }

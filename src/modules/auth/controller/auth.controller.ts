@@ -5,6 +5,9 @@ import IGetAllUsersUseCase from '@/modules/user/domain/usecase/I_get_all_users_u
 import IGetUserByIdUseCase, {
   GetUserByIdParam,
 } from '@/modules/user/domain/usecase/i_get_user_by_id_use_case';
+import IToggleUserUseCase, {
+  ToggleUserParam,
+} from '@/modules/user/domain/usecase/i_toggle_user_use_case';
 import IUpdateUserUseCase, {
   UpdateUserParam,
 } from '@/modules/user/domain/usecase/i_update_user_use_case';
@@ -31,6 +34,7 @@ import ICreateUserUseCase, {
 import CreateUserDto from 'src/modules/user/dto/create_user.dto';
 import {
   GET_USER_BY_ID_SERVICE,
+  TOGGLE_USER_SERVICE,
   UPDATE_USER_SERVICE,
 } from 'src/modules/user/symbols';
 import ILoginUseCase, { LoginParams } from '../domain/usecase/i_login_use_case';
@@ -67,6 +71,8 @@ export default class AuthController {
     private readonly updateUserService: IUpdateUserUseCase,
     @Inject(GET_USER_BY_ID_SERVICE)
     private readonly getUserByIdService: IGetUserByIdUseCase,
+    @Inject(TOGGLE_USER_SERVICE)
+    private readonly toggleUserService: IToggleUserUseCase,
   ) {}
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
@@ -178,6 +184,21 @@ export default class AuthController {
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
+  }
+
+  @Post('/toggle-user/:id')
+  async toggleUser(@Param('id', ParseUUIDPipe) id: string) {
+    const param = plainToClass(ToggleUserParam, {
+      userId: id,
+    });
+
+    const result = await this.toggleUserService.execute(param);
+
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode);
+    }
+
+    return result.value;
   }
 
   @Get('/get-user/:id')

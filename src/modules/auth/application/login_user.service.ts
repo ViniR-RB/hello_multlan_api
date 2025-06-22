@@ -1,3 +1,4 @@
+import Nil from '@/core/either/nil';
 import { AsyncResult } from '@/core/types/async_result';
 import { left, right } from 'src/core/either/either';
 import ServiceException from 'src/core/erros/service.exception';
@@ -19,9 +20,15 @@ export default class LoginUserService implements ILoginUseCase {
   ): AsyncResult<ServiceException, TokenEntity> {
     const { email } = loginParams;
     const resultUserFinder = await this.userRepository.findOneByEmail(email);
+
     if (resultUserFinder.isLeft()) {
       return left(new ServiceException(resultUserFinder.value.message, 404));
     }
+
+    if (resultUserFinder.value instanceof Nil) {
+      return left(new ServiceException('User not found', 404));
+    }
+
     const comparePassword = await this.encryptionService.isMatch(
       resultUserFinder.value.userPassword,
       loginParams.password,
