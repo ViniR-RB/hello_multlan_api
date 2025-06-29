@@ -33,6 +33,7 @@ import ICreateUserUseCase, {
 } from 'src/modules/user/domain/usecase/i_create_user_use_case';
 import CreateUserDto from 'src/modules/user/dto/create_user.dto';
 import {
+  CREATE_USER_SERVICE,
   GET_USER_BY_ID_SERVICE,
   TOGGLE_USER_SERVICE,
   UPDATE_USER_SERVICE,
@@ -55,7 +56,7 @@ import {
 @Controller('/api/auth')
 export default class AuthController {
   constructor(
-    @Inject(GET_USER_BY_ID_SERVICE)
+    @Inject(CREATE_USER_SERVICE)
     private readonly createUserService: ICreateUserUseCase,
     @Inject(LOGIN_USER_SERVICE)
     private readonly loginUserService: ILoginUseCase,
