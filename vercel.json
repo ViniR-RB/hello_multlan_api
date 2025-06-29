@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "env": {
+    "DATABASE_HOST": "@DATABASE_HOST",
+    "DATABASE_USERNAME": "@DATABASE_USERNAME",
+    "DATABASE_PASSWORD": "@DATABASE_PASSWORD",
+    "DATABASE_NAME": "@DATABASE_NAME",
+    "DATABASE_PORT": "@DATABASE_PORT",
+    "SUPABASE_URL": "@SUPABASE_URL",
+    "SUPABASE_API_KEY": "@SUPABASE_API_KEY",
+    "SALT": "@SALT",
+    "JWT_SECRET": "@JWT_SECRET",
+    "PORT": "@PORT"
+  },
+  "builds": [
+    {
+      "src": "src/main.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/main.ts",
+      "methods": ["GET", "POST", "PUT", "DELETE"]
+    }
+  ]
+}
