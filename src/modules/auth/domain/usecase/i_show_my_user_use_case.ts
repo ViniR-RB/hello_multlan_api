@@ -9,9 +9,7 @@ export default interface IShowMyUserUseCase {
 }
 
 export class ShowMyUserParam {
-  constructor(public userId: string) {
-    this.userId = userId;
-  }
+  constructor(public readonly userId: string) {}
 }
 export class ShowMyUserResponse {
   static fromEntity(user: UserEntity): ShowMyUserResponse {

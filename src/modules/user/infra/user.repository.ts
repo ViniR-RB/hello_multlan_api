@@ -65,21 +65,22 @@ export default class UserRepository implements IUserRepository {
     id: string,
   ): Promise<Either<RepositoryException, UserEntity>> {
     try {
-      const userFinder = await this.userRepository.findOneBy({ id: id });
+      const userFinder = await this.userRepository.findOneByOrFail({ id: id });
       return right(UserMapper.toEntity(userFinder));
     } catch (e) {
       if (e instanceof EntityNotFoundError) {
         return left(new RepositoryException('Usuário não econtrado'));
       }
+      return left(new RepositoryException('Usuário não econtrado'));
     }
   }
   async findOneByEmail(
     email: string,
   ): Promise<Either<RepositoryException, UserEntity | Nil>> {
     try {
-      return right(
-        (await this.userRepository.findOneByOrFail({ email })).toEntity(),
-      );
+      const userModel = await this.userRepository.findOneByOrFail({ email });
+
+      return right(UserMapper.toEntity(userModel));
     } catch (error) {
       if (error instanceof EntityNotFoundError) {
         return right(nil);

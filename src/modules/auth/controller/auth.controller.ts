@@ -106,10 +106,9 @@ export default class AuthController {
   @HttpCode(HttpStatus.OK)
   async me(@Req() resquest: any) {
     const user: JwtVerifyPayload = resquest['user'];
-    const showMyUserParam: ShowMyUserParam = plainToClass(
-      ShowMyUserParam,
-      user.sub,
-    );
+    const showMyUserParam: ShowMyUserParam = plainToClass(ShowMyUserParam, {
+      userId: user.sub,
+    });
     const resultUserFinder = await this.showMyUserService.call(showMyUserParam);
     if (resultUserFinder.isLeft()) {
       throw new HttpException(
