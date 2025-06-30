@@ -1,6 +1,5 @@
 import ServiceException from '@/core/erros/service.exception';
 import { AsyncResult } from '@/core/types/async_result';
-import BoxEntity from '@/modules/box/domain/box.entity';
 import RouteEntity from '@/modules/box/domain/route.entity';
 
 export default interface ICreateRouteUseCase {
@@ -9,13 +8,10 @@ export default interface ICreateRouteUseCase {
   ): AsyncResult<ServiceException, CreateRouteParamResponse>;
 }
 export class CreateRouteParam {
-  constructor(public readonly boxes: Array<string>) {}
-
-  toEntity(): RouteEntity {
-    return new RouteEntity({
-      boxes: this.boxes.map(box => new BoxEntity({} as any, box)),
-    });
-  }
+  constructor(
+    public readonly boxes: Array<string>,
+    public readonly name: string,
+  ) {}
 }
 
 export class CreateRouteParamResponse {

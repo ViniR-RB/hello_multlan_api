@@ -3,6 +3,8 @@ import ServiceException from '@/core/erros/service.exception';
 import { AsyncResult } from '@/core/types/async_result';
 import IBoxRepository from '@/modules/box/adapters/i_box_repository';
 import IRouteRepository from '@/modules/box/adapters/i_route_repository';
+import BoxEntity from '@/modules/box/domain/box.entity';
+import RouteEntity from '@/modules/box/domain/route.entity';
 import ICreateRouteUseCase, {
   CreateRouteParam,
   CreateRouteParamResponse,
@@ -17,7 +19,12 @@ export default class CreateRouteService implements ICreateRouteUseCase {
     param: CreateRouteParam,
   ): AsyncResult<ServiceException, CreateRouteParamResponse> {
     try {
-      const routeEntity = param.toEntity();
+      const routeEntity = new RouteEntity({
+        name: param.name,
+        boxes: param.boxes.map(boxId => {
+          return new BoxEntity({} as any, boxId);
+        }),
+      });
 
       if (param.boxes && param.boxes.length > 0) {
         const boxesResult = await this.boxRepository.findByIds(param.boxes);

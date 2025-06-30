@@ -1,9 +1,9 @@
-import BoxDomainException from '@/core/erros/box.domain.exception';
 import RouteDomainException from '@/core/erros/route.domain.exception';
 import BoxEntity from '@/modules/box/domain/box.entity';
 
 interface RouteProps {
   boxes?: BoxEntity[];
+  name: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -14,6 +14,7 @@ export default class RouteEntity {
     private readonly id: string = crypto.randomUUID(),
   ) {
     this.props.boxes = props.boxes ?? [];
+    this.props.name = props.name;
     this.props.createdAt = props.createdAt ?? new Date();
     this.props.updatedAt = props.updatedAt ?? new Date();
   }
@@ -29,6 +30,9 @@ export default class RouteEntity {
   }
   get updatedAt() {
     return this.props.updatedAt;
+  }
+  get routeName() {
+    return this.props.name;
   }
 
   addBox(box: BoxEntity) {

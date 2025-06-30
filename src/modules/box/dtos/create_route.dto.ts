@@ -6,6 +6,9 @@ export default class CreateRouteDto {
   @ValidateNested({ each: true })
   @Type(() => BoxIdDto)
   boxes: Array<BoxIdDto>;
+
+  @IsString()
+  name: string;
 }
 
 class BoxIdDto {

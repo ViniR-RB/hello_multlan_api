@@ -62,6 +62,7 @@ export default class RouteController {
   async createRoute(@Body() data: CreateRouteDto) {
     const createRouteParam = new CreateRouteParam(
       data.boxes.map(box => box.id),
+      data.name,
     );
 
     const result = await this.createRouteSerivce.execute(createRouteParam);

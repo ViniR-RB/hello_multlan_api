@@ -95,7 +95,6 @@ export default class RouteRepository implements IRouteRepository {
   ): AsyncResult<RepositoryException, RouteEntity> {
     try {
       const routeData = RouteMapper.toModel(route);
-      console.log(routeData);
       const routeModel = this.routeRepository.create(routeData);
       await this.routeRepository.save(routeModel);
       return right(RouteMapper.toEntity(routeModel));

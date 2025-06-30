@@ -1,5 +1,6 @@
 import BoxModel from '@/modules/box/infra/model/box.model';
 import {
+  Column,
   CreateDateColumn,
   Entity,
   OneToMany,
@@ -11,6 +12,9 @@ import {
 export default class RouteModel {
   @PrimaryColumn()
   id: string;
+
+  @Column({})
+  name: string;
 
   @OneToMany(() => BoxModel, box => box.route)
   boxes: BoxModel[];

@@ -73,7 +73,6 @@ export default class BoxRepository implements IBoxRepository {
           (SELECT jsonb_agg(tr) FROM total_routes tr) AS total_routes;
         `,
       );
-      console.log(query[0]);
       return right(SummaryBoxDto.fromJson(query[0]));
     } catch (error) {
       return left(
