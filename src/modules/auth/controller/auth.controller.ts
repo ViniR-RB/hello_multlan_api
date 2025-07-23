@@ -31,11 +31,16 @@ import { plainToClass } from 'class-transformer';
 import ICreateUserUseCase, {
   CreateUserParams,
 } from 'src/modules/user/domain/usecase/i_create_user_use_case';
+import IUpdateFirebaseIdUseCase, {
+  UpdateFirebaseIdParams,
+} from 'src/modules/user/domain/usecase/i_update_firebase_id_use_case';
 import CreateUserDto from 'src/modules/user/dto/create_user.dto';
+import UpdateFirebaseIdDto from 'src/modules/user/dto/update_firebase_id.dto';
 import {
   CREATE_USER_SERVICE,
   GET_USER_BY_ID_SERVICE,
   TOGGLE_USER_SERVICE,
+  UPDATE_FIREBASE_ID_SERVICE,
   UPDATE_USER_SERVICE,
 } from 'src/modules/user/symbols';
 import ILoginUseCase, { LoginParams } from '../domain/usecase/i_login_use_case';
@@ -74,6 +79,8 @@ export default class AuthController {
     private readonly getUserByIdService: IGetUserByIdUseCase,
     @Inject(TOGGLE_USER_SERVICE)
     private readonly toggleUserService: IToggleUserUseCase,
+    @Inject(UPDATE_FIREBASE_ID_SERVICE)
+    private readonly updateFirebaseIdService: IUpdateFirebaseIdUseCase,
   ) {}
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
@@ -211,5 +218,24 @@ export default class AuthController {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
     return result.value;
+  }
+
+  @Post('/update-firebase-id/:id')
+  @HttpCode(HttpStatus.OK)
+  async updateFirebaseId(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateFirebaseIdDto: UpdateFirebaseIdDto,
+  ) {
+    const param = new UpdateFirebaseIdParams(
+      id,
+      updateFirebaseIdDto.firebaseId,
+    );
+    const result = await this.updateFirebaseIdService.call(param);
+
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode);
+    }
+
+    return result.value.toObject();
   }
 }

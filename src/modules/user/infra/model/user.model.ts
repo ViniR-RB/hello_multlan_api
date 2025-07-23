@@ -6,14 +6,18 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 @Entity({ name: 'users' })
 export default class UserModel {
   @PrimaryColumn()
   id: string;
+
   @Column()
   name: string;
+
   @Column({ unique: true })
   email: string;
+
   @Column()
   password: string;
 
@@ -28,8 +32,12 @@ export default class UserModel {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
+  @Column({ name: 'firebase_id', nullable: true })
+  firebaseId: string | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
   @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 
@@ -42,6 +50,7 @@ export default class UserModel {
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
         role: this.role,
+        firebaseId: this.firebaseId,
       },
       this.id,
     );
