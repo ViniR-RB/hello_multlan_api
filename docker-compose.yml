@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  nest-dev:
+    container_name: hello_multlan_api
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
+      - '9229:9229'
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: sei-postgres
+    image: postgres:16-alpine
+    restart: always
+    ports:
+      - '5432:5432'
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

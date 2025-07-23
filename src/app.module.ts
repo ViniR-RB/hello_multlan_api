@@ -4,6 +4,7 @@ import { CoreModule } from '@/core/core_module';
 import ConfigurationService from '@/core/services/configuration.service';
 import AuthModule from '@/modules/auth/auth.module';
 import BoxModule from '@/modules/box/box.module';
+import OccurrenceModule from '@/modules/occurrence/occurrence.module';
 import UserModule from '@/modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,6 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     BoxModule,
     AuthModule,
     UserModule,
+    OccurrenceModule,
     TypeOrmModule.forRootAsync({
       imports: [CoreModule],
       inject: [ConfigurationService],

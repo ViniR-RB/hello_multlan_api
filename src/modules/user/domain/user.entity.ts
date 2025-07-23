@@ -12,8 +12,9 @@ interface UserProps {
   password: string;
   role?: USER_ROLE;
   isActive?: boolean;
-  createdAt?: Partial<Date>;
-  updatedAt?: Partial<Date>;
+  firebaseId?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export default class UserEntity {
@@ -25,6 +26,7 @@ export default class UserEntity {
       ...props,
       role: props.role || USER_ROLE.INTERNO,
       isActive: props.isActive ?? true,
+      firebaseId: props.firebaseId || null,
       createdAt: props.createdAt || new Date(),
       updatedAt: props.updatedAt || new Date(),
     };
@@ -57,8 +59,17 @@ export default class UserEntity {
     return this.props.isActive!;
   }
 
+  get userFirebaseId(): string | null {
+    return this.props.firebaseId;
+  }
+
   updatePassword(newPassword: string) {
     this.props.password = newPassword;
+  }
+
+  updateFirebaseId(firebaseId: string) {
+    this.props.firebaseId = firebaseId;
+    this.touch();
   }
 
   toObject() {
