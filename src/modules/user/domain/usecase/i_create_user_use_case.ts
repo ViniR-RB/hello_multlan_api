@@ -1,26 +1,18 @@
-import { Either } from 'src/core/either/either';
-import Nil from 'src/core/either/nil';
-import ServiceException from 'src/core/erros/service.exception';
+import { IUseCase } from '@/core/interfaces/use_case';
+import CreateUserDto from '@/modules/user/dto/create_user.dto';
+import UserDto from '@/modules/user/dto/user.dto';
+import { plainToInstance } from 'class-transformer';
 import UserEntity from '../user.entity';
 export class CreateUserParams {
-  constructor(
-    public readonly name: string,
-    public readonly email: string,
-    public readonly password: string,
-  ) {
-    this.name = name;
-    this.email = email;
-    this.password = password;
-  }
+  constructor(public readonly user: CreateUserDto) {}
+}
 
-  toEntity() {
-    return new UserEntity({
-      name: this.name,
-      email: this.email,
-      password: this.password,
+export class CreateUserResponse {
+  static fromEntity(user: UserEntity) {
+    return plainToInstance(UserDto, {
+      ...user.toObject(),
     });
   }
 }
-export default interface ICreateUserUseCase {
-  call(user: CreateUserParams): Promise<Either<ServiceException, Nil>>;
-}
+export default interface ICreateUserUseCase
+  extends IUseCase<CreateUserParams, CreateUserResponse> {}

@@ -12,7 +12,10 @@ import IUpdateUserUseCase, {
   UpdateUserParam,
 } from '@/modules/user/domain/usecase/i_update_user_use_case';
 import ChangePasswordDto from '@/modules/user/dto/change_password.dto';
+import CreateUserInternalDto from '@/modules/user/dto/create_user.Internal.dto';
+import CreateUserAdminDto from '@/modules/user/dto/create_user_admin.dto';
 import UpdateUserDto from '@/modules/user/dto/update_user.dto';
+import UserResponseDto from '@/modules/user/dto/user_response.dto';
 import {
   Body,
   Controller,
@@ -34,7 +37,6 @@ import ICreateUserUseCase, {
 import IUpdateFirebaseIdUseCase, {
   UpdateFirebaseIdParams,
 } from 'src/modules/user/domain/usecase/i_update_firebase_id_use_case';
-import CreateUserDto from 'src/modules/user/dto/create_user.dto';
 import UpdateFirebaseIdDto from 'src/modules/user/dto/update_firebase_id.dto';
 import {
   CREATE_USER_SERVICE,
@@ -82,10 +84,12 @@ export default class AuthController {
     @Inject(UPDATE_FIREBASE_ID_SERVICE)
     private readonly updateFirebaseIdService: IUpdateFirebaseIdUseCase,
   ) {}
-  @Post('/register')
+  @Post('/register-internal')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() body: CreateUserDto) {
-    const userData = plainToClass(CreateUserParams, body);
+  async registerInternal(@Body() body: CreateUserInternalDto) {
+    const userData = plainToClass(CreateUserParams, {
+      user: body,
+    });
     const resultCreateUser = await this.createUserService.call(userData);
     if (resultCreateUser.isLeft()) {
       throw new HttpException(
@@ -93,7 +97,25 @@ export default class AuthController {
         resultCreateUser.value.statusCode,
       );
     }
+    return plainToClass(UserResponseDto, resultCreateUser.value);
   }
+
+  @Post('/register-admin')
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body() body: CreateUserAdminDto) {
+    const userData = plainToClass(CreateUserParams, {
+      user: body,
+    });
+    const resultCreateUser = await this.createUserService.call(userData);
+    if (resultCreateUser.isLeft()) {
+      throw new HttpException(
+        resultCreateUser.value.message,
+        resultCreateUser.value.statusCode,
+      );
+    }
+    return plainToClass(UserResponseDto, resultCreateUser.value);
+  }
+
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginUserDto) {

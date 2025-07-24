@@ -23,7 +23,7 @@ export default class UserModel {
 
   @Column({
     name: 'role',
-    default: USER_ROLE.INTERNO,
+    default: USER_ROLE.INTERNAL,
     type: 'enum',
     enum: USER_ROLE,
   })

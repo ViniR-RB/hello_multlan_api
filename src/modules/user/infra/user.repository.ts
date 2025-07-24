@@ -1,4 +1,5 @@
 import { AsyncResult } from '@/core/types/async_result';
+import { UserRepositoryException } from '@/modules/user/exceptions/user_repository.exception';
 import UserMapper from '@/modules/user/infra/model/user_mapper';
 import { Either, left, right } from 'src/core/either/either';
 import Nil, { nil } from 'src/core/either/nil';
@@ -88,18 +89,13 @@ export default class UserRepository implements IUserRepository {
       return left(new RepositoryException('Error to find user by email'));
     }
   }
-  async create(user: UserEntity): Promise<Either<RepositoryException, Nil>> {
+  async create(user: UserEntity): AsyncResult<RepositoryException, UserEntity> {
     try {
-      const data = {
-        id: user.userId,
-        name: user.userName,
-        email: user.userEmail,
-        password: user.userPassword,
-      };
-      await this.userRepository.save(this.userRepository.create(data));
-      return right(nil);
+      const userModel = this.userRepository.create(UserMapper.toModel(user));
+      await this.userRepository.save(userModel);
+      return right(UserMapper.toEntity(userModel));
     } catch (error) {
-      return left(new RepositoryException('Error to create user'));
+      return left(new UserRepositoryException());
     }
   }
 }

@@ -5,7 +5,7 @@ import RepositoryException from 'src/core/erros/repository.exception';
 import UserEntity from '../domain/user.entity';
 
 export default interface IUserRepository {
-  create(user: UserEntity): Promise<Either<RepositoryException, Nil>>;
+  create(user: UserEntity): AsyncResult<RepositoryException, UserEntity>;
   findOneByEmail(
     email: string,
   ): Promise<Either<RepositoryException, UserEntity | Nil>>;

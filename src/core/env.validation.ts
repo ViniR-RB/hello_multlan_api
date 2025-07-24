@@ -61,6 +61,14 @@ export default class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   FIREBASE_CLIENT_EMAIL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  USER_ADMIN_EMAIL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  USER_ADMIN_PASSWORD: string;
 }
 
 export function validateEnvironmentVariables(config: Record<string, unknown>) {
