@@ -1,14 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import UserDto from '@/modules/user/dto/user.dto';
+import { OmitType } from '@nestjs/mapped-types';
 
-export default class CreateUserDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
-  email: string;
-  @IsNotEmpty()
-  @IsString()
-  password: string;
-}
+export default class CreateUserDto extends OmitType(UserDto, [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'firebaseId',
+  'isActive',
+]) {}

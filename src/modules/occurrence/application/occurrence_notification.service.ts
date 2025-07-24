@@ -28,7 +28,7 @@ export class OccurrenceNotificationService {
 
       const users = usersResult.value;
       const internalUsers = users.filter(
-        user => user.userRole === USER_ROLE.INTERNO,
+        user => user.userRole === USER_ROLE.INTERNAL,
       );
 
       const usersWithFirebaseId = internalUsers

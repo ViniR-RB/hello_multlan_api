@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 
 export enum USER_ROLE {
   ADMIN = 'ADMIN',
-  INTERNO = 'INTERNO',
+  INTERNAL = 'INTERNAL',
 }
 
 interface UserProps {
@@ -24,7 +24,7 @@ export default class UserEntity {
   ) {
     this.props = {
       ...props,
-      role: props.role || USER_ROLE.INTERNO,
+      role: props.role || USER_ROLE.INTERNAL,
       isActive: props.isActive ?? true,
       firebaseId: props.firebaseId || null,
       createdAt: props.createdAt || new Date(),
