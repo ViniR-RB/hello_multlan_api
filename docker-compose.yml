@@ -18,7 +18,7 @@ services:
       - postgres
 
   postgres:
-    container_name: sei-postgres
+    container_name: hello_multlan-postgres
     image: postgres:16-alpine
     restart: always
     ports:
@@ -30,7 +30,7 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/hello_multlan/data
 
 volumes:
   pgdata:

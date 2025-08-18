@@ -34,9 +34,14 @@ import { FirebaseNotificationService } from 'src/core/services/firebase-notifica
 import IUserRepository from 'src/modules/user/adapters/i_user_repository';
 import UserModel from 'src/modules/user/infra/model/user.model';
 import UserRepository from 'src/modules/user/infra/user.repository';
+import AuthModule from '@/modules/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OccurrenceModel, UserModel]), CoreModule],
+  imports: [
+    TypeOrmModule.forFeature([OccurrenceModel, UserModel]),
+    CoreModule,
+    AuthModule,
+  ],
   controllers: [OccurrenceController],
   providers: [
     {

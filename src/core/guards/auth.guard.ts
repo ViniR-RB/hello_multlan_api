@@ -1,15 +1,25 @@
+import { JwtVerifyPayload } from '@/core/interfaces/jwt.payload';
+import JsonWebTokenService from '@/core/services/json_web_token.service';
+import IExtractUserFromJwt, {
+  ExtractUserFromJwtParam,
+} from '@/modules/auth/domain/usecase/i_extract_user_fow_jwt';
+import { EXTRACT_USER_FROM_JWT } from '@/modules/auth/symbols';
 import {
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import JsonWebTokenService from '../services/json_web_token.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JsonWebTokenService) {}
+  constructor(
+    private jwtService: JsonWebTokenService,
+    @Inject(EXTRACT_USER_FROM_JWT)
+    private readonly extractUseForJwtService: IExtractUserFromJwt,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -28,9 +38,9 @@ export class AuthGuard implements CanActivate {
       if (payload.type !== 'access') {
         throw new UnauthorizedException('Token is not an access token', {});
       }
-      request['user'] = payload;
+      const user = await this.verifyUser(payload);
+      request['user'] = user;
     } catch (e) {
-      console.error('Authentication error:', e);
       throw new UnauthorizedException('Jwt Is invalid');
     }
 
@@ -53,11 +63,21 @@ export class AuthGuard implements CanActivate {
       if (payload.type !== 'refresh') {
         throw new UnauthorizedException('Token is not a refresh token');
       }
-      request['user'] = payload;
+      const user = await this.verifyUser(payload);
+
+      request['user'] = user;
     } catch (e) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
     return true;
+  }
+  private async verifyUser(payload: JwtVerifyPayload) {
+    const param = new ExtractUserFromJwtParam(payload);
+    const user = await this.extractUseForJwtService.call(param);
+    if (user.isLeft()) {
+      throw new UnauthorizedException(user.value.message);
+    }
+    return user.value;
   }
 }
