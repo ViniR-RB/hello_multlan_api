@@ -4,7 +4,10 @@ import SummaryBoxReadModel from '@/modules/box/domain/read-models/summary_box_re
 export default class SummaryBoxReadModelMapper {
   static fromEntity(query: BoxSummaryQueryResult): SummaryBoxReadModel {
     return new SummaryBoxReadModel({
-      totalBoxes: query.summary[0].total_boxes,
+      totalBoxes: query.summary.total_boxes,
+      totalCustomers: query.summary.total_customers,
+      zoneInfo: query.zone_info as any,
+      totalRoutes: query.total_routes as any,
     });
   }
 }
