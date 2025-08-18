@@ -111,7 +111,7 @@ export default class BoxController {
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode);
     }
-    return result.value;
+    return result.value.fromResponse();
   }
   @Delete(':id')
   @HttpCode(HttpStatus.OK)

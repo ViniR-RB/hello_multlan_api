@@ -1,4 +1,5 @@
 import { AsyncResult } from '@/core/types/async_result';
+import SummaryBoxReadModel from '@/modules/box/domain/read-models/summary_box_read_model';
 import { BoxMapper } from '@/modules/box/infra/mapper/box_mapper';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Either, left, right } from 'src/core/either/either';
@@ -9,10 +10,7 @@ import IBoxRepository, {
   BoxSummaryQueryResult,
 } from '../../adapters/i_box_repository';
 import BoxEntity from '../../domain/box.entity';
-import {
-  default as SummaryBoxDto,
-  default as SummaryBoxReadModelMapper,
-} from '../mapper/summary_box_read_model.mapper';
+import { default as SummaryBoxReadModelMapper } from '../mapper/summary_box_read_model.mapper';
 import BoxModel from '../model/box.model';
 
 export default class BoxRepository implements IBoxRepository {
@@ -45,7 +43,7 @@ export default class BoxRepository implements IBoxRepository {
       return left(new RepositoryException('Erro ao deletar a caixa'));
     }
   }
-  async summaryBox(): AsyncResult<RepositoryException, SummaryBoxDto> {
+  async summaryBox(): AsyncResult<RepositoryException, SummaryBoxReadModel> {
     try {
       const query = await this.boxRepository.query<BoxSummaryQueryResult[]>(
         `
