@@ -5,9 +5,14 @@ import { Either, left, right } from 'src/core/either/either';
 import Nil, { nil } from 'src/core/either/nil';
 import RepositoryException from 'src/core/erros/repository.exception';
 import { EntityNotFoundError, In, Repository } from 'typeorm';
-import IBoxRepository from '../../adapters/i_box_repository';
+import IBoxRepository, {
+  BoxSummaryQueryResult,
+} from '../../adapters/i_box_repository';
 import BoxEntity from '../../domain/box.entity';
-import SummaryBoxDto from '../../dtos/summary.dto';
+import {
+  default as SummaryBoxDto,
+  default as SummaryBoxReadModelMapper,
+} from '../mapper/summary_box_read_model.mapper';
 import BoxModel from '../model/box.model';
 
 export default class BoxRepository implements IBoxRepository {
@@ -42,7 +47,7 @@ export default class BoxRepository implements IBoxRepository {
   }
   async summaryBox(): AsyncResult<RepositoryException, SummaryBoxDto> {
     try {
-      const query = await this.boxRepository.query(
+      const query = await this.boxRepository.query<BoxSummaryQueryResult[]>(
         `
         WITH box_summary AS (
           SELECT
@@ -73,7 +78,7 @@ export default class BoxRepository implements IBoxRepository {
           (SELECT jsonb_agg(tr) FROM total_routes tr) AS total_routes;
         `,
       );
-      return right(SummaryBoxDto.fromJson(query[0]));
+      return right(SummaryBoxReadModelMapper.fromEntity(query[0]));
     } catch (error) {
       return left(
         new RepositoryException('Erro em Busca o Resumos das Caixas'),

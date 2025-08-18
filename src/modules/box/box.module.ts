@@ -42,12 +42,14 @@ import {
   ROUTE_REPOSITORY,
   UPDATE_BOX_SERVICE,
 } from './symbols';
+import AuthModule from '@/modules/auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([BoxModel, RouteModel]),
     UploadModule,
     CoreModule,
+    AuthModule,
   ],
   controllers: [BoxController, RouteController],
   providers: [
