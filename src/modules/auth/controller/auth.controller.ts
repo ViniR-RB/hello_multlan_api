@@ -1,5 +1,6 @@
+import { Roles } from '@/core/decorators/role.decorator';
+import { User } from '@/core/decorators/user_request.decorator';
 import { AuthGuard } from '@/core/guards/auth.guard';
-import { JwtVerifyPayload } from '@/core/interfaces/jwt.payload';
 import IChangePasswordUseCase from '@/modules/user/domain/usecase/i_change_password_use_case';
 import IGetAllUsersUseCase from '@/modules/user/domain/usecase/I_get_all_users_use_case';
 import IGetUserByIdUseCase, {
@@ -11,10 +12,12 @@ import IToggleUserUseCase, {
 import IUpdateUserUseCase, {
   UpdateUserParam,
 } from '@/modules/user/domain/usecase/i_update_user_use_case';
+import { USER_ROLE } from '@/modules/user/domain/user.entity';
 import ChangePasswordDto from '@/modules/user/dto/change_password.dto';
 import CreateUserInternalDto from '@/modules/user/dto/create_user.Internal.dto';
 import CreateUserAdminDto from '@/modules/user/dto/create_user_admin.dto';
 import UpdateUserDto from '@/modules/user/dto/update_user.dto';
+import UserDto from '@/modules/user/dto/user.dto';
 import UserResponseDto from '@/modules/user/dto/user_response.dto';
 import {
   Body,
@@ -47,9 +50,7 @@ import {
 } from 'src/modules/user/symbols';
 import ILoginUseCase, { LoginParams } from '../domain/usecase/i_login_use_case';
 import IRefreshTokenUseCase from '../domain/usecase/I_refresh_tokens_use_case';
-import IShowMyUserUseCase, {
-  ShowMyUserParam,
-} from '../domain/usecase/i_show_my_user_use_case';
+import IShowMyUserUseCase from '../domain/usecase/i_show_my_user_use_case';
 import LoginUserDto from '../dto/login_user.dto';
 import RefreshTokenDto from '../dto/refresh_token.dto';
 import {
@@ -133,19 +134,8 @@ export default class AuthController {
   @Get('/me')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  async me(@Req() resquest: any) {
-    const user: JwtVerifyPayload = resquest['user'];
-    const showMyUserParam: ShowMyUserParam = plainToClass(ShowMyUserParam, {
-      userId: user.sub,
-    });
-    const resultUserFinder = await this.showMyUserService.call(showMyUserParam);
-    if (resultUserFinder.isLeft()) {
-      throw new HttpException(
-        resultUserFinder.value.message,
-        resultUserFinder.value.statusCode,
-      );
-    }
-    return resultUserFinder.value;
+  async me(@User() user: UserDto) {
+    return user;
   }
 
   @Get('/all')
@@ -216,12 +206,14 @@ export default class AuthController {
   }
 
   @Post('/toggle-user/:id')
+  @UseGuards(AuthGuard)
+  @Roles(USER_ROLE.ADMIN)
   async toggleUser(@Param('id', ParseUUIDPipe) id: string) {
     const param = plainToClass(ToggleUserParam, {
       userId: id,
     });
 
-    const result = await this.toggleUserService.execute(param);
+    const result = await this.toggleUserService.call(param);
 
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode);
