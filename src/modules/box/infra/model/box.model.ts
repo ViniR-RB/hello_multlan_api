@@ -17,10 +17,24 @@ export default class BoxModel {
   @Column()
   label: string;
 
-  @Column({ type: 'decimal' })
+  @Column({
+    type: 'decimal',
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string | number) =>
+        typeof value === 'string' ? parseFloat(value) : value,
+    },
+  })
   latitude: number;
 
-  @Column({ type: 'decimal' })
+  @Column({
+    type: 'decimal',
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string | number) =>
+        typeof value === 'string' ? parseFloat(value) : value,
+    },
+  })
   longitude: number;
 
   @Column({ name: 'free_space' })
@@ -44,7 +58,7 @@ export default class BoxModel {
   @Column({ nullable: true, default: '' })
   note?: string;
 
-  @Column({ name: 'route_id', nullable: true }) 
+  @Column({ name: 'route_id', nullable: true })
   routeId?: string;
 
   @ManyToOne(() => RouteModel, route => route.boxes, {
@@ -75,7 +89,7 @@ export default class BoxModel {
         note: this.note,
         image: this.image,
         zone: this.zone,
-        routeId: this.routeId
+        routeId: this.routeId,
       },
       this.id,
     );
