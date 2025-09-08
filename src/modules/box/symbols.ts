@@ -1,2 +1,3 @@
 export const BOX_REPOSITORY = Symbol('BOX_REPOSITORY');
 export const CREATE_BOX_SERVICE = Symbol('CREATE_BOX_SERVICE');
+export const UPDATE_BOX_SERVICE = Symbol('UPDATE_BOX_SERVICE');

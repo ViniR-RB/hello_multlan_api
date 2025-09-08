@@ -1,9 +1,14 @@
 import CoreModule from '@/core/core_module';
 import CreateBoxService from '@/modules/box/application/create_box.service';
+import UpdateBoxService from '@/modules/box/application/update_box.service';
 import BoxController from '@/modules/box/controller/box_controller';
 import BoxModel from '@/modules/box/infra/models/box.model';
 import BoxRepository from '@/modules/box/infra/repositories/box.repository';
-import { BOX_REPOSITORY, CREATE_BOX_SERVICE } from '@/modules/box/symbols';
+import {
+  BOX_REPOSITORY,
+  CREATE_BOX_SERVICE,
+  UPDATE_BOX_SERVICE,
+} from '@/modules/box/symbols';
 import IFileRepository from '@/modules/file/adapters/i_file_repository';
 import FileModule from '@/modules/file/file.module';
 import { FILE_REPOSITORY } from '@/modules/file/symbols';
@@ -28,6 +33,12 @@ import { Repository } from 'typeorm';
         boxRepository: BoxRepository,
         fileRepository: IFileRepository,
       ) => new CreateBoxService(boxRepository, fileRepository),
+    },
+    {
+      inject: [BOX_REPOSITORY],
+      provide: UPDATE_BOX_SERVICE,
+      useFactory: (boxRepository: BoxRepository) =>
+        new UpdateBoxService(boxRepository),
     },
   ],
 })

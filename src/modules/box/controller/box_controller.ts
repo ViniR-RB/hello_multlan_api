@@ -1,12 +1,17 @@
 import ICreateBoxUseCase from '@/modules/box/domain/usecase/i_create_box_use_case';
+import IUpdateBoxUseCase from '@/modules/box/domain/usecase/i_update_box_use_case';
 import CreateBoxDto from '@/modules/box/dtos/create_box.dto';
-import { CREATE_BOX_SERVICE } from '@/modules/box/symbols';
+import UpdateBoxDto from '@/modules/box/dtos/update_box.dto';
+import { CREATE_BOX_SERVICE, UPDATE_BOX_SERVICE } from '@/modules/box/symbols';
 import {
   Body,
   Controller,
   HttpException,
   Inject,
+  Param,
+  ParseUUIDPipe,
   Post,
+  Put,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,6 +22,8 @@ export default class BoxController {
   constructor(
     @Inject(CREATE_BOX_SERVICE)
     private readonly createBoxService: ICreateBoxUseCase,
+    @Inject(UPDATE_BOX_SERVICE)
+    private readonly updateBoxService: IUpdateBoxUseCase,
   ) {}
 
   @Post('')
@@ -54,5 +61,27 @@ export default class BoxController {
       );
     }
     return savedBox.value.fromResponse();
+  }
+
+  @Put('/:id')
+  async updateBox(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateBoxDto: UpdateBoxDto,
+  ) {
+    const boxUpdatedResult = await this.updateBoxService.execute({
+      id: id,
+      ...updateBoxDto,
+    });
+
+    if (boxUpdatedResult.isLeft()) {
+      throw new HttpException(
+        boxUpdatedResult.value.message,
+        boxUpdatedResult.value.statusCode,
+        {
+          cause: boxUpdatedResult.value.cause,
+        },
+      );
+    }
+    return boxUpdatedResult.value.fromResponse();
   }
 }

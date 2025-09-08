@@ -106,6 +106,53 @@ export default class BoxEntity {
     return this.props.updatedAt!;
   }
 
+  updateBox(props: Partial<BoxEntityProps>) {
+    const cleanProps = Object.fromEntries(
+      Object.entries(props).filter(([_, value]) => value !== undefined),
+    ) as Partial<BoxEntityProps>;
+    if (cleanProps.createdAt || cleanProps.id || cleanProps.updatedAt) {
+      throw new BoxDomainException(
+        'ID, createdAt and updatedAt cannot be updated',
+      );
+    }
+    if (cleanProps.imageUrl) {
+      throw new BoxDomainException('Image URL cannot be updated here');
+    }
+    if (cleanProps.label && cleanProps.label.length < 3) {
+      throw new BoxDomainException('Label must be at least 3 characters long');
+    }
+    if (
+      cleanProps.filledSpace !== undefined &&
+      cleanProps.freeSpace !== undefined &&
+      cleanProps.filledSpace > cleanProps.freeSpace
+    ) {
+      throw new BoxDomainException(
+        'Filled space cannot be greater than free space',
+      );
+    }
+    if (
+      typeof BoxZone[cleanProps.zone as keyof typeof BoxZone] === 'undefined'
+    ) {
+      throw new BoxDomainException('Invalid zone');
+    }
+    if (
+      cleanProps.listUser &&
+      cleanProps.freeSpace &&
+      cleanProps.listUser?.length > cleanProps.freeSpace
+    ) {
+      throw new BoxDomainException(
+        'Number of users cannot exceed the free space of the box',
+      );
+    }
+
+    Object.assign(this.props, cleanProps);
+    this.toTouch();
+  }
+
+  toTouch() {
+    this.props.updatedAt = new Date();
+  }
+
   toObject() {
     return {
       id: this.props.id,
@@ -115,6 +162,7 @@ export default class BoxEntity {
       freeSpace: this.props.freeSpace,
       filledSpace: this.props.filledSpace,
       signal: this.props.signal,
+      listUser: this.listUser,
       zone: this.props.zone,
       routeId: this.props.routeId,
       imageUrl: this.props.imageUrl,
