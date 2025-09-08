@@ -1,5 +1,12 @@
 import { Transform } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUrl,
+  ValidateIf,
+} from 'class-validator';
 
 export default class EnvironmentVariables {
   @IsEnum(['dev', 'tst', 'prd'])
@@ -51,7 +58,8 @@ export default class EnvironmentVariables {
   @IsNotEmpty()
   REFRESH_TOKEN_EXPIRES_IN_SECONDS: number;
 
-
-
-  static
+  @IsString()
+  @IsUrl()
+  @ValidateIf(o => o.NODE_ENV === 'prd')
+  STORAGE_URL: string;
 }
