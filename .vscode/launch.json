@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Nest Local",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "start:debug", "--", "--inspect-brk"],
+      "console": "integratedTerminal",
+      "restart": true,
+      "protocol": "auto",
+      "port": 9229,
+      "autoAttachChildProcesses": true
+    },
+    {
+      "name": "Debug in Container Nest Dev",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 9229,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app",
+      "protocol": "inspector"
+    }
+  ]
+}
