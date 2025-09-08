@@ -1,6 +1,7 @@
 import CoreModule from '@/core/core_module';
 import ConfigurationService from '@/core/services/configuration.service';
 import AuthModule from '@/modules/auth/auth.module';
+import BoxModule from '@/modules/box/box.module';
 import UsersModule from '@/modules/users/users.module';
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -30,6 +31,7 @@ import { AppService } from './app.service';
     CoreModule,
     UsersModule,
     AuthModule,
+    BoxModule,
     ServeStaticModule.forRootAsync({
       imports: [CoreModule],
       inject: [ConfigurationService],

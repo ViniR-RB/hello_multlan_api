@@ -1,0 +1,44 @@
+import { BaseMapper } from '@/core/models/base.mapper';
+import BoxEntity from '@/modules/box/domain/entities/box.entity';
+import BoxModel from '@/modules/box/infra/models/box.model';
+
+export default abstract class BoxMapper extends BaseMapper<
+  BoxEntity,
+  BoxModel
+> {
+  static toEntity(model: BoxModel): BoxEntity {
+    return BoxEntity.fromData({
+      id: model.id,
+      label: model.label,
+      latitude: model.latitude,
+      longitude: model.longitude,
+      freeSpace: model.freeSpace,
+      filledSpace: model.filledSpace,
+      signal: model.signal,
+      zone: model.zone,
+      routeId: null,
+      imageUrl: model.imageUrl || null,
+      note: model.note || null,
+      listUser: model.listUser,
+      createdAt: model.createdAt,
+      updatedAt: model.updatedAt,
+    });
+  }
+  static toModel(entity: BoxEntity): Partial<BoxModel> {
+    return {
+      id: entity.id,
+      label: entity.label,
+      latitude: entity.latitude,
+      longitude: entity.longitude,
+      freeSpace: entity.freeSpace,
+      filledSpace: entity.filledSpace,
+      signal: entity.signal,
+      zone: entity.zone,
+      imageUrl: entity.imageUrl || null,
+      listUser: entity.listUser,
+      note: entity.note || null,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    };
+  }
+}

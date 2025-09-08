@@ -4,12 +4,14 @@ import { randomUUID } from 'crypto';
 
 interface BoxEntityProps {
   id?: string;
+  label: string;
   latitude: number;
   longitude: number;
   freeSpace: number;
   filledSpace: number;
   signal: number;
   zone: BoxZone;
+  listUser?: string[];
   routeId?: string | null;
   imageUrl?: string | null;
   note?: string | null;
@@ -21,12 +23,14 @@ export default class BoxEntity {
   private constructor(private readonly props: BoxEntityProps) {
     this.props = {
       id: props.id ?? randomUUID().toString(),
+      label: props.label,
       latitude: props.latitude,
       longitude: props.longitude,
       freeSpace: props.freeSpace,
       filledSpace: props.filledSpace,
       signal: props.signal,
       zone: props.zone,
+      listUser: props.listUser ?? [],
       routeId: props.routeId ?? null,
       imageUrl: props.imageUrl ?? null,
       note: props.note ?? null,
@@ -36,6 +40,9 @@ export default class BoxEntity {
   }
 
   static validate(props: BoxEntityProps) {
+    if (props.label.length < 3) {
+      throw new BoxDomainException('Label must be at least 3 characters long');
+    }
     if (props.filledSpace > props.freeSpace) {
       throw new BoxDomainException(
         'Filled space cannot be greater than free space',
@@ -58,6 +65,10 @@ export default class BoxEntity {
     return this.props.id!;
   }
 
+  get label() {
+    return this.props.label;
+  }
+
   get latitude() {
     return this.props.latitude;
   }
@@ -75,6 +86,9 @@ export default class BoxEntity {
   }
   get zone() {
     return this.props.zone;
+  }
+  get listUser() {
+    return this.props.listUser;
   }
   get routeId() {
     return this.props.routeId || null;
@@ -95,6 +109,7 @@ export default class BoxEntity {
   toObject() {
     return {
       id: this.props.id,
+      label: this.label,
       latitude: this.props.latitude,
       longitude: this.props.longitude,
       freeSpace: this.props.freeSpace,
@@ -107,5 +122,10 @@ export default class BoxEntity {
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
     };
+  }
+
+  updateImageUrl(imageUrl: string) {
+    this.props.imageUrl = imageUrl;
+    this.props.updatedAt = new Date();
   }
 }
