@@ -25,7 +25,15 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('api/auth')
 export default class AuthController {
   constructor(
@@ -38,6 +46,14 @@ export default class AuthController {
   ) {}
 
   @Post('/register')
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({
+    status: 201,
+    description: 'User registered successfully',
+    type: UserDto,
+  })
+  @ApiResponse({ status: 400, description: 'Erro in Domain' })
   async createRegister(@Body() createUserDto: CreateUserDto) {
     const param = new CreateUserParam(
       createUserDto.name,
@@ -53,6 +69,10 @@ export default class AuthController {
     return result.value.fromResponse();
   }
   @Post('/login')
+  @ApiOperation({ summary: 'Login user' })
+  @ApiBody({ type: Credentials })
+  @ApiResponse({ status: 200, description: 'Login successful' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async login(@Body() credentials: Credentials) {
     const param = new LoginParam(credentials.email, credentials.password);
     const result = await this.loginService.execute(param);
@@ -65,12 +85,19 @@ export default class AuthController {
   }
 
   @Get('/me')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user info' })
+  @ApiResponse({ status: 200, description: 'Current user info', type: UserDto })
   @UseGuards(AuthGuard)
   async getMe(@User() user: UserDto) {
     return user;
   }
 
   @Post('/refresh')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Refresh JWT token' })
+  @ApiResponse({ status: 200, description: 'Token refreshed' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async refreshToken(@User() user: UserDto) {
