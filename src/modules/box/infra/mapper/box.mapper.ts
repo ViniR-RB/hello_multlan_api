@@ -1,6 +1,7 @@
 import { BaseMapper } from '@/core/models/base.mapper';
 import BoxEntity from '@/modules/box/domain/entities/box.entity';
 import BoxModel from '@/modules/box/infra/models/box.model';
+import BoxWithLabelAndLocationReadModel from '@/modules/box/infra/read-models/box_with_label_and_location.read_model';
 
 export default abstract class BoxMapper extends BaseMapper<
   BoxEntity,
@@ -39,6 +40,17 @@ export default abstract class BoxMapper extends BaseMapper<
       note: entity.note || null,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
+    };
+  }
+
+  static toBoxWithLabelAndLocationReadModel(
+    model: Partial<BoxModel>,
+  ): BoxWithLabelAndLocationReadModel {
+    return {
+      id: model.id!,
+      label: model.label!,
+      latitude: model.latitude!,
+      longitude: model.longitude!,
     };
   }
 }

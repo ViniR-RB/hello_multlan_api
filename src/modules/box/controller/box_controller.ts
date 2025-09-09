@@ -1,11 +1,18 @@
+import AuthGuard from '@/core/guard/auth.guard';
 import ICreateBoxUseCase from '@/modules/box/domain/usecase/i_create_box_use_case';
+import IGetBoxesWithLabelAndLocationUseCase from '@/modules/box/domain/usecase/i_get_boxes_with_label_and_location_use_case';
 import IUpdateBoxUseCase from '@/modules/box/domain/usecase/i_update_box_use_case';
 import CreateBoxDto from '@/modules/box/dtos/create_box.dto';
 import UpdateBoxDto from '@/modules/box/dtos/update_box.dto';
-import { CREATE_BOX_SERVICE, UPDATE_BOX_SERVICE } from '@/modules/box/symbols';
+import {
+  CREATE_BOX_SERVICE,
+  GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE,
+  UPDATE_BOX_SERVICE,
+} from '@/modules/box/symbols';
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   Inject,
   Param,
@@ -13,17 +20,21 @@ import {
   Post,
   Put,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('api/box')
+@UseGuards(AuthGuard)
 export default class BoxController {
   constructor(
     @Inject(CREATE_BOX_SERVICE)
     private readonly createBoxService: ICreateBoxUseCase,
     @Inject(UPDATE_BOX_SERVICE)
     private readonly updateBoxService: IUpdateBoxUseCase,
+    @Inject(GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE)
+    private readonly getBoxesWithLabelAndLocationService: IGetBoxesWithLabelAndLocationUseCase,
   ) {}
 
   @Post('')
@@ -83,5 +94,16 @@ export default class BoxController {
       );
     }
     return boxUpdatedResult.value.fromResponse();
+  }
+
+  @Get('')
+  async getBoxesWithLabelAndLocation() {
+    const result = await this.getBoxesWithLabelAndLocationService.execute();
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return result.value.fromResponse();
   }
 }

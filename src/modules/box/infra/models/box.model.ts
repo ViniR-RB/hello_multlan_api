@@ -7,10 +7,24 @@ export default class BoxModel extends BaseModelIdUuidCreated {
   @Column({ type: 'varchar', length: 255 })
   label: string;
 
-  @Column('decimal', { precision: 11, scale: 8 })
+  @Column('decimal', {
+    precision: 11,
+    scale: 8,
+    transformer: {
+      to: (value: number) => String(value),
+      from: (value: string) => parseFloat(value),
+    },
+  })
   latitude: number;
 
-  @Column('decimal', { precision: 11, scale: 8 })
+  @Column('decimal', {
+    precision: 11,
+    scale: 8,
+    transformer: {
+      to: (value: number) => String(value),
+      from: (value: string) => parseFloat(value),
+    },
+  })
   longitude: number;
 
   @Column({ name: 'free_space', type: 'int' })

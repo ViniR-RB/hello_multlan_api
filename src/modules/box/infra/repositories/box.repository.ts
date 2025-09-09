@@ -8,6 +8,7 @@ import BoxRepositoryException from '@/modules/box/exceptions/box_repository.exce
 import BoxMapper from '@/modules/box/infra/mapper/box.mapper';
 import BoxModel from '@/modules/box/infra/models/box.model';
 import { BoxQueryObject } from '@/modules/box/infra/query/query_object';
+import BoxWithLabelAndLocationReadModel from '@/modules/box/infra/read-models/box_with_label_and_location.read_model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityNotFoundError, FindOneOptions, Repository } from 'typeorm';
 
@@ -16,6 +17,21 @@ export default class BoxRepository implements IBoxRepository {
     @InjectRepository(BoxModel)
     private readonly boxRepository: Repository<BoxModel>,
   ) {}
+  async findBoxesWithLabelAndLocation(): AsyncResult<
+    AppException,
+    BoxWithLabelAndLocationReadModel[]
+  > {
+    try {
+      const boxes = await this.boxRepository.find({
+        select: ['id', 'label', 'latitude', 'longitude'],
+      });
+      return right(boxes.map(BoxMapper.toBoxWithLabelAndLocationReadModel));
+    } catch (e) {
+      return left(
+        new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
+      );
+    }
+  }
   async findOne(query: BoxQueryObject): AsyncResult<AppException, BoxEntity> {
     try {
       let findOneOptions: FindOneOptions<BoxModel> = {
