@@ -1,0 +1,2 @@
+export const CREATE_ROUTE_SERVICE = Symbol('CREATE_ROUTE_SERVICE');
+export const ROUTE_REPOSITORY = Symbol('ROUTE_REPOSITORY');

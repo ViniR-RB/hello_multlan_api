@@ -13,4 +13,5 @@ export default interface IBoxRepository
     AppException,
     BoxWithLabelAndLocationReadModel[]
   >;
+  findBoxesByIds(ids: string[]): AsyncResult<AppException, BoxEntity[]>;
 }

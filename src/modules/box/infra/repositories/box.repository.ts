@@ -10,13 +10,19 @@ import BoxModel from '@/modules/box/infra/models/box.model';
 import { BoxQueryObject } from '@/modules/box/infra/query/query_object';
 import BoxWithLabelAndLocationReadModel from '@/modules/box/infra/read-models/box_with_label_and_location.read_model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, FindOneOptions, Repository } from 'typeorm';
+import { EntityNotFoundError, FindOneOptions, In, Repository } from 'typeorm';
 
 export default class BoxRepository implements IBoxRepository {
   constructor(
     @InjectRepository(BoxModel)
     private readonly boxRepository: Repository<BoxModel>,
   ) {}
+  async findBoxesByIds(ids: string[]): AsyncResult<AppException, BoxEntity[]> {
+    const boxesModel = await this.boxRepository.find({
+      where: { id: In(ids) },
+    });
+    return right(boxesModel.map(BoxMapper.toEntity));
+  }
   async findBoxesWithLabelAndLocation(): AsyncResult<
     AppException,
     BoxWithLabelAndLocationReadModel[]

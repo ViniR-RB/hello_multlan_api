@@ -61,6 +61,14 @@ export default class BoxEntity {
     return new BoxEntity(props);
   }
 
+  addRoute(routeId: string) {
+    if (this.props.routeId) {
+      throw new BoxDomainException('box already has a route assigned');
+    }
+    this.props.routeId = routeId;
+    this.toTouch();
+  }
+
   get id() {
     return this.props.id!;
   }

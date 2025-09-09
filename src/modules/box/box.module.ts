@@ -56,6 +56,14 @@ import { Repository } from 'typeorm';
         new GetBoxesWithLabelAndLocationService(boxRepository),
     },
   ],
+  exports: [
+    {
+      inject: [getRepositoryToken(BoxModel)],
+      provide: BOX_REPOSITORY,
+      useFactory: (boxRepository: Repository<BoxModel>) =>
+        new BoxRepository(boxRepository),
+    },
+  ],
 })
 export default class BoxModule {
   constructor() {}

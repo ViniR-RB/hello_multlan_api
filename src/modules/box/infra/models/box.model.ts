@@ -1,6 +1,7 @@
 import { BaseModelIdUuidCreated } from '@/core/models/base.models';
 import { BoxZone } from '@/modules/box/domain/entities/box_zone_enum';
-import { Column, Entity } from 'typeorm';
+import RouterModel from '@/modules/routers/infra/models/route.model';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('boxes')
 export default class BoxModel extends BaseModelIdUuidCreated {
@@ -49,6 +50,16 @@ export default class BoxModel extends BaseModelIdUuidCreated {
   listUser: string[];
   @Column({ type: 'enum', enum: BoxZone })
   zone: BoxZone;
+
+  @ManyToOne(() => RouterModel, route => route.boxs, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'route_id' })
+  route?: RouterModel;
+
+  @Column({ name: 'route_id', type: 'uuid', nullable: true })
+  routeId: string | null;
 
   @Column({ name: 'image_url', type: 'varchar', nullable: true })
   imageUrl: string | null;
