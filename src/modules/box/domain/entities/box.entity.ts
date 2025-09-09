@@ -118,9 +118,14 @@ export default class BoxEntity {
     const cleanProps = Object.fromEntries(
       Object.entries(props).filter(([_, value]) => value !== undefined),
     ) as Partial<BoxEntityProps>;
-    if (cleanProps.createdAt || cleanProps.id || cleanProps.updatedAt) {
+    if (
+      cleanProps.createdAt ||
+      cleanProps.id ||
+      cleanProps.updatedAt ||
+      cleanProps.routeId
+    ) {
       throw new BoxDomainException(
-        'ID, createdAt and updatedAt cannot be updated',
+        'ID, createdAt, updatedAt and routeId cannot be updated',
       );
     }
     if (cleanProps.imageUrl) {
