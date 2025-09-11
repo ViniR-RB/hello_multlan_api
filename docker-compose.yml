@@ -16,6 +16,7 @@ services:
       - .env
     depends_on:
       - postgres
+      - redis
 
   postgres:
     container_name: hello_multlan_postgres
@@ -32,6 +33,16 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  redis:
+    container_name: hello_multlan_redis
+    image: redis:7-alpine
+    restart: no
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
   nest-prod:
     build:
       context: .
@@ -43,3 +54,4 @@ services:
 
 volumes:
   pgdata:
+  redis_data:

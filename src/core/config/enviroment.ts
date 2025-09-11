@@ -62,4 +62,15 @@ export default class EnvironmentVariables {
   @IsUrl()
   @ValidateIf(o => o.NODE_ENV === 'prd')
   STORAGE_URL: string;
+
+  @IsString()
+  REDIS_HOST: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  REDIS_PORT: number;
+
+  @IsString()
+  @IsNotEmpty()
+  REDIS_PASSWORD: string;
 }
