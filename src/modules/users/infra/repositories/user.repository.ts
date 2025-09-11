@@ -12,13 +12,28 @@ import UserMapper from '@/modules/users/infra/mapper/user.mapper';
 import UserModel from '@/modules/users/infra/models/user.model';
 import { UserQueryOptions } from '@/modules/users/infra/query/query_objects';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, FindOneOptions, Repository } from 'typeorm';
+import { EntityNotFoundError, FindOneOptions, In, Repository } from 'typeorm';
 
 export default class UserRepository implements IUserRepository {
   constructor(
     @InjectRepository(UserModel)
     private userRepository: Repository<UserModel>,
   ) {}
+  create(entity: UserEntity): UserModel {
+    return this.userRepository.create(UserMapper.toModel(entity));
+  }
+  async findManyByIds(ids: number[]): AsyncResult<AppException, UserEntity[]> {
+    try {
+      const users = await this.userRepository.findBy({
+        id: In(ids),
+      });
+      return right(users.map(UserMapper.toEntity));
+    } catch (error) {
+      return left(
+        new UserRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, error),
+      );
+    }
+  }
   async findOne(
     query: UserQueryOptions,
   ): AsyncResult<AppException, UserEntity> {
