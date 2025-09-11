@@ -11,9 +11,14 @@ import { LOGIN_SERVICE, REFRESH_TOKEN_SERVICE } from '@/modules/auth/symbols';
 import ICreateUserUseCase, {
   CreateUserParam,
 } from '@/modules/users/domain/usecase/i_create_user_use_case';
+import IUpdateUserUseCase from '@/modules/users/domain/usecase/i_update_user_use_case';
 import CreateUserDto from '@/modules/users/dtos/create_user.dto';
+import UpdateUserDto from '@/modules/users/dtos/update_user.dto';
 import UserDto from '@/modules/users/dtos/user.dto';
-import { CREATE_USER_SERVICE } from '@/modules/users/symbols';
+import {
+  CREATE_USER_SERVICE,
+  UPDATE_USER_SERVICE,
+} from '@/modules/users/symbols';
 import {
   Body,
   Controller,
@@ -43,6 +48,8 @@ export default class AuthController {
     private readonly loginService: ILoginUseCase,
     @Inject(REFRESH_TOKEN_SERVICE)
     private readonly refreshTokenService: IRefreshTokenUseCase,
+    @Inject(UPDATE_USER_SERVICE)
+    private readonly updateUserService: IUpdateUserUseCase,
   ) {}
 
   @Post('/register')
@@ -59,6 +66,7 @@ export default class AuthController {
       createUserDto.name,
       createUserDto.email,
       createUserDto.password,
+      createUserDto.fcmToken,
     );
     const result = await this.createUserService.execute(param);
     if (result.isLeft()) {
@@ -113,5 +121,22 @@ export default class AuthController {
       );
     }
     return resultRefreshTokenService.value.fromResponse();
+  }
+
+  @Post('update-user')
+  @UseGuards(AuthGuard)
+  async updateUser(@Body() dto: UpdateUserDto, @User() user: UserDto) {
+    const result = await this.updateUserService.execute({
+      userId: user.id,
+      name: dto.name,
+      email: dto.email,
+      fcmToken: dto.fcmToken,
+    });
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return result.value.fromResponse();
   }
 }

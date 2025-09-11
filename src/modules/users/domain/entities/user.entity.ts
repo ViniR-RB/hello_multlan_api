@@ -8,6 +8,7 @@ interface UserEntityProps {
   email: string;
   name: string;
   password: string;
+  fcmToken: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -18,6 +19,7 @@ export default class UserEntity {
       id: props.id,
       email: props.email,
       name: props.name,
+      fcmToken: props.fcmToken,
       password: props.password,
       createdAt: props.createdAt ?? new Date(),
       updatedAt: props.updatedAt ?? new Date(),
@@ -58,8 +60,15 @@ export default class UserEntity {
     }
     return this.props.id!;
   }
+  get name() {
+    return this.props.name;
+  }
   get email() {
     return this.props.email!;
+  }
+
+  get fcmToken() {
+    return this.props.fcmToken;
   }
 
   get password() {
@@ -77,9 +86,35 @@ export default class UserEntity {
       id: this.props.id,
       email: this.props.email,
       name: this.props.name,
+      fcmToken: this.props.fcmToken,
       password: this.props.password,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
     };
+  }
+
+  updateUser(
+    props: Partial<
+      Omit<UserEntityProps, 'id' | 'createdAt' | 'updatedAt' | 'password'>
+    >,
+  ) {
+    const cleanProps = Object.fromEntries(
+      Object.entries(props).filter(([_, value]) => value !== undefined),
+    ) as Partial<UserEntityProps>;
+
+    if (props.email !== undefined && !EmailValidator.validate(props.email)) {
+      throw new UserDomainException('Invalid email');
+    }
+    if (props.name !== undefined && !NameValidator.validate(props.name)) {
+      throw new UserDomainException('Invalid name');
+    }
+    if (props.fcmToken !== undefined && props.fcmToken === '') {
+      throw new UserDomainException('Invalid fcmToken');
+    }
+    Object.assign(this.props, cleanProps);
+    this.toTouch();
+  }
+  private toTouch() {
+    this.props.updatedAt = new Date();
   }
 }

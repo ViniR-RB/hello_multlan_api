@@ -20,6 +20,9 @@ export default class UserModel {
   @Column({ name: 'name' })
   name: string;
 
+  @Column({ type: 'varchar', name: 'fcm_token', nullable: true })
+  fcmToken: string | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
