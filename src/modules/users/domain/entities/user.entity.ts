@@ -10,6 +10,7 @@ interface UserEntityProps {
   name: string;
   password: string;
   role: UserRole;
+  isActive?: boolean;
   fcmToken: string | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -21,6 +22,7 @@ export default class UserEntity {
       id: props.id,
       email: props.email,
       name: props.name,
+      isActive: props.isActive ?? true,
       role: props.role,
       fcmToken: props.fcmToken,
       password: props.password,
@@ -41,6 +43,9 @@ export default class UserEntity {
       !PasswordValidator.validate(props.password)
     ) {
       throw new UserDomainException('Invalid password');
+    }
+    if (UserRole[props.role as keyof typeof UserRole] === undefined) {
+      throw new UserDomainException('Invalid role');
     }
   }
 
@@ -76,6 +81,9 @@ export default class UserEntity {
   get fcmToken() {
     return this.props.fcmToken;
   }
+  get isActive() {
+    return this.props.isActive!;
+  }
 
   get password() {
     return this.props.password;
@@ -87,11 +95,18 @@ export default class UserEntity {
     return this.props.updatedAt!;
   }
 
+  userHasLogin() {
+    if (this.isActive === false) {
+      throw new UserDomainException('user is inactive');
+    }
+  }
+
   toObject() {
     return {
       id: this.props.id,
       email: this.props.email,
       name: this.props.name,
+      isActive: this.props.isActive,
       fcmToken: this.props.fcmToken,
       role: this.props.role,
       password: this.props.password,
@@ -100,9 +115,17 @@ export default class UserEntity {
     };
   }
 
+  toogleUser() {
+    this.props.isActive = !this.props.isActive;
+    this.toTouch();
+  }
+
   updateUser(
     props: Partial<
-      Omit<UserEntityProps, 'id' | 'createdAt' | 'updatedAt' | 'password'>
+      Omit<
+        UserEntityProps,
+        'id' | 'createdAt' | 'updatedAt' | 'password' | 'role' | 'isActive'
+      >
     >,
   ) {
     const cleanProps = Object.fromEntries(

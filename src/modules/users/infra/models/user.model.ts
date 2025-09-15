@@ -21,6 +21,9 @@ export default class UserModel {
   @Column({ name: 'name' })
   name: string;
 
+  @Column({ name: 'is_active', default: true })
+  isActive: boolean;
+
   @Column({ type: 'enum', enum: UserRole })
   role: UserRole;
 
