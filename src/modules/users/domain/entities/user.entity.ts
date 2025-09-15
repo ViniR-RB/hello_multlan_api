@@ -55,10 +55,10 @@ export default class UserEntity {
   }
 
   get id() {
-    if (!this.props.id) {
-      throw new UserDomainException('User Id has no generated');
+    if (this.props.id === undefined) {
+      return 0;
     }
-    return this.props.id!;
+    return this.props.id;
   }
   get name() {
     return this.props.name;

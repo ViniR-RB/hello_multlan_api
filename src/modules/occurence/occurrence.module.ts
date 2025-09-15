@@ -1,3 +1,6 @@
+import { IEventBus } from '@/modules/events/adapters/i_event_bus';
+import EventsModule from '@/modules/events/events.module';
+import { EVENT_BUS } from '@/modules/events/symbols';
 import IOcurrenceRepository from '@/modules/occurence/adapters/i_ocurrence.repository';
 import CreateOcurrenceService from '@/modules/occurence/application/create_ocurrence.service';
 import OccurrenceController from '@/modules/occurence/controller/occurrence.controller';
@@ -14,7 +17,11 @@ import { Module } from '@nestjs/common';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forFeature([OccurrenceModel])],
+  imports: [
+    UsersModule,
+    EventsModule,
+    TypeOrmModule.forFeature([OccurrenceModel]),
+  ],
   controllers: [OccurrenceController],
   providers: [
     {
@@ -23,12 +30,18 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
       useFactory: repository => new OccurrenceRepository(repository),
     },
     {
-      inject: [OCCURRENCE_REPOSITORY, USER_REPOSITORY],
+      inject: [OCCURRENCE_REPOSITORY, USER_REPOSITORY, EVENT_BUS],
       provide: CREATE_OCCURRENCE_SERVICE,
       useFactory: (
         ocurrenceRepository: IOcurrenceRepository,
         userRepository: IUserRepository,
-      ) => new CreateOcurrenceService(ocurrenceRepository, userRepository),
+        eventBus: IEventBus,
+      ) =>
+        new CreateOcurrenceService(
+          ocurrenceRepository,
+          userRepository,
+          eventBus,
+        ),
     },
   ],
   exports: [],

@@ -73,4 +73,16 @@ export default class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   REDIS_PASSWORD: string;
+
+  @IsString()
+  @IsNotEmpty()
+  FIREBASE_PROJECT_ID: string;
+
+  @IsString()
+  @IsNotEmpty()
+  FIREBASE_CLIENT_EMAIL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  FIREBASE_PRIVATE_KEY: string;
 }

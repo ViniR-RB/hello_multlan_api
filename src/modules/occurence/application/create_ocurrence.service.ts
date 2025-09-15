@@ -1,6 +1,8 @@
 import AppException from '@/core/exceptions/app_exception';
 import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
+import { IEventBus } from '@/modules/events/adapters/i_event_bus';
+import { PushNotificationEventData } from '@/modules/events/infra/handlers/push_notification_handler';
 import IOcurrenceRepository from '@/modules/occurence/adapters/i_ocurrence.repository';
 import OccurrenceEntity from '@/modules/occurence/domain/entities/occurrence.entity';
 import ICreateOcurrenceUseCase, {
@@ -13,6 +15,7 @@ export default class CreateOcurrenceService implements ICreateOcurrenceUseCase {
   constructor(
     private readonly ocurrenceRepository: IOcurrenceRepository,
     private readonly userRepository: IUserRepository,
+    private readonly eventBus: IEventBus,
   ) {}
   async execute(
     param: CreateOcurrenceParam,
@@ -34,6 +37,19 @@ export default class CreateOcurrenceService implements ICreateOcurrenceUseCase {
     const missingUsers = param.usersId.filter(
       id => !usersResult.value.some(user => user.id === id),
     );
+    const senderNotification = param.usersId.filter(id =>
+      usersResult.value.some(user => user.id === id),
+    );
+
+    senderNotification.map(async userId => {
+      await this.eventBus.publish<PushNotificationEventData>({
+        type: 'push_notification',
+        title: `${param.title}`,
+        body: `${param.description}`,
+        userId: userId,
+      });
+    });
+
     return right(
       new CreateOcurrenceResponse(savedOcurrence.value, missingUsers),
     );

@@ -2,9 +2,11 @@ import CoreModule from '@/core/core_module';
 import ConfigurationService from '@/core/services/configuration.service';
 import AuthModule from '@/modules/auth/auth.module';
 import BoxModule from '@/modules/box/box.module';
+import EventsModule from '@/modules/events/events.module';
 import OccurrenceModule from '@/modules/occurence/occurrence.module';
 import RouterModule from '@/modules/routers/route.module';
 import UsersModule from '@/modules/users/users.module';
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,6 +14,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import NotificationModule from '@/modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -30,12 +33,25 @@ import { AppService } from './app.service';
         synchronize: true,
       }),
     }),
+    BullModule.forRootAsync({
+      inject: [ConfigurationService],
+      imports: [CoreModule],
+      useFactory: async (configService: ConfigurationService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+          password: configService.get('REDIS_PASSWORD'),
+        },
+      }),
+    }),
     CoreModule,
     RouterModule,
     UsersModule,
     AuthModule,
     BoxModule,
     OccurrenceModule,
+    EventsModule,
+    NotificationModule,
     ServeStaticModule.forRootAsync({
       imports: [CoreModule],
       inject: [ConfigurationService],
