@@ -51,6 +51,7 @@ export default class CreateUserService implements ICreateUserUseCase {
       if (userSavedResult.isLeft()) {
         return left(userSavedResult.value);
       }
+     
       return right(new CreateUserResponse(userSavedResult.value));
     } catch (error) {
       if (error instanceof AppException) {

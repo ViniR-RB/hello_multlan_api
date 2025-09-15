@@ -1,3 +1,4 @@
+import UserRole from '@/modules/users/domain/entities/user_role';
 import {
   Column,
   CreateDateColumn,
@@ -19,6 +20,9 @@ export default class UserModel {
 
   @Column({ name: 'name' })
   name: string;
+
+  @Column({ type: 'enum', enum: UserRole })
+  role: UserRole;
 
   @Column({ type: 'varchar', name: 'fcm_token', nullable: true })
   fcmToken: string | null;

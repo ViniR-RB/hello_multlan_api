@@ -1,6 +1,7 @@
 import EmailValidator from '@/core/validators/email.validator';
 import NameValidator from '@/core/validators/name.validator';
 import PasswordValidator from '@/core/validators/password.validator';
+import UserRole from '@/modules/users/domain/entities/user_role';
 import UserDomainException from '@/modules/users/exceptions/user_domain_exception';
 
 interface UserEntityProps {
@@ -8,6 +9,7 @@ interface UserEntityProps {
   email: string;
   name: string;
   password: string;
+  role: UserRole;
   fcmToken: string | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -19,6 +21,7 @@ export default class UserEntity {
       id: props.id,
       email: props.email,
       name: props.name,
+      role: props.role,
       fcmToken: props.fcmToken,
       password: props.password,
       createdAt: props.createdAt ?? new Date(),
@@ -66,6 +69,9 @@ export default class UserEntity {
   get email() {
     return this.props.email!;
   }
+  get role() {
+    return this.props.role;
+  }
 
   get fcmToken() {
     return this.props.fcmToken;
@@ -87,6 +93,7 @@ export default class UserEntity {
       email: this.props.email,
       name: this.props.name,
       fcmToken: this.props.fcmToken,
+      role: this.props.role,
       password: this.props.password,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,

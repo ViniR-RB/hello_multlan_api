@@ -3,10 +3,11 @@ import { OmitType } from '@nestjs/swagger';
 import { IsEmail, IsString, Length } from 'class-validator';
 
 export default class Credentials extends OmitType(UserDto, [
-  "id",
-  "name",
-  "createdAt",
-  "updatedAt",
+  'id',
+  'name',
+  'role',
+  'createdAt',
+  'updatedAt',
 ]) {
   @IsEmail()
   email: string;

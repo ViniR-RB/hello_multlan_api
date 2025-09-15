@@ -1,6 +1,8 @@
+import UserRole from '@/modules/users/domain/entities/user_role';
 import {
   IsDate,
   IsEmail,
+  IsEnum,
   IsNumber,
   IsOptional,
   IsString,
@@ -29,6 +31,10 @@ export default class UserDto {
   @IsOptional()
   @ValidateIf(obj => obj.fcmToken !== null)
   fcmToken: string | null;
+
+  @IsEnum(UserRole)
+  @IsString()
+  role: UserRole;
 
   @IsDate()
   createdAt: Date;

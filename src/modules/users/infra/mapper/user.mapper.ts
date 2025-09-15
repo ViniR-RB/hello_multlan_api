@@ -11,6 +11,7 @@ export default abstract class UserMapper extends BaseMapper<
       id: userModel.id,
       password: userModel.password,
       fcmToken: userModel.fcmToken,
+      role: userModel.role,
       email: userModel.email,
       name: userModel.name,
     });
@@ -23,6 +24,7 @@ export default abstract class UserMapper extends BaseMapper<
       email: entity.email,
       password: entity.password,
       fcmToken: entity.fcmToken,
+      role: entity.role,
     };
   }
 }
