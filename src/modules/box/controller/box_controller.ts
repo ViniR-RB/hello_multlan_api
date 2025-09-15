@@ -1,11 +1,13 @@
 import AuthGuard from '@/core/guard/auth.guard';
 import ICreateBoxUseCase from '@/modules/box/domain/usecase/i_create_box_use_case';
+import IGetBoxByIdUseCase from '@/modules/box/domain/usecase/i_get_box_by_id_use_case';
 import IGetBoxesWithLabelAndLocationUseCase from '@/modules/box/domain/usecase/i_get_boxes_with_label_and_location_use_case';
 import IUpdateBoxUseCase from '@/modules/box/domain/usecase/i_update_box_use_case';
 import CreateBoxDto from '@/modules/box/dtos/create_box.dto';
 import UpdateBoxDto from '@/modules/box/dtos/update_box.dto';
 import {
   CREATE_BOX_SERVICE,
+  GET_BOX_BY_ID_SERVICE,
   GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
@@ -35,6 +37,8 @@ export default class BoxController {
     private readonly updateBoxService: IUpdateBoxUseCase,
     @Inject(GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE)
     private readonly getBoxesWithLabelAndLocationService: IGetBoxesWithLabelAndLocationUseCase,
+    @Inject(GET_BOX_BY_ID_SERVICE)
+    private readonly getBoxByIdService: IGetBoxByIdUseCase,
   ) {}
 
   @Post('')
@@ -73,7 +77,20 @@ export default class BoxController {
     }
     return savedBox.value.fromResponse();
   }
-
+  @Get('/:id')
+  async getBoxById(@Param('id', ParseUUIDPipe) id: string) {
+    const boxResult = await this.getBoxByIdService.execute({ boxId: id });
+    if (boxResult.isLeft()) {
+      throw new HttpException(
+        boxResult.value.message,
+        boxResult.value.statusCode,
+        {
+          cause: boxResult.value.cause,
+        },
+      );
+    }
+    return boxResult.value.fromResponse();
+  }
   @Put('/:id')
   async updateBox(
     @Param('id', ParseUUIDPipe) id: string,

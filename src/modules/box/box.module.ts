@@ -2,6 +2,7 @@ import CoreModule from '@/core/core_module';
 import AuthModule from '@/modules/auth/auth.module';
 import IBoxRepository from '@/modules/box/adapters/i_box_repository';
 import CreateBoxService from '@/modules/box/application/create_box.service';
+import GetBoxByIdService from '@/modules/box/application/get_box_by_id.service';
 import GetBoxesWithLabelAndLocationService from '@/modules/box/application/get_boxes_with_label_and_location.service';
 import UpdateBoxService from '@/modules/box/application/update_box.service';
 import BoxController from '@/modules/box/controller/box_controller';
@@ -10,6 +11,7 @@ import BoxRepository from '@/modules/box/infra/repositories/box.repository';
 import {
   BOX_REPOSITORY,
   CREATE_BOX_SERVICE,
+  GET_BOX_BY_ID_SERVICE,
   GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
@@ -54,6 +56,12 @@ import { Repository } from 'typeorm';
       provide: GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE,
       useFactory: (boxRepository: IBoxRepository) =>
         new GetBoxesWithLabelAndLocationService(boxRepository),
+    },
+    {
+      inject: [BOX_REPOSITORY],
+      provide: GET_BOX_BY_ID_SERVICE,
+      useFactory: (boxRepository: IBoxRepository) =>
+        new GetBoxByIdService(boxRepository),
     },
   ],
   exports: [
