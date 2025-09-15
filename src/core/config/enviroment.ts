@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -73,6 +74,11 @@ export default class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   REDIS_PASSWORD: string;
+
+  @IsEmail()
+  ADMIN_EMAIL: string;
+  @IsString()
+  ADMIN_PASSWORD: string;
 
   @IsString()
   @IsNotEmpty()
