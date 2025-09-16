@@ -1,3 +1,6 @@
+import IBoxRepository from '@/modules/box/adapters/i_box_repository';
+import BoxModule from '@/modules/box/box.module';
+import { BOX_REPOSITORY } from '@/modules/box/symbols';
 import { IEventBus } from '@/modules/events/adapters/i_event_bus';
 import EventsModule from '@/modules/events/events.module';
 import { EVENT_BUS } from '@/modules/events/symbols';
@@ -18,6 +21,7 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
+    BoxModule,
     UsersModule,
     EventsModule,
     TypeOrmModule.forFeature([OccurrenceModel]),
@@ -30,16 +34,23 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
       useFactory: repository => new OccurrenceRepository(repository),
     },
     {
-      inject: [OCCURRENCE_REPOSITORY, USER_REPOSITORY, EVENT_BUS],
+      inject: [
+        OCCURRENCE_REPOSITORY,
+        USER_REPOSITORY,
+        BOX_REPOSITORY,
+        EVENT_BUS,
+      ],
       provide: CREATE_OCCURRENCE_SERVICE,
       useFactory: (
         ocurrenceRepository: IOcurrenceRepository,
         userRepository: IUserRepository,
+        boxRepository: IBoxRepository,
         eventBus: IEventBus,
       ) =>
         new CreateOcurrenceService(
           ocurrenceRepository,
           userRepository,
+          boxRepository,
           eventBus,
         ),
     },

@@ -1,6 +1,7 @@
 import AppException from '@/core/exceptions/app_exception';
 import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
+import IBoxRepository from '@/modules/box/adapters/i_box_repository';
 import { IEventBus } from '@/modules/events/adapters/i_event_bus';
 import { PushNotificationEventData } from '@/modules/events/infra/handlers/push_notification_handler';
 import IOcurrenceRepository from '@/modules/occurence/adapters/i_ocurrence.repository';
@@ -15,11 +16,21 @@ export default class CreateOcurrenceService implements ICreateOcurrenceUseCase {
   constructor(
     private readonly ocurrenceRepository: IOcurrenceRepository,
     private readonly userRepository: IUserRepository,
+    private readonly boxRepository: IBoxRepository,
     private readonly eventBus: IEventBus,
   ) {}
   async execute(
     param: CreateOcurrenceParam,
   ): AsyncResult<AppException, CreateOcurrenceResponse> {
+    if (param.boxId) {
+      const boxExists = await this.boxRepository.findOne({
+        boxId: param.boxId,
+      });
+      if (boxExists.isLeft()) {
+        return left(boxExists.value);
+      }
+    }
+
     const usersResult = await this.userRepository.findManyByIds(param.usersId);
 
     if (usersResult.isLeft()) {
