@@ -1,4 +1,5 @@
 import OccurrenceStatus from '@/modules/occurence/domain/entities/occurrence_status';
+import OccurrenceDomainException from '@/modules/occurence/exceptions/occurrence_domain.exception';
 import UserEntity from '@/modules/users/domain/entities/user.entity';
 import { randomUUID } from 'crypto';
 
@@ -52,6 +53,53 @@ export default class OccurrenceEntity {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
+  }
+
+  cancelOccurrence(reason: string, userCacelled: UserEntity) {
+    if (this.status !== OccurrenceStatus.CREATED) {
+      throw new OccurrenceDomainException(
+        'Only occurrences with status Created can be resolved',
+      );
+    }
+    const usersInOccurrence = this.users.map(user => user.id);
+    if (
+      userCacelled.userHasAdmin() === true ||
+      usersInOccurrence.includes(userCacelled.id) === true
+    ) {
+      this.props.status = OccurrenceStatus.CANCELLED;
+      this.props.canceledReason = reason;
+      this.toTouch();
+      return;
+    }
+
+    throw new OccurrenceDomainException(
+      'User not authorized to cancel this occurrence',
+    );
+  }
+
+  resolveOccurrence(userResolved: UserEntity) {
+    if (this.status !== OccurrenceStatus.CREATED) {
+      throw new OccurrenceDomainException(
+        'Only occurrences with status Created can be resolved',
+      );
+    }
+    const usersInOccurrence = this.users.map(user => user.id);
+    if (
+      userResolved.userHasAdmin() ||
+      usersInOccurrence.includes(userResolved.id)
+    ) {
+      this.props.status = OccurrenceStatus.RESOLVED;
+      this.toTouch();
+      return;
+    }
+
+    throw new OccurrenceDomainException(
+      'User not authorized to resolve this occurrence',
+    );
+  }
+
+  private toTouch() {
+    this.props.updatedAt = new Date();
   }
 
   get id() {

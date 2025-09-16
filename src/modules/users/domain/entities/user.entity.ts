@@ -62,6 +62,10 @@ export default class UserEntity {
     this.props.password = newPasswordHash;
   }
 
+  userHasAdmin() {
+    return this.role === UserRole.ADMIN;
+  }
+
   get id() {
     if (this.props.id === undefined) {
       return 0;
