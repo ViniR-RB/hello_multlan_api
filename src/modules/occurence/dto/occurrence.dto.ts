@@ -1,5 +1,13 @@
+import OccurrenceStatus from '@/modules/occurence/domain/entities/occurrence_status';
 import UserDto from '@/modules/users/dtos/user.dto';
-import { IsArray, IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsArray,
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export default class OccurrenceDto {
   @IsUUID()
@@ -20,6 +28,9 @@ export default class OccurrenceDto {
   @IsUUID()
   @IsOptional()
   boxId: string | null;
+
+  @IsEnum(OccurrenceStatus)
+  status: OccurrenceStatus;
 
   @IsDate()
   createdAt: Date;
