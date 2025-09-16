@@ -10,6 +10,7 @@ import IOcurrenceRepository from '@/modules/occurence/adapters/i_ocurrence.repos
 import ApproveOccurrenceService from '@/modules/occurence/application/approve_occurrence.service';
 import CancelOccurrenceService from '@/modules/occurence/application/cancel_occurrence.service';
 import CreateOcurrenceService from '@/modules/occurence/application/create_ocurrence.service';
+import GetOccurrencesService from '@/modules/occurence/application/get_occurrences.service';
 import OccurrenceController from '@/modules/occurence/controller/occurrence.controller';
 import OccurrenceModel from '@/modules/occurence/infra/models/occurrence.model';
 import OccurrenceRepository from '@/modules/occurence/infra/repository/occurence.repository';
@@ -17,6 +18,7 @@ import {
   APPROVE_OCCURRENCE_SERVICE,
   CANCEL_OCCURRENCE_SERVICE,
   CREATE_OCCURRENCE_SERVICE,
+  GET_OCCURRENCE_SERVICE,
   OCCURRENCE_REPOSITORY,
 } from '@/modules/occurence/symbols';
 import IUserRepository from '@/modules/users/adapters/i_user.repository';
@@ -77,6 +79,12 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
         userRepository: IUserRepository,
         ocurrenceRepository: IOcurrenceRepository,
       ) => new ApproveOccurrenceService(ocurrenceRepository, userRepository),
+    },
+    {
+      inject: [OCCURRENCE_REPOSITORY],
+      provide: GET_OCCURRENCE_SERVICE,
+      useFactory: (ocurrenceRepository: IOcurrenceRepository) =>
+        new GetOccurrencesService(ocurrenceRepository),
     },
   ],
   exports: [],

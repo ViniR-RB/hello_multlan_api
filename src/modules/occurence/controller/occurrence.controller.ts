@@ -3,17 +3,23 @@ import AuthGuard from '@/core/guard/auth.guard';
 import IApproveOccurrenceUseCase from '@/modules/occurence/domain/usecases/i_approve_occurrence_use_case';
 import ICancelOccurrenceUseCase from '@/modules/occurence/domain/usecases/i_cancel_occurrence_use_case';
 import ICreateOcurrenceUseCase from '@/modules/occurence/domain/usecases/i_create_ocurrence_use_case';
+import IGetOccurrencesUseCase from '@/modules/occurence/domain/usecases/i_get_occurrences_use_case';
 import CancelOccurrenceDto from '@/modules/occurence/dto/cancel_occurrence.dto';
 import CreateOccurrenceDto from '@/modules/occurence/dto/create_occurrence.dto';
+import OccurrenceFilterDto from '@/modules/occurence/dto/occurrence_filter.dto';
 import {
   APPROVE_OCCURRENCE_SERVICE,
   CANCEL_OCCURRENCE_SERVICE,
   CREATE_OCCURRENCE_SERVICE,
+  GET_OCCURRENCE_SERVICE,
 } from '@/modules/occurence/symbols';
+import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options.entity';
+import { PageOptionsDto } from '@/modules/pagination/dto/page_options.dto';
 import UserDto from '@/modules/users/dtos/user.dto';
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpException,
   HttpStatus,
@@ -22,6 +28,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -34,6 +41,8 @@ export default class OccurrenceController {
     private readonly cancelOccurrenceUseCase: ICancelOccurrenceUseCase,
     @Inject(APPROVE_OCCURRENCE_SERVICE)
     private readonly approveOccurrenceUseCase: IApproveOccurrenceUseCase,
+    @Inject(GET_OCCURRENCE_SERVICE)
+    private readonly getOccurrencesUseCase: IGetOccurrencesUseCase,
   ) {}
 
   @Post('')
@@ -53,6 +62,25 @@ export default class OccurrenceController {
     }
     return result.value.fromResponse();
   }
+  @Get('')
+  async getOccurrences(
+    @Query() query: PageOptionsDto,
+    @Query() occurrenceFilter: OccurrenceFilterDto,
+  ) {
+    const result = await this.getOccurrencesUseCase.execute({
+      pageOptions: new PageOptionsEntity(query.order, query.page, query.take),
+      status: occurrenceFilter.status,
+      boxId: occurrenceFilter.boxId,
+      userId: occurrenceFilter.userId,
+    });
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return result.value.fromResponse();
+  }
+
   @Put(':occurrenceId/cancel')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
