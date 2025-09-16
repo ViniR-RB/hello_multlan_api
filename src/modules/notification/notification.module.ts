@@ -11,7 +11,9 @@ import { Module } from '@nestjs/common';
       inject: [ConfigurationService],
       provide: NOTIFICATION_SERVICE,
       useFactory: (configService: ConfigurationService) => {
-        return new FirebaseNotificationService(configService);
+        const service = new FirebaseNotificationService(configService);
+        service.onModuleInit();
+        return service;
       },
     },
   ],

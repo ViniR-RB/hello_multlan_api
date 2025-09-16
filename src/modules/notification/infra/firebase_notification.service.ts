@@ -23,6 +23,11 @@ export default class FirebaseNotificationService
 
   private initializeFirebase() {
     try {
+      if (admin.apps.length > 0) {
+        this.firebaseApp = admin.app();
+        console.log('Using existing Firebase app');
+        return;
+      }
       const projectId = this.configurationService.get('FIREBASE_PROJECT_ID');
       const privateKey = this.configurationService
         .get('FIREBASE_PRIVATE_KEY')
