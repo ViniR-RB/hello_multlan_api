@@ -68,6 +68,10 @@ export default class BoxEntity {
     this.props.routeId = routeId;
     this.toTouch();
   }
+  removeRoute() {
+    this.props.routeId = null;
+    this.toTouch();
+  }
 
   get id() {
     return this.props.id!;

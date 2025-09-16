@@ -1,4 +1,5 @@
 import BoxEntity from '@/modules/box/domain/entities/box.entity';
+import RouteDomainException from '@/modules/routers/exceptions/route_domain.exception';
 import { randomUUID } from 'crypto';
 
 interface RouterEntityProps {
@@ -43,8 +44,29 @@ export default class RouterEntity {
   }
 
   addBox(box: BoxEntity) {
+    if (this.props.boxs!.some(boxInRoute => boxInRoute.id === box.id)) {
+      throw new RouteDomainException('Box already in route');
+    }
     box.addRoute(this.id);
     this.props.boxs?.push(box);
+  }
+
+  removeBox(box: BoxEntity) {
+    const boxFinder = this.props.boxs?.find(
+      boxInRoute => boxInRoute.id === box.id,
+    );
+    if (!boxFinder) {
+      throw new RouteDomainException('Box not found in route');
+    }
+    box.removeRoute();
+    this.props.boxs = this.props.boxs?.filter(
+      boxInRoute => boxInRoute.id !== box.id,
+    );
+    this.toTouch();
+  }
+
+  private toTouch() {
+    this.props.updatedAt = new Date();
   }
 
   toObject() {

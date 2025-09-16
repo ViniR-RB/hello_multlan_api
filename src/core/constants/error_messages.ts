@@ -6,5 +6,6 @@ export default abstract class ErrorMessages {
   static readonly INVALID_CREDENTIALS = 'Invalid email or password';
   static readonly FILE_NOT_FOUND = 'File not found';
   static readonly BOX_NOT_FOUND = 'Box not found';
+  static readonly ROUTER_NOT_FOUND = 'Router not found';
   static readonly INVALID_FILE_TYPE = 'Invalid file type';
 }
