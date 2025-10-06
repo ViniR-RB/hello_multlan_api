@@ -3,6 +3,7 @@ import AuthModule from '@/modules/auth/auth.module';
 import IBoxRepository from '@/modules/box/adapters/i_box_repository';
 import CreateBoxService from '@/modules/box/application/create_box.service';
 import GetBoxByIdService from '@/modules/box/application/get_box_by_id.service';
+import GetBoxSummaryService from '@/modules/box/application/get_box_summary.service';
 import GetBoxesWithLabelAndLocationService from '@/modules/box/application/get_boxes_with_label_and_location.service';
 import UpdateBoxService from '@/modules/box/application/update_box.service';
 import BoxController from '@/modules/box/controller/box_controller';
@@ -12,6 +13,7 @@ import {
   BOX_REPOSITORY,
   CREATE_BOX_SERVICE,
   GET_BOX_BY_ID_SERVICE,
+  GET_BOX_SUMMARY_SERVICE,
   GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
@@ -20,7 +22,7 @@ import FileModule from '@/modules/file/file.module';
 import { FILE_REPOSITORY } from '@/modules/file/symbols';
 import { Module } from '@nestjs/common';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 @Module({
   imports: [
@@ -32,10 +34,12 @@ import { Repository } from 'typeorm';
   controllers: [BoxController],
   providers: [
     {
-      inject: [getRepositoryToken(BoxModel)],
+      inject: [getRepositoryToken(BoxModel), DataSource],
       provide: BOX_REPOSITORY,
-      useFactory: (boxRepository: Repository<BoxModel>) =>
-        new BoxRepository(boxRepository),
+      useFactory: (
+        boxRepository: Repository<BoxModel>,
+        dataSource: DataSource,
+      ) => new BoxRepository(boxRepository, dataSource),
     },
     {
       inject: [BOX_REPOSITORY, FILE_REPOSITORY],
@@ -63,13 +67,21 @@ import { Repository } from 'typeorm';
       useFactory: (boxRepository: IBoxRepository) =>
         new GetBoxByIdService(boxRepository),
     },
+    {
+      inject: [BOX_REPOSITORY],
+      provide: GET_BOX_SUMMARY_SERVICE,
+      useFactory: (boxRepository: IBoxRepository) =>
+        new GetBoxSummaryService(boxRepository),
+    },
   ],
   exports: [
     {
-      inject: [getRepositoryToken(BoxModel)],
+      inject: [getRepositoryToken(BoxModel), DataSource],
       provide: BOX_REPOSITORY,
-      useFactory: (boxRepository: Repository<BoxModel>) =>
-        new BoxRepository(boxRepository),
+      useFactory: (
+        boxRepository: Repository<BoxModel>,
+        dataSource: DataSource,
+      ) => new BoxRepository(boxRepository, dataSource),
     },
   ],
 })

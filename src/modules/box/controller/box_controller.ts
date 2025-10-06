@@ -1,6 +1,7 @@
 import AuthGuard from '@/core/guard/auth.guard';
 import ICreateBoxUseCase from '@/modules/box/domain/usecase/i_create_box_use_case';
 import IGetBoxByIdUseCase from '@/modules/box/domain/usecase/i_get_box_by_id_use_case';
+import IGetBoxSummaryUseCase from '@/modules/box/domain/usecase/i_get_box_summary_use_case';
 import IGetBoxesWithLabelAndLocationUseCase from '@/modules/box/domain/usecase/i_get_boxes_with_label_and_location_use_case';
 import IUpdateBoxUseCase from '@/modules/box/domain/usecase/i_update_box_use_case';
 import CreateBoxDto from '@/modules/box/dtos/create_box.dto';
@@ -8,6 +9,7 @@ import UpdateBoxDto from '@/modules/box/dtos/update_box.dto';
 import {
   CREATE_BOX_SERVICE,
   GET_BOX_BY_ID_SERVICE,
+  GET_BOX_SUMMARY_SERVICE,
   GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
@@ -39,7 +41,20 @@ export default class BoxController {
     private readonly getBoxesWithLabelAndLocationService: IGetBoxesWithLabelAndLocationUseCase,
     @Inject(GET_BOX_BY_ID_SERVICE)
     private readonly getBoxByIdService: IGetBoxByIdUseCase,
+    @Inject(GET_BOX_SUMMARY_SERVICE)
+    private readonly getBoxSummaryService: IGetBoxSummaryUseCase,
   ) {}
+
+  @Get('/summary')
+  async getSummary() {
+    const result = await this.getBoxSummaryService.execute();
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return result.value.fromResponse();
+  }
 
   @Post('')
   @UseInterceptors(FileInterceptor('file'))

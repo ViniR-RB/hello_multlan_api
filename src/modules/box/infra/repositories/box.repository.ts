@@ -4,19 +4,95 @@ import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
 import IBoxRepository from '@/modules/box/adapters/i_box_repository';
 import BoxEntity from '@/modules/box/domain/entities/box.entity';
+import { BoxZone } from '@/modules/box/domain/entities/box_zone_enum';
 import BoxRepositoryException from '@/modules/box/exceptions/box_repository.exception';
 import BoxMapper from '@/modules/box/infra/mapper/box.mapper';
 import BoxModel from '@/modules/box/infra/models/box.model';
 import { BoxQueryObject } from '@/modules/box/infra/query/query_object';
+import BoxSummaryReadModel from '@/modules/box/infra/read-models/box_summary_read_model';
 import BoxWithLabelAndLocationReadModel from '@/modules/box/infra/read-models/box_with_label_and_location.read_model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, FindOneOptions, In, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityNotFoundError,
+  FindOneOptions,
+  In,
+  Repository,
+} from 'typeorm';
 
 export default class BoxRepository implements IBoxRepository {
   constructor(
     @InjectRepository(BoxModel)
     private readonly boxRepository: Repository<BoxModel>,
+    private readonly dataSource: DataSource,
   ) {}
+
+  async getSummary(): AsyncResult<AppException, BoxSummaryReadModel> {
+    try {
+      const boxesByZoneQuery = await this.boxRepository
+        .createQueryBuilder('box')
+        .select('box.zone', 'zone')
+        .addSelect('COUNT(box.id)', 'count')
+        .groupBy('box.zone')
+        .getRawMany();
+
+      const totalBoxes = await this.boxRepository
+        .createQueryBuilder('box')
+        .getCount();
+
+      // Contar total de rotas
+      const totalRoutesResult = await this.dataSource.query(
+        'SELECT COUNT(*) as count FROM routers',
+      );
+      const totalRoutes = parseInt(totalRoutesResult[0].count, 10);
+
+      const boxesWithUsersQuery = await this.boxRepository
+        .createQueryBuilder('box')
+        .select('box.list_users', 'listUsers')
+        .where('box.list_users IS NOT NULL')
+        .andWhere("box.list_users != ''")
+        .getRawMany();
+
+      const allUsers = new Set<string>();
+      boxesWithUsersQuery.forEach(box => {
+        if (box.listUsers) {
+          const users = box.listUsers
+            .split(',')
+            .filter(user => user.trim() !== '');
+          users.forEach(user => allUsers.add(user.trim()));
+        }
+      });
+
+      const totalClients = allUsers.size;
+
+      const boxesByZones: Record<BoxZone, number> = {
+        [BoxZone.SAFE]: 0,
+        [BoxZone.MODERATE]: 0,
+        [BoxZone.DANGER]: 0,
+      };
+
+      boxesByZoneQuery.forEach(result => {
+        const zone = result.zone as BoxZone;
+        const count = parseInt(result.count, 10);
+        if (zone in boxesByZones) {
+          boxesByZones[zone] = count;
+        }
+      });
+
+      const summaryReadModel = new BoxSummaryReadModel({
+        boxesByZones,
+        totalRoutes,
+        totalBoxes,
+        totalClients,
+      });
+
+      return right(summaryReadModel);
+    } catch (error) {
+      return left(
+        new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, error),
+      );
+    }
+  }
   async findBoxesByIds(ids: string[]): AsyncResult<AppException, BoxEntity[]> {
     const boxesModel = await this.boxRepository.find({
       where: { id: In(ids) },
