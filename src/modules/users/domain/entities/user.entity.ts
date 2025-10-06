@@ -145,7 +145,10 @@ export default class UserEntity {
     this.props.isActive = !this.props.isActive;
     this.toTouch();
   }
-
+  updatePassword(newPasswordHash: string) {
+    this.props.password = newPasswordHash;
+    this.toTouch();
+  }
   updateUser(
     props: Partial<
       Omit<

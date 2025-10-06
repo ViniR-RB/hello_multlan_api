@@ -1,18 +1,35 @@
 import { Roles } from '@/core/decorators/role.decorator';
+import { User } from '@/core/decorators/user_request.decorator';
 import AuthGuard from '@/core/guard/auth.guard';
 import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options.entity';
 import { PageOptionsDto } from '@/modules/pagination/dto/page_options.dto';
 import UserRole from '@/modules/users/domain/entities/user_role';
 import IFindUsersByFiltersUseCase from '@/modules/users/domain/usecase/i_find_users_by_filters_use_case';
+import IUpdateMyPasswordUseCase from '@/modules/users/domain/usecase/i_update_my_password_use_case';
 import FindUsersQueryFiltersDto from '@/modules/users/dtos/find_users_query_filters.dto';
-import { FIND_USERS_BY_FILTERS_SERVICE } from '@/modules/users/symbols';
-import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common';
+import UpdateMyPasswordDto from '@/modules/users/dtos/update_my_password.dto';
+import UserDto from '@/modules/users/dtos/user.dto';
+import {
+  FIND_USERS_BY_FILTERS_SERVICE,
+  UPDATE_MY_PASSWORD_SERVICE,
+} from '@/modules/users/symbols';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Inject,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
 @Controller('/api/users')
 export default class UsersController {
   constructor(
     @Inject(FIND_USERS_BY_FILTERS_SERVICE)
     private readonly findUsersByFiltersService: IFindUsersByFiltersUseCase,
+    @Inject(UPDATE_MY_PASSWORD_SERVICE)
+    private readonly updateMyPasswordService: IUpdateMyPasswordUseCase,
   ) {}
 
   @Get('/filters')
@@ -31,5 +48,24 @@ export default class UsersController {
       throw error;
     }
     return result.value.fromResponse();
+  }
+
+  @Get('/reset-password')
+  @UseGuards(AuthGuard)
+  async updateMyPassword(
+    @User() user: UserDto,
+    @Body() body: UpdateMyPasswordDto,
+  ) {
+    const result = await this.updateMyPasswordService.execute({
+      userId: user.id,
+      oldPassword: body.oldPassword,
+      newPassword: body.newPassword,
+    });
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value,
+      });
+    }
+    return result.value;
   }
 }
