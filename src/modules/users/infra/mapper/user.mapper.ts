@@ -15,6 +15,8 @@ export default abstract class UserMapper extends BaseMapper<
       isActive: userModel.isActive,
       email: userModel.email,
       name: userModel.name,
+      createdAt: userModel.createdAt,
+      updatedAt: userModel.updatedAt,
     });
   }
 

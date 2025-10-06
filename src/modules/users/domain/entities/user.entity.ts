@@ -26,8 +26,8 @@ export default class UserEntity {
       role: props.role,
       fcmToken: props.fcmToken,
       password: props.password,
-      createdAt: props.createdAt ?? new Date(),
-      updatedAt: props.updatedAt ?? new Date(),
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
     };
   }
 
@@ -49,13 +49,35 @@ export default class UserEntity {
     }
   }
 
-  static create(props: UserEntityProps) {
+  static create(
+    props: Omit<UserEntityProps, 'id' | 'isActive' | 'createdAt' | 'updatedAt'>,
+  ) {
     this.validade(props);
-    return new UserEntity(props);
+    return new UserEntity({
+      id: undefined,
+      email: props.email,
+      name: props.name,
+      isActive: true,
+      role: props.role,
+      fcmToken: null,
+      password: props.password,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   static fromData(props: UserEntityProps) {
-    return new UserEntity(props);
+    return new UserEntity({
+      id: props.id,
+      email: props.email,
+      name: props.name,
+      isActive: props.isActive,
+      role: props.role,
+      fcmToken: props.fcmToken,
+      password: props.password,
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
+    });
   }
 
   changePassword(newPasswordHash: string) {
