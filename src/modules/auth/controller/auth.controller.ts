@@ -88,6 +88,8 @@ export default class AuthController {
     description: 'User registered successfully',
     type: UserDto,
   })
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
   @ApiResponse({ status: 400, description: 'Erro in Domain' })
   async createRegister(@Body() createUserDto: CreateUserInternalDto) {
     const result = await this.createUserService.execute({
