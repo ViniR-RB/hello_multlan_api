@@ -2,8 +2,12 @@ import ErrorMessages from '@/core/constants/error_messages';
 import AppException from '@/core/exceptions/app_exception';
 import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
+import PageEntity from '@/modules/pagination/domain/entities/page.entity';
+import PageMetaEntity from '@/modules/pagination/domain/entities/page_meta.entity';
+import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options.entity';
 import IUserRepository from '@/modules/users/adapters/i_user.repository';
 import UserEntity from '@/modules/users/domain/entities/user.entity';
+import UserRole from '@/modules/users/domain/entities/user_role';
 import {
   UserRepositoryException,
   UserRepositoryNotFoundException,
@@ -19,6 +23,37 @@ export default class UserRepository implements IUserRepository {
     @InjectRepository(UserModel)
     private userRepository: Repository<UserModel>,
   ) {}
+
+  async findByFilters(
+    options: PageOptionsEntity,
+    role: UserRole,
+  ): AsyncResult<AppException, PageEntity<UserEntity>> {
+    try {
+      let queryBuilder = this.userRepository.createQueryBuilder('user');
+
+      if (role) {
+        queryBuilder = queryBuilder.where('user.role = :role', { role });
+      }
+
+      queryBuilder
+        .orderBy('user.createdAt', options.order)
+        .skip(options.skip)
+        .take(options.take);
+
+      const [users, total] = await queryBuilder.getManyAndCount();
+      const pageMeta = new PageMetaEntity({
+        pageOptions: options,
+        itemCount: total,
+      });
+
+      return right(new PageEntity(users.map(UserMapper.toEntity), pageMeta));
+    } catch (e) {
+      return left(
+        new UserRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
+      );
+    }
+  }
+
   create(entity: UserEntity): UserModel {
     return this.userRepository.create(UserMapper.toModel(entity));
   }
