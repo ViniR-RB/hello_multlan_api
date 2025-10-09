@@ -1,30 +1,25 @@
 import CoreModule from '@/core/core_module';
-import ConfigurationService from '@/core/services/configuration.service';
+import {
+  FIREBASE_APP,
+  firebaseAppProvider,
+  firebaseConfigProvider,
+} from '@/modules/notification/infra/firebase.providers';
 import FirebaseNotificationService from '@/modules/notification/infra/firebase_notification.service';
 import { NOTIFICATION_SERVICE } from '@/modules/notification/symbols';
 import { Module } from '@nestjs/common';
-
+import * as admin from 'firebase-admin';
 @Module({
   imports: [CoreModule],
   providers: [
+    firebaseConfigProvider,
+    firebaseAppProvider,
     {
-      inject: [ConfigurationService],
+      inject: [FIREBASE_APP],
       provide: NOTIFICATION_SERVICE,
-      useFactory: (configService: ConfigurationService) => {
-        const service = new FirebaseNotificationService(configService);
-        service.onModuleInit();
-        return service;
-      },
+      useFactory: (firebaseApp: admin.app.App) =>
+        new FirebaseNotificationService(firebaseApp),
     },
   ],
-  exports: [
-    {
-      inject: [ConfigurationService],
-      provide: NOTIFICATION_SERVICE,
-      useFactory: (configService: ConfigurationService) => {
-        return new FirebaseNotificationService(configService);
-      },
-    },
-  ],
+  exports: [NOTIFICATION_SERVICE],
 })
 export default class NotificationModule {}

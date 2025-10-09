@@ -1,53 +1,20 @@
 import ErrorMessages from '@/core/constants/error_messages';
 import AppException from '@/core/exceptions/app_exception';
 import ServiceException from '@/core/exceptions/service.exception';
-import ConfigurationService from '@/core/services/configuration.service';
 import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
 import { unit, Unit } from '@/core/types/unit';
 import INotificationMessage from '@/modules/notification/adapters/i_notification_message';
 import NotificationInterface from '@/modules/notification/domain/entities/notification';
 import NotificationServiceException from '@/modules/notification/exceptions/notification_service.exception';
-import { OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
+@Injectable()
 export default class FirebaseNotificationService
-  implements INotificationMessage, OnModuleInit
+  implements INotificationMessage
 {
-  private firebaseApp: admin.app.App;
-
-  onModuleInit() {
-    this.initializeFirebase();
-  }
-  constructor(private readonly configurationService: ConfigurationService) {}
-
-  private initializeFirebase() {
-    try {
-      if (admin.apps.length > 0) {
-        this.firebaseApp = admin.app();
-        console.log('Using existing Firebase app');
-        return;
-      }
-      const projectId = this.configurationService.get('FIREBASE_PROJECT_ID');
-      const privateKey = this.configurationService
-        .get('FIREBASE_PRIVATE_KEY')
-        ?.replace(/\\n/g, '\n');
-
-      const clientEmail = this.configurationService.get(
-        'FIREBASE_CLIENT_EMAIL',
-      );
-
-      this.firebaseApp = admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId,
-          privateKey,
-          clientEmail,
-        }),
-      });
-    } catch (e) {
-      throw NotificationServiceException.serviceNotAvailable(e);
-    }
-  }
+  constructor(private readonly firebaseApp: admin.app.App) {}
 
   async sendNotificationToUser(
     token: string,
@@ -83,8 +50,8 @@ export default class FirebaseNotificationService
         },
       };
       console.log('Sending message');
-      await this.firebaseApp.messaging().send(message);
-
+      const messageId = await this.firebaseApp.messaging().send(message);
+      console.log('Message sent: ', messageId);
       return right(unit);
     } catch (e) {
       if (e instanceof AppException) {
