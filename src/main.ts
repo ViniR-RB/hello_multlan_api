@@ -13,6 +13,7 @@ async function bootstrap() {
     new ValidationPipe({
       errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       whitelist: true,
+      transform: true,
     }),
   );
   const options = new DocumentBuilder()

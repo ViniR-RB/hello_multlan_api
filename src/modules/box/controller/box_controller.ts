@@ -2,15 +2,16 @@ import AuthGuard from '@/core/guard/auth.guard';
 import ICreateBoxUseCase from '@/modules/box/domain/usecase/i_create_box_use_case';
 import IGetBoxByIdUseCase from '@/modules/box/domain/usecase/i_get_box_by_id_use_case';
 import IGetBoxSummaryUseCase from '@/modules/box/domain/usecase/i_get_box_summary_use_case';
-import IGetBoxesWithLabelAndLocationUseCase from '@/modules/box/domain/usecase/i_get_boxes_with_label_and_location_use_case';
+import IGetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersUseCase from '@/modules/box/domain/usecase/i_get_boxes_with_label_and_location_by_lat_long_min_max_and_filters_use_case';
 import IUpdateBoxUseCase from '@/modules/box/domain/usecase/i_update_box_use_case';
 import CreateBoxDto from '@/modules/box/dtos/create_box.dto';
+import GetBoxesByLatLongMinMaxAndFiltersDto from '@/modules/box/dtos/get_boxes_by_lat_long_min_max_and_filters.dto';
 import UpdateBoxDto from '@/modules/box/dtos/update_box.dto';
 import {
   CREATE_BOX_SERVICE,
   GET_BOX_BY_ID_SERVICE,
   GET_BOX_SUMMARY_SERVICE,
-  GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE,
+  GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
 import {
@@ -23,6 +24,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -37,12 +39,13 @@ export default class BoxController {
     private readonly createBoxService: ICreateBoxUseCase,
     @Inject(UPDATE_BOX_SERVICE)
     private readonly updateBoxService: IUpdateBoxUseCase,
-    @Inject(GET_BOXES_WITH_LOCATION_AND_LABEL_SERVICE)
-    private readonly getBoxesWithLabelAndLocationService: IGetBoxesWithLabelAndLocationUseCase,
+
     @Inject(GET_BOX_BY_ID_SERVICE)
     private readonly getBoxByIdService: IGetBoxByIdUseCase,
     @Inject(GET_BOX_SUMMARY_SERVICE)
     private readonly getBoxSummaryService: IGetBoxSummaryUseCase,
+    @Inject(GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS)
+    private readonly getBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService: IGetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersUseCase,
   ) {}
 
   @Get('/summary')
@@ -129,8 +132,19 @@ export default class BoxController {
   }
 
   @Get('')
-  async getBoxesWithLabelAndLocation() {
-    const result = await this.getBoxesWithLabelAndLocationService.execute();
+  async getBoxesWithLabelAndLocationByLatLongMinMaxAndFilters(
+    @Query() query: GetBoxesByLatLongMinMaxAndFiltersDto,
+  ) {
+    const result =
+      await this.getBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService.execute(
+        {
+          latMax: query.latMax,
+          latMin: query.latMin,
+          lngMax: query.lngMax,
+          lngMin: query.lngMin,
+          zone: query.zone,
+        },
+      );
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode, {
         cause: result.value.cause,

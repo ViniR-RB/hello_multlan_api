@@ -26,6 +26,35 @@ export default class BoxRepository implements IBoxRepository {
     private readonly boxRepository: Repository<BoxModel>,
     private readonly dataSource: DataSource,
   ) {}
+  async findBoxesWithLabelAndLocationByLatLongMinMaxAndFilters(
+    latMin: number,
+    latMax: number,
+    longMin: number,
+    longMax: number,
+    zone?: BoxZone,
+  ): AsyncResult<AppException, BoxWithLabelAndLocationReadModel[]> {
+    try {
+      const queryBuilder = this.boxRepository
+        .createQueryBuilder('box')
+        .select(['box.id', 'box.label', 'box.latitude', 'box.longitude'])
+        .where('box.latitude BETWEEN :latMin AND :latMax', { latMin, latMax })
+        .andWhere('box.longitude BETWEEN :longMin AND :longMax', {
+          longMin,
+          longMax,
+        });
+      if (zone) {
+        queryBuilder.andWhere('box.zone = :zone', { zone });
+      }
+
+      const boxes = await queryBuilder.getMany();
+
+      return right(boxes.map(BoxMapper.toBoxWithLabelAndLocationReadModel));
+    } catch (e) {
+      return left(
+        new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
+      );
+    }
+  }
 
   async getSummary(): AsyncResult<AppException, BoxSummaryReadModel> {
     try {
@@ -98,21 +127,6 @@ export default class BoxRepository implements IBoxRepository {
       where: { id: In(ids) },
     });
     return right(boxesModel.map(BoxMapper.toEntity));
-  }
-  async findBoxesWithLabelAndLocation(): AsyncResult<
-    AppException,
-    BoxWithLabelAndLocationReadModel[]
-  > {
-    try {
-      const boxes = await this.boxRepository.find({
-        select: ['id', 'label', 'latitude', 'longitude'],
-      });
-      return right(boxes.map(BoxMapper.toBoxWithLabelAndLocationReadModel));
-    } catch (e) {
-      return left(
-        new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
-      );
-    }
   }
   async findOne(query: BoxQueryObject): AsyncResult<AppException, BoxEntity> {
     try {
