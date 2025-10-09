@@ -173,9 +173,18 @@ export default class BoxEntity {
       throw new BoxDomainException('Invalid zone');
     }
     if (
-      cleanProps.listUser &&
       cleanProps.freeSpace &&
-      cleanProps.listUser?.length > cleanProps.freeSpace
+      cleanProps.filledSpace &&
+      cleanProps.filledSpace > cleanProps.freeSpace
+    ) {
+      throw new BoxDomainException(
+        'Filled space cannot be greater than free space',
+      );
+    }
+    if (
+      cleanProps.listUser &&
+      cleanProps.filledSpace &&
+      cleanProps.listUser?.length > cleanProps.filledSpace
     ) {
       throw new BoxDomainException(
         'Number of users cannot exceed the free space of the box',
