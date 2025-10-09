@@ -3,9 +3,9 @@ import RouteDomainException from '@/modules/routers/exceptions/route_domain.exce
 import { randomUUID } from 'crypto';
 
 interface RouterEntityProps {
-  id?: string;
+  id: string;
   name: string;
-  boxs?: BoxEntity[];
+  boxs: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -13,15 +13,23 @@ interface RouterEntityProps {
 export default class RouterEntity {
   constructor(private readonly props: RouterEntityProps) {
     this.props = {
-      id: props.id ?? randomUUID().toString(),
+      id: props.id,
       name: props.name,
       boxs: props.boxs ?? [],
       createdAt: props.createdAt ?? new Date(),
       updatedAt: props.updatedAt ?? new Date(),
     };
   }
-  static create(props: RouterEntityProps) {
-    return new RouterEntity(props);
+  static create(
+    props: Omit<RouterEntityProps, 'id' | 'createdAt' | 'updatedAt'>,
+  ) {
+    return new RouterEntity({
+      ...props,
+      id: randomUUID().toString(),
+      boxs: props.boxs,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
   }
 
   static fromData(props: RouterEntityProps) {
@@ -44,24 +52,20 @@ export default class RouterEntity {
   }
 
   addBox(box: BoxEntity) {
-    if (this.props.boxs!.some(boxInRoute => boxInRoute.id === box.id)) {
+    if (this.props.boxs!.some(boxId => boxId === box.id)) {
       throw new RouteDomainException('Box already in route');
     }
     box.addRoute(this.id);
-    this.props.boxs?.push(box);
+    this.props.boxs?.push(box.id);
   }
 
   removeBox(box: BoxEntity) {
-    const boxFinder = this.props.boxs?.find(
-      boxInRoute => boxInRoute.id === box.id,
-    );
+    const boxFinder = this.props.boxs?.find(boxId => boxId === box.id);
     if (!boxFinder) {
       throw new RouteDomainException('Box not found in route');
     }
     box.removeRoute();
-    this.props.boxs = this.props.boxs?.filter(
-      boxInRoute => boxInRoute.id !== box.id,
-    );
+    this.props.boxs = this.props.boxs?.filter(boxId => boxId !== box.id);
     this.toTouch();
   }
 
@@ -73,7 +77,7 @@ export default class RouterEntity {
     return {
       id: this.id,
       name: this.name,
-      boxs: this.boxs?.map(box => box.toObject()),
+      boxs: this.boxs,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

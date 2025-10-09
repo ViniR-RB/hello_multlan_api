@@ -34,16 +34,19 @@ export default class CreateRouteService implements ICreateRouteUseCase {
           ),
         );
       }
-      const routeEntity = new RouterEntity({
+      const routeEntity = RouterEntity.create({
         name: param.name,
-        boxs: boxes,
+        boxs: [],
       });
-      boxes.map(box => box.addRoute(routeEntity.id));
+
+      boxes.map(box => routeEntity.addBox(box));
 
       const rounteSavedResult = await this.routeRepository.save(routeEntity);
+
       if (rounteSavedResult.isLeft()) {
         return left(rounteSavedResult.value);
       }
+      
       return right(new CreateRouteResponse(rounteSavedResult.value));
     } catch (e) {
       if (e instanceof AppException) {

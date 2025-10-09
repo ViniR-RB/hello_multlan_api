@@ -1,4 +1,3 @@
-import BoxDto from '@/modules/box/dtos/box.dto';
 import { IsArray, IsDate, IsString, IsUUID, Length } from 'class-validator';
 
 export default class RouterDto {
@@ -10,7 +9,7 @@ export default class RouterDto {
   name: string;
 
   @IsArray()
-  boxs: BoxDto[];
+  boxs: string[];
 
   @IsDate()
   createdAt: Date;
