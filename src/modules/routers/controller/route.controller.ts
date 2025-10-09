@@ -18,7 +18,6 @@ import {
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   Inject,
@@ -95,7 +94,7 @@ export default class RouteController {
     return result.value.fromResponse();
   }
 
-  @Delete(':routeId/remove-boxs')
+  @Put(':routeId/remove-boxs')
   async removeBoxsFromRoute(
     @Param('routeId', ParseUUIDPipe) routeId: string,
     @Body() body: RemoveBoxsFromRouteDto,
