@@ -16,9 +16,8 @@ export interface CreateBoxParam {
   zone: BoxZone;
   listUser: string[];
   boxFile: BaseFile;
-  routeId?: string | null;
-  imageUrl?: string | null;
-  note?: string | null;
+  routeId: string | null;
+  note: string | null;
 }
 export class CreateBoxResponse {
   constructor(public readonly boxEntity: BoxEntity) {}

@@ -30,6 +30,7 @@ export default class CreateBoxService implements ICreateBoxUseCase {
         zone: param.zone,
         routeId: param.routeId,
         note: param.note,
+        listUser: param.listUser,
       });
 
       const fileName = `${boxEntity.id}.${param.boxFile.originalName.split('.').pop()}`;

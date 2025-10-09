@@ -3,7 +3,7 @@ import BoxDomainException from '@/modules/box/exceptions/box_domain.exception';
 import { randomUUID } from 'crypto';
 
 interface BoxEntityProps {
-  id?: string;
+  id: string;
   label: string;
   latitude: number;
   longitude: number;
@@ -11,12 +11,12 @@ interface BoxEntityProps {
   filledSpace: number;
   signal: number;
   zone: BoxZone;
-  listUser?: string[];
-  routeId?: string | null;
-  imageUrl?: string | null;
-  note?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+  listUser: string[];
+  routeId: string | null;
+  imageUrl: string | null;
+  note: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export default class BoxEntity {
@@ -30,12 +30,12 @@ export default class BoxEntity {
       filledSpace: props.filledSpace,
       signal: props.signal,
       zone: props.zone,
-      listUser: props.listUser ?? [],
-      routeId: props.routeId ?? null,
-      imageUrl: props.imageUrl ?? null,
-      note: props.note ?? null,
-      createdAt: props.createdAt ?? new Date(),
-      updatedAt: props.updatedAt ?? new Date(),
+      listUser: props.listUser,
+      routeId: props.routeId,
+      imageUrl: props.imageUrl,
+      note: props.note,
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
     };
   }
 
@@ -48,13 +48,33 @@ export default class BoxEntity {
         'Filled space cannot be greater than free space',
       );
     }
-    if (props.zone === undefined) {
+    if (props.filledSpace !== props.listUser.length) {
+      throw new BoxDomainException(
+        'Filled space must be equal to the number of users in the box',
+      );
+    }
+    if (props.filledSpace < props.listUser.length) {
+      throw new BoxDomainException(
+        'Filled space cannot be less than the number of users in the box',
+      );
+    }
+    if (props.zone) {
       throw new BoxDomainException('Zone is required');
     }
   }
-  static create(props: BoxEntityProps) {
-    this.validate(props);
-    return new BoxEntity(props);
+  static create(
+    props: Omit<BoxEntityProps, 'id' | 'createdAt' | 'updatedAt' | 'imageUrl'>,
+    id?: string,
+  ) {
+    const newData: BoxEntityProps = {
+      ...props,
+      id: id ?? randomUUID().toString(),
+      imageUrl: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.validate(newData);
+    return new BoxEntity(newData);
   }
 
   static fromData(props: BoxEntityProps) {

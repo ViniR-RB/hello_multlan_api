@@ -6,14 +6,8 @@ import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export default class CreateBoxDto extends PickType(BoxDto, [
   'label',
-  'latitude',
-  'longitude',
-  'freeSpace',
-  'filledSpace',
   'signal',
   'zone',
-  'listUser',
-  'imageUrl',
   'note',
 ]) {
   @IsNumber()
@@ -52,7 +46,7 @@ export default class CreateBoxDto extends PickType(BoxDto, [
     }
     return String(value);
   })
-  routeId?: string | null;
+  routeId: string | null;
 
   @IsOptional()
   @IsString()
