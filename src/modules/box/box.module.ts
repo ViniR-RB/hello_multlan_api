@@ -2,6 +2,7 @@ import CoreModule from '@/core/core_module';
 import AuthModule from '@/modules/auth/auth.module';
 import IBoxRepository from '@/modules/box/adapters/i_box_repository';
 import CreateBoxService from '@/modules/box/application/create_box.service';
+import DeleteBoxService from '@/modules/box/application/delete_box.service';
 import GetBoxByIdService from '@/modules/box/application/get_box_by_id.service';
 import GetBoxSummaryService from '@/modules/box/application/get_box_summary.service';
 import GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService from '@/modules/box/application/get_boxes_with_label_and_location_by_lat_long_min_max_and_filters.service';
@@ -12,6 +13,7 @@ import BoxRepository from '@/modules/box/infra/repositories/box.repository';
 import {
   BOX_REPOSITORY,
   CREATE_BOX_SERVICE,
+  DELETE_BOX_SERVICE,
   GET_BOX_BY_ID_SERVICE,
   GET_BOX_SUMMARY_SERVICE,
   GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS,
@@ -20,6 +22,8 @@ import {
 import IFileRepository from '@/modules/file/adapters/i_file_repository';
 import FileModule from '@/modules/file/file.module';
 import { FILE_REPOSITORY } from '@/modules/file/symbols';
+import { USER_REPOSITORY } from '@/modules/users/symbols';
+import UsersModule from '@/modules/users/users.module';
 import { Module } from '@nestjs/common';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -29,6 +33,7 @@ import { DataSource, Repository } from 'typeorm';
     AuthModule,
     CoreModule,
     FileModule,
+    UsersModule,
     TypeOrmModule.forFeature([BoxModel]),
   ],
   controllers: [BoxController],
@@ -77,6 +82,11 @@ import { DataSource, Repository } from 'typeorm';
           boxRepository,
         ),
     },
+    {
+      inject: [USER_REPOSITORY,BOX_REPOSITORY],
+      provide: DELETE_BOX_SERVICE,
+      useFactory: (userRepository, boxRepository) => new DeleteBoxService(userRepository, boxRepository)
+    }
   ],
   exports: [
     {

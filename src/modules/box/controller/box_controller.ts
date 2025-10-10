@@ -1,5 +1,8 @@
+import { Roles } from '@/core/decorators/role.decorator';
+import { User } from '@/core/decorators/user_request.decorator';
 import AuthGuard from '@/core/guard/auth.guard';
 import ICreateBoxUseCase from '@/modules/box/domain/usecase/i_create_box_use_case';
+import IDeleteBoxUseCase from '@/modules/box/domain/usecase/i_delete_box_use_case';
 import IGetBoxByIdUseCase from '@/modules/box/domain/usecase/i_get_box_by_id_use_case';
 import IGetBoxSummaryUseCase from '@/modules/box/domain/usecase/i_get_box_summary_use_case';
 import IGetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersUseCase from '@/modules/box/domain/usecase/i_get_boxes_with_label_and_location_by_lat_long_min_max_and_filters_use_case';
@@ -9,14 +12,18 @@ import GetBoxesByLatLongMinMaxAndFiltersDto from '@/modules/box/dtos/get_boxes_b
 import UpdateBoxDto from '@/modules/box/dtos/update_box.dto';
 import {
   CREATE_BOX_SERVICE,
+  DELETE_BOX_SERVICE,
   GET_BOX_BY_ID_SERVICE,
   GET_BOX_SUMMARY_SERVICE,
   GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
+import UserRole from '@/modules/users/domain/entities/user_role';
+import UserDto from '@/modules/users/dtos/user.dto';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Inject,
@@ -46,6 +53,8 @@ export default class BoxController {
     private readonly getBoxSummaryService: IGetBoxSummaryUseCase,
     @Inject(GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS)
     private readonly getBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService: IGetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersUseCase,
+    @Inject(DELETE_BOX_SERVICE)
+    private readonly deleteBoxService: IDeleteBoxUseCase
   ) {}
 
   @Get('/summary')
@@ -151,5 +160,19 @@ export default class BoxController {
       });
     }
     return result.value.fromResponse();
+  }
+
+
+  @Delete("/:id")
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  async deleteBox(@Param("id", ParseUUIDPipe) id: string, @User() user: UserDto) {
+    const result = await this.deleteBoxService.execute({ boxId: id, userActionId: user.id });
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return
   }
 }

@@ -2,6 +2,7 @@ import ErrorMessages from '@/core/constants/error_messages';
 import AppException from '@/core/exceptions/app_exception';
 import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
+import { unit, Unit } from '@/core/types/unit';
 import IBoxRepository from '@/modules/box/adapters/i_box_repository';
 import BoxEntity from '@/modules/box/domain/entities/box.entity';
 import { BoxZone } from '@/modules/box/domain/entities/box_zone_enum';
@@ -26,6 +27,17 @@ export default class BoxRepository implements IBoxRepository {
     private readonly boxRepository: Repository<BoxModel>,
     private readonly dataSource: DataSource,
   ) {}
+  async deleteById(id: string): AsyncResult<AppException, Unit> {
+   try {
+    const result = await this.boxRepository.delete(id);
+    if (result.affected && result.affected > 0) {
+      return right(unit);
+    }
+    return left(new BoxRepositoryException(ErrorMessages.BOX_NOT_FOUND, 404));
+   } catch (error) {
+    return left(new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, error));
+   }
+  }
   async findBoxesWithLabelAndLocationByLatLongMinMaxAndFilters(
     latMin: number,
     latMax: number,

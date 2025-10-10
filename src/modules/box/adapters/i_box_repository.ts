@@ -1,6 +1,7 @@
 import AppException from '@/core/exceptions/app_exception';
 import BaseRepository from '@/core/interface/base_repository';
 import AsyncResult from '@/core/types/async_result';
+import { Unit } from '@/core/types/unit';
 import BoxEntity from '@/modules/box/domain/entities/box.entity';
 import { BoxZone } from '@/modules/box/domain/entities/box_zone_enum';
 import BoxModel from '@/modules/box/infra/models/box.model';
@@ -19,5 +20,6 @@ export default interface IBoxRepository
     zone?: BoxZone,
   ): AsyncResult<AppException, BoxWithLabelAndLocationReadModel[]>;
   findBoxesByIds(ids: string[]): AsyncResult<AppException, BoxEntity[]>;
+  deleteById(id: string): AsyncResult<AppException, Unit>;
   getSummary(): AsyncResult<AppException, BoxSummaryReadModel>;
 }
