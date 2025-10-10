@@ -58,7 +58,7 @@ export default class BoxEntity {
         'Filled space cannot be less than the number of users in the box',
       );
     }
-    if (props.zone) {
+    if (!props.zone) {
       throw new BoxDomainException('Zone is required');
     }
   }
