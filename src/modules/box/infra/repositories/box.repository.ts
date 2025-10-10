@@ -28,15 +28,17 @@ export default class BoxRepository implements IBoxRepository {
     private readonly dataSource: DataSource,
   ) {}
   async deleteById(id: string): AsyncResult<AppException, Unit> {
-   try {
-    const result = await this.boxRepository.delete(id);
-    if (result.affected && result.affected > 0) {
-      return right(unit);
+    try {
+      const result = await this.boxRepository.delete(id);
+      if (result.affected && result.affected > 0) {
+        return right(unit);
+      }
+      return left(new BoxRepositoryException(ErrorMessages.BOX_NOT_FOUND, 404));
+    } catch (error) {
+      return left(
+        new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, error),
+      );
     }
-    return left(new BoxRepositoryException(ErrorMessages.BOX_NOT_FOUND, 404));
-   } catch (error) {
-    return left(new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, error));
-   }
   }
   async findBoxesWithLabelAndLocationByLatLongMinMaxAndFilters(
     latMin: number,
@@ -163,6 +165,17 @@ export default class BoxRepository implements IBoxRepository {
           new BoxRepositoryException(ErrorMessages.BOX_NOT_FOUND, 404),
         );
       }
+      return left(
+        new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
+      );
+    }
+  }
+
+  async findAll(): AsyncResult<AppException, BoxEntity[]> {
+    try {
+      const boxes = await this.boxRepository.find();
+      return right(boxes.map(box => BoxMapper.toEntity(box)));
+    } catch (e) {
       return left(
         new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
       );

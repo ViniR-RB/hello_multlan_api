@@ -3,6 +3,7 @@ import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options
 import { PageOptionsDto } from '@/modules/pagination/dto/page_options.dto';
 import IAddBoxsToRouteUseCase from '@/modules/routers/domain/usecase/i_add_boxs_to_route_use_case';
 import ICreateRouteUseCase from '@/modules/routers/domain/usecase/i_create_route_use_case';
+import IFindAllRoutesUseCase from '@/modules/routers/domain/usecase/i_find_all_routes_use_case';
 import IGetRoutersUseCase from '@/modules/routers/domain/usecase/i_get_routers_use_case';
 import IRemoveBoxsFromRouteUseCase from '@/modules/routers/domain/usecase/i_remove_boxs_from_route_use_case';
 import AddBoxsToRouteDto from '@/modules/routers/dto/add_boxs_to_route.dto';
@@ -12,6 +13,7 @@ import RouterFilterDto from '@/modules/routers/dto/router_filter.dto';
 import {
   ADD_BOXS_TO_ROUTE_SERVICE,
   CREATE_ROUTE_SERVICE,
+  FIND_ALL_ROUTERS_SERVICE,
   GET_ROUTERS_SERVICE,
   REMOVE_BOXS_FROM_ROUTE_SERVICE,
 } from '@/modules/routers/symbols';
@@ -41,7 +43,21 @@ export default class RouteController {
     private readonly removeBoxsFromRouteService: IRemoveBoxsFromRouteUseCase,
     @Inject(GET_ROUTERS_SERVICE)
     private readonly getRoutersService: IGetRoutersUseCase,
+    @Inject(FIND_ALL_ROUTERS_SERVICE)
+    private readonly findAllRoutesService: IFindAllRoutesUseCase,
   ) {}
+
+  @Get('/all')
+  async findAllRoutes() {
+    const result = await this.findAllRoutesService.execute();
+
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return result.value.fromResponse();
+  }
 
   @Get('')
   async getRouters(

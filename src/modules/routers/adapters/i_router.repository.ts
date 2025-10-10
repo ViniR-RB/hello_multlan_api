@@ -9,6 +9,7 @@ import { RouterQueryObjects } from '@/modules/routers/infra/query/query_objects'
 
 export default interface IRouterRepository
   extends BaseRepository<RouterModel, RouterEntity> {
+  findAll(): AsyncResult<AppException, RouterEntity[]>;
   findOne(query: RouterQueryObjects): AsyncResult<AppException, RouterEntity>;
   findMany(
     pageOptions: PageOptionsEntity,

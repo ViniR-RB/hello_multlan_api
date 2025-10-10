@@ -12,6 +12,7 @@ import BoxWithLabelAndLocationReadModel from '@/modules/box/infra/read-models/bo
 export default interface IBoxRepository
   extends BaseRepository<BoxModel, BoxEntity> {
   findOne(query: BoxQueryObject): AsyncResult<AppException, BoxEntity>;
+  findAll(): AsyncResult<AppException, BoxEntity[]>;
   findBoxesWithLabelAndLocationByLatLongMinMaxAndFilters(
     latMin: number,
     latMax: number,

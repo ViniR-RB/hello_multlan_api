@@ -3,6 +3,7 @@ import { User } from '@/core/decorators/user_request.decorator';
 import AuthGuard from '@/core/guard/auth.guard';
 import ICreateBoxUseCase from '@/modules/box/domain/usecase/i_create_box_use_case';
 import IDeleteBoxUseCase from '@/modules/box/domain/usecase/i_delete_box_use_case';
+import IFindAllBoxesUseCase from '@/modules/box/domain/usecase/i_find_all_boxes_use_case';
 import IGetBoxByIdUseCase from '@/modules/box/domain/usecase/i_get_box_by_id_use_case';
 import IGetBoxSummaryUseCase from '@/modules/box/domain/usecase/i_get_box_summary_use_case';
 import IGetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersUseCase from '@/modules/box/domain/usecase/i_get_boxes_with_label_and_location_by_lat_long_min_max_and_filters_use_case';
@@ -13,6 +14,7 @@ import UpdateBoxDto from '@/modules/box/dtos/update_box.dto';
 import {
   CREATE_BOX_SERVICE,
   DELETE_BOX_SERVICE,
+  FIND_ALL_BOXES_SERVICE,
   GET_BOX_BY_ID_SERVICE,
   GET_BOX_SUMMARY_SERVICE,
   GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS,
@@ -49,17 +51,30 @@ export default class BoxController {
 
     @Inject(GET_BOX_BY_ID_SERVICE)
     private readonly getBoxByIdService: IGetBoxByIdUseCase,
+    @Inject(FIND_ALL_BOXES_SERVICE)
+    private readonly findAllBoxesService: IFindAllBoxesUseCase,
     @Inject(GET_BOX_SUMMARY_SERVICE)
     private readonly getBoxSummaryService: IGetBoxSummaryUseCase,
     @Inject(GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS)
     private readonly getBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService: IGetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersUseCase,
     @Inject(DELETE_BOX_SERVICE)
-    private readonly deleteBoxService: IDeleteBoxUseCase
+    private readonly deleteBoxService: IDeleteBoxUseCase,
   ) {}
 
   @Get('/summary')
   async getSummary() {
     const result = await this.getBoxSummaryService.execute();
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return result.value.fromResponse();
+  }
+
+  @Get('/all')
+  async findAllBoxes() {
+    const result = await this.findAllBoxesService.execute();
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode, {
         cause: result.value.cause,
@@ -162,17 +177,22 @@ export default class BoxController {
     return result.value.fromResponse();
   }
 
-
-  @Delete("/:id")
+  @Delete('/:id')
   @UseGuards(AuthGuard)
   @Roles(UserRole.ADMIN)
-  async deleteBox(@Param("id", ParseUUIDPipe) id: string, @User() user: UserDto) {
-    const result = await this.deleteBoxService.execute({ boxId: id, userActionId: user.id });
+  async deleteBox(
+    @Param('id', ParseUUIDPipe) id: string,
+    @User() user: UserDto,
+  ) {
+    const result = await this.deleteBoxService.execute({
+      boxId: id,
+      userActionId: user.id,
+    });
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode, {
         cause: result.value.cause,
       });
     }
-    return
+    return;
   }
 }

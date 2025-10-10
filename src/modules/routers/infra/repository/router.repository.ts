@@ -15,6 +15,16 @@ import { EntityNotFoundError, FindOneOptions, Repository } from 'typeorm';
 
 export default class RouterRepository implements IRouterRepository {
   constructor(private readonly routeRepository: Repository<RouterModel>) {}
+  async findAll(): AsyncResult<AppException, RouterEntity[]> {
+    try {
+      const routers = await this.routeRepository.find();
+      return right(routers.map(RouterMapper.toEntity));
+    } catch (e) {
+      return left(
+        new RouterRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
+      );
+    }
+  }
 
   async findMany(
     pageOptions: PageOptionsEntity,

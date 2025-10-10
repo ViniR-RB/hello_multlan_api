@@ -3,6 +3,7 @@ import AuthModule from '@/modules/auth/auth.module';
 import IBoxRepository from '@/modules/box/adapters/i_box_repository';
 import CreateBoxService from '@/modules/box/application/create_box.service';
 import DeleteBoxService from '@/modules/box/application/delete_box.service';
+import FindAllBoxesService from '@/modules/box/application/find_all_boxes.service';
 import GetBoxByIdService from '@/modules/box/application/get_box_by_id.service';
 import GetBoxSummaryService from '@/modules/box/application/get_box_summary.service';
 import GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService from '@/modules/box/application/get_boxes_with_label_and_location_by_lat_long_min_max_and_filters.service';
@@ -14,6 +15,7 @@ import {
   BOX_REPOSITORY,
   CREATE_BOX_SERVICE,
   DELETE_BOX_SERVICE,
+  FIND_ALL_BOXES_SERVICE,
   GET_BOX_BY_ID_SERVICE,
   GET_BOX_SUMMARY_SERVICE,
   GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS,
@@ -69,6 +71,12 @@ import { DataSource, Repository } from 'typeorm';
     },
     {
       inject: [BOX_REPOSITORY],
+      provide: FIND_ALL_BOXES_SERVICE,
+      useFactory: (boxRepository: IBoxRepository) =>
+        new FindAllBoxesService(boxRepository),
+    },
+    {
+      inject: [BOX_REPOSITORY],
       provide: GET_BOX_SUMMARY_SERVICE,
       useFactory: (boxRepository: IBoxRepository) =>
         new GetBoxSummaryService(boxRepository),
@@ -83,10 +91,11 @@ import { DataSource, Repository } from 'typeorm';
         ),
     },
     {
-      inject: [USER_REPOSITORY,BOX_REPOSITORY],
+      inject: [USER_REPOSITORY, BOX_REPOSITORY],
       provide: DELETE_BOX_SERVICE,
-      useFactory: (userRepository, boxRepository) => new DeleteBoxService(userRepository, boxRepository)
-    }
+      useFactory: (userRepository, boxRepository) =>
+        new DeleteBoxService(userRepository, boxRepository),
+    },
   ],
   exports: [
     {

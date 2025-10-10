@@ -6,6 +6,7 @@ import { BOX_REPOSITORY } from '@/modules/box/symbols';
 import IRouterRepository from '@/modules/routers/adapters/i_router.repository';
 import AddBoxsToRouteService from '@/modules/routers/application/add_boxs_to_route.service';
 import CreateRouteService from '@/modules/routers/application/create_route.service';
+import FindAllRoutesService from '@/modules/routers/application/find_all_routes.service';
 import GetRoutersService from '@/modules/routers/application/get_routers.service';
 import RemoveBoxsFromRouteService from '@/modules/routers/application/remove_boxs_from_route.service';
 import RouteController from '@/modules/routers/controller/route.controller';
@@ -14,6 +15,7 @@ import RouterRepository from '@/modules/routers/infra/repository/router.reposito
 import {
   ADD_BOXS_TO_ROUTE_SERVICE,
   CREATE_ROUTE_SERVICE,
+  FIND_ALL_ROUTERS_SERVICE,
   GET_ROUTERS_SERVICE,
   REMOVE_BOXS_FROM_ROUTE_SERVICE,
   ROUTE_REPOSITORY,
@@ -65,6 +67,12 @@ import { Repository } from 'typeorm';
       provide: GET_ROUTERS_SERVICE,
       useFactory: (routeRepository: IRouterRepository) =>
         new GetRoutersService(routeRepository),
+    },
+    {
+      inject: [ROUTE_REPOSITORY],
+      provide: FIND_ALL_ROUTERS_SERVICE,
+      useFactory: (routeRepository: IRouterRepository) =>
+        new FindAllRoutesService(routeRepository),
     },
   ],
 })
