@@ -41,6 +41,7 @@ export default class UsersController {
   ) {
     const result = await this.findUsersByFiltersService.execute({
       options: new PageOptionsEntity(options.order, options.page, options.take),
+      email: findUsersQueryFilters.email,
       role: findUsersQueryFilters.role,
     });
     if (result.isLeft()) {

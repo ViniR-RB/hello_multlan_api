@@ -16,6 +16,7 @@ export default class FindUsersByFiltersService
   ): AsyncResult<AppException, FindUsersByFiltersResponse> {
     const usersFinder = await this.userRepository.findByFilters(
       param.options,
+      param.email,
       param.role,
     );
     if (usersFinder.isLeft()) {

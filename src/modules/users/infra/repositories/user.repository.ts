@@ -26,13 +26,20 @@ export default class UserRepository implements IUserRepository {
 
   async findByFilters(
     options: PageOptionsEntity,
-    role: UserRole,
+    email?: string,
+    role?: UserRole,
   ): AsyncResult<AppException, PageEntity<UserEntity>> {
     try {
       let queryBuilder = this.userRepository.createQueryBuilder('user');
 
       if (role) {
         queryBuilder = queryBuilder.where('user.role = :role', { role });
+      }
+
+      if (email) {
+        queryBuilder = queryBuilder.andWhere('user.email ILIKE :email', {
+          email: `%${email}%`,
+        });
       }
 
       queryBuilder

@@ -14,6 +14,7 @@ export default interface IUserRepository
   findManyByIds(ids: number[]): AsyncResult<AppException, UserEntity[]>;
   findByFilters(
     options: PageOptionsEntity,
+    email?: string,
     role?: UserRole,
   ): AsyncResult<AppException, PageEntity<UserEntity>>;
 }

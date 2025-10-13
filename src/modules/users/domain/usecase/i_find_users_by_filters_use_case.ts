@@ -9,6 +9,7 @@ export default interface IFindUsersByFiltersUseCase
 
 export interface FindUsersByFiltersParam {
   options: PageOptionsEntity;
+  email?: string;
   role?: UserRole;
 }
 
