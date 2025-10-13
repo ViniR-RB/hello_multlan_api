@@ -10,7 +10,7 @@ interface UserEntityProps {
   name: string;
   password: string;
   role: UserRole;
-  isActive?: boolean;
+  isActive: boolean;
   fcmToken: string | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -22,7 +22,7 @@ export default class UserEntity {
       id: props.id,
       email: props.email,
       name: props.name,
-      isActive: props.isActive ?? true,
+      isActive: props.isActive,
       role: props.role,
       fcmToken: props.fcmToken,
       password: props.password,
@@ -142,6 +142,16 @@ export default class UserEntity {
   }
 
   toogleUser() {
+    this.props.isActive = !this.props.isActive;
+    this.toTouch();
+  }
+
+  toggleUserByAdmin(requestingUserId: number) {
+    if (this.id === requestingUserId) {
+      throw new UserDomainException(
+        'User cannot activate or deactivate themselves',
+      );
+    }
     this.props.isActive = !this.props.isActive;
     this.toTouch();
   }

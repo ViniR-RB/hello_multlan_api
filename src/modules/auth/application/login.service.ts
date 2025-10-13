@@ -22,11 +22,17 @@ export default class LoginService implements ILoginUseCase {
     try {
       const userFinder = await this.userRepository.findOne({
         userEmail: param.email,
-        selectFields: ['id', 'password', 'name', 'email'],
+        selectFields: ['id', 'password', 'name', 'email', 'isActive'],
       });
 
       if (userFinder.isLeft()) {
         return left(userFinder.value);
+      }
+
+      if (!userFinder.value.isActive) {
+        return left(
+          new ServiceException(ErrorMessages.USER_IS_NOT_AUTHORIZED, 400),
+        );
       }
 
       const passwordIsMatch = await this.encryptionService.isMatch(

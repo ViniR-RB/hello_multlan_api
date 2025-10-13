@@ -59,6 +59,14 @@ export default class AuthGuard implements CanActivate {
     if (userAlreadyExisties.isLeft()) {
       throw new UnauthorizedException('Jwt Is invalid');
     }
+
+    const user = userAlreadyExisties.value.userEntity;
+
+    // Verificar se o usuário está ativo
+    if (!user.isActive) {
+      throw new UnauthorizedException('User Deactive');
+    }
+
     const userDto = plainToClass(UserDto, {
       ...userAlreadyExisties.value.fromResponse(),
     });

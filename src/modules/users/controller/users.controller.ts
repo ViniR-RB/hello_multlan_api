@@ -5,12 +5,15 @@ import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options
 import { PageOptionsDto } from '@/modules/pagination/dto/page_options.dto';
 import UserRole from '@/modules/users/domain/entities/user_role';
 import IFindUsersByFiltersUseCase from '@/modules/users/domain/usecase/i_find_users_by_filters_use_case';
+import IToggleUserUseCase from '@/modules/users/domain/usecase/i_toggle_user_use_case';
 import IUpdateMyPasswordUseCase from '@/modules/users/domain/usecase/i_update_my_password_use_case';
+import ToggleUserDto from '@/modules/users/dto/toggle_user.dto';
 import FindUsersQueryFiltersDto from '@/modules/users/dtos/find_users_query_filters.dto';
 import UpdateMyPasswordDto from '@/modules/users/dtos/update_my_password.dto';
 import UserDto from '@/modules/users/dtos/user.dto';
 import {
   FIND_USERS_BY_FILTERS_SERVICE,
+  TOGGLE_USER_SERVICE,
   UPDATE_MY_PASSWORD_SERVICE,
 } from '@/modules/users/symbols';
 import {
@@ -19,6 +22,7 @@ import {
   Get,
   HttpException,
   Inject,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -30,6 +34,8 @@ export default class UsersController {
     private readonly findUsersByFiltersService: IFindUsersByFiltersUseCase,
     @Inject(UPDATE_MY_PASSWORD_SERVICE)
     private readonly updateMyPasswordService: IUpdateMyPasswordUseCase,
+    @Inject(TOGGLE_USER_SERVICE)
+    private readonly toggleUserService: IToggleUserUseCase,
   ) {}
 
   @Get('/filters')
@@ -68,5 +74,21 @@ export default class UsersController {
       });
     }
     return result.value;
+  }
+
+  @Patch('/toggle')
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  async toggleUser(@User() user: UserDto, @Body() body: ToggleUserDto) {
+    const result = await this.toggleUserService.execute({
+      targetUserId: body.targetUserId,
+      requestingUserId: user.id,
+    });
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value,
+      });
+    }
+    return result.value.fromResponse();
   }
 }
