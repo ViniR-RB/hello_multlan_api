@@ -1,3 +1,4 @@
+import ErrorMessages from '@/core/constants/error_messages';
 import AppException from '@/core/exceptions/app_exception';
 import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
@@ -22,47 +23,56 @@ export default class CreateOcurrenceService implements ICreateOcurrenceUseCase {
   async execute(
     param: CreateOcurrenceParam,
   ): AsyncResult<AppException, CreateOcurrenceResponse> {
-    if (param.boxId) {
-      const boxExists = await this.boxRepository.findOne({
-        boxId: param.boxId,
-      });
-      if (boxExists.isLeft()) {
-        return left(boxExists.value);
+    try {
+      if (param.boxId) {
+        const boxExists = await this.boxRepository.findOne({
+          boxId: param.boxId,
+        });
+        if (boxExists.isLeft()) {
+          return left(boxExists.value);
+        }
       }
-    }
 
-    const usersResult = await this.userRepository.findManyByIds(param.usersId);
+      const usersResult = await this.userRepository.findManyByIds(
+        param.usersId,
+      );
 
-    if (usersResult.isLeft()) {
-      return left(usersResult.value);
-    }
-    const ocurrence = OccurrenceEntity.create({
-      ...param,
-      users: usersResult.value,
-    });
-    const savedOcurrence = await this.ocurrenceRepository.save(ocurrence);
-
-    if (savedOcurrence.isLeft()) {
-      return left(savedOcurrence.value);
-    }
-    const missingUsers = param.usersId.filter(
-      id => !usersResult.value.some(user => user.id === id),
-    );
-    const senderNotification = param.usersId.filter(id =>
-      usersResult.value.some(user => user.id === id),
-    );
-
-    senderNotification.map(async userId => {
-      await this.eventBus.publish<PushNotificationEventData>({
-        type: 'push_notification',
-        title: `${param.title}`,
-        body: `${param.description}`,
-        userId: userId,
+      if (usersResult.isLeft()) {
+        return left(usersResult.value);
+      }
+      const ocurrence = OccurrenceEntity.create({
+        ...param,
+        users: usersResult.value,
       });
-    });
+      const savedOcurrence = await this.ocurrenceRepository.save(ocurrence);
 
-    return right(
-      new CreateOcurrenceResponse(savedOcurrence.value, missingUsers),
-    );
+      if (savedOcurrence.isLeft()) {
+        return left(savedOcurrence.value);
+      }
+      const missingUsers = param.usersId.filter(
+        id => !usersResult.value.some(user => user.id === id),
+      );
+      const senderNotification = param.usersId.filter(id =>
+        usersResult.value.some(user => user.id === id),
+      );
+
+      senderNotification.map(async userId => {
+        await this.eventBus.publish<PushNotificationEventData>({
+          type: 'push_notification',
+          title: `${param.title}`,
+          body: `${param.description}`,
+          userId: userId,
+        });
+      });
+
+      return right(
+        new CreateOcurrenceResponse(savedOcurrence.value, missingUsers),
+      );
+    } catch (error) {
+      if (error instanceof AppException) {
+        return left(error);
+      }
+      return left(new AppException(ErrorMessages.UNEXPECTED_ERROR, 500, error));
+    }
   }
 }

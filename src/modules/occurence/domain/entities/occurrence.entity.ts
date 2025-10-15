@@ -36,6 +36,12 @@ export default class OccurrenceEntity {
     >,
     id?: string,
   ) {
+    if (props.users.length === 0) {
+      throw new OccurrenceDomainException(
+        'An occurrence must have at least one user',
+      );
+    }
+
     return new OccurrenceEntity({
       ...props,
       id: id ?? randomUUID().toString(),
