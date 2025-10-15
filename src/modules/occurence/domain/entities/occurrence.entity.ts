@@ -4,36 +4,45 @@ import UserEntity from '@/modules/users/domain/entities/user.entity';
 import { randomUUID } from 'crypto';
 
 interface OccurrenceEntityProps {
-  id?: string;
+  id: string;
   title: string;
   description: string | null;
-  users?: UserEntity[];
+  users: UserEntity[];
   boxId: string | null;
-  canceledReason?: string | null;
-  status?: OccurrenceStatus;
-  createdAt?: Date;
-  updatedAt?: Date;
+  canceledReason: string | null;
+  status: OccurrenceStatus;
+  createdAt: Date;
+  updatedAt: Date;
 }
 export default class OccurrenceEntity {
   private constructor(private readonly props: OccurrenceEntityProps) {
     this.props = {
-      id: props.id ?? randomUUID().toString(),
+      id: props.id,
       title: props.title,
       description: props.description,
-      users: props.users ?? [],
+      users: props.users,
       boxId: props.boxId,
       canceledReason: props.canceledReason,
       status: props.status,
-      createdAt: props.createdAt ?? new Date(),
-      updatedAt: props.updatedAt ?? new Date(),
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
     };
   }
 
-  static create(props: OccurrenceEntityProps) {
+  static create(
+    props: Omit<
+      OccurrenceEntityProps,
+      'id' | 'status' | 'canceledReason' | 'createdAt' | 'updatedAt'
+    >,
+    id?: string,
+  ) {
     return new OccurrenceEntity({
       ...props,
+      id: id ?? randomUUID().toString(),
       canceledReason: null,
       status: OccurrenceStatus.CREATED,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
   }
 
