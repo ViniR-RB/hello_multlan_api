@@ -2,7 +2,9 @@ import CoreModule from '@/core/core_module';
 import ConfigurationService from '@/core/services/configuration.service';
 import AuthModule from '@/modules/auth/auth.module';
 import BoxModule from '@/modules/box/box.module';
+import ConfigModule from '@/modules/config/config.module';
 import EventsModule from '@/modules/events/events.module';
+import NotificationModule from '@/modules/notification/notification.module';
 import OccurrenceModule from '@/modules/occurence/occurrence.module';
 import RouterModule from '@/modules/routers/route.module';
 import UsersModule from '@/modules/users/users.module';
@@ -14,7 +16,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import NotificationModule from '@/modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import NotificationModule from '@/modules/notification/notification.module';
     UsersModule,
     AuthModule,
     BoxModule,
+    ConfigModule,
     OccurrenceModule,
     EventsModule,
     NotificationModule,
