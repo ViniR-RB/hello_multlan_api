@@ -18,5 +18,6 @@ export default interface IOcurrenceRepository
     status?: OccurrenceStatus,
     boxId?: string,
     userId?: number,
+    occurrenceTypeId?: string
   ): AsyncResult<AppException, PageEntity<OccurrenceEntity>>;
 }

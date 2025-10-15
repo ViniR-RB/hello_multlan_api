@@ -8,6 +8,7 @@ interface OccurrenceEntityProps {
   title: string;
   description: string | null;
   users: UserEntity[];
+  occurrenceTypeId: string | null;
   boxId: string | null;
   canceledReason: string | null;
   status: OccurrenceStatus;
@@ -21,6 +22,7 @@ export default class OccurrenceEntity {
       title: props.title,
       description: props.description,
       users: props.users,
+      occurrenceTypeId: props.occurrenceTypeId,
       boxId: props.boxId,
       canceledReason: props.canceledReason,
       status: props.status,
@@ -62,6 +64,7 @@ export default class OccurrenceEntity {
       title: this.name,
       description: this.description,
       users: this.users.map(user => user.toObject()),
+      occurrenceTypeId: this.occurrenceTypeId,
       status: this.status,
       canceledReason: this.canceledReason,
       boxId: this.boxId,
@@ -125,6 +128,9 @@ export default class OccurrenceEntity {
   }
   get description() {
     return this.props.description;
+  }
+  get occurrenceTypeId() {
+    return this.props.occurrenceTypeId;
   }
   get users() {
     return this.props.users!;

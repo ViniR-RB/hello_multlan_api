@@ -12,6 +12,7 @@ export interface GetOccurrencesParam {
   status?: OccurrenceStatus;
   boxId?: string;
   userId?: number;
+  occurrenceTypeId?: string;
 }
 export class GetOccurrencesResponse {
   constructor(public readonly page: PageEntity<OccurrenceEntity>) {}

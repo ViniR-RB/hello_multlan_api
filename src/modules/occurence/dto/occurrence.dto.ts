@@ -3,6 +3,7 @@ import UserDto from '@/modules/users/dtos/user.dto';
 import {
   IsArray,
   IsDate,
+  IsEmpty,
   IsEnum,
   IsOptional,
   IsString,
@@ -28,6 +29,11 @@ export default class OccurrenceDto {
   @IsUUID()
   @IsOptional()
   boxId: string | null;
+
+  @IsString()
+  @IsUUID()
+  @IsEmpty()
+  occurrenceTypeId: string | null;
 
   @IsEnum(OccurrenceStatus)
   status: OccurrenceStatus;

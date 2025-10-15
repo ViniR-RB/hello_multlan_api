@@ -8,6 +8,7 @@ export interface CreateOcurrenceParam {
   title: string;
   description: string | null;
   usersId: number[];
+  occurrenceTypeId: string;
   boxId: string | null;
 }
 

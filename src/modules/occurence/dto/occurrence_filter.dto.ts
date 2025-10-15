@@ -23,4 +23,9 @@ export default class OccurrenceFilterDto {
   @IsNumber()
   @IsOptional()
   userId?: number;
+
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  occurrenceTypeId?: string;
 }

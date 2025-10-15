@@ -17,6 +17,7 @@ export default class GetOccurrencesService implements IGetOccurrencesUseCase {
       param.status,
       param.boxId,
       param.userId,
+      param.occurrenceTypeId,
     );
     if (occurrences.isLeft()) {
       return left(occurrences.value);

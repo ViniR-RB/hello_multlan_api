@@ -23,6 +23,7 @@ export default class OccurrenceRepository implements IOcurrenceRepository {
     status?: OccurrenceStatus,
     boxId?: string,
     userId?: number,
+    occurrenceTypeId?: string,
   ): AsyncResult<AppException, PageEntity<OccurrenceEntity>> {
     try {
       let queryBuilder =
@@ -46,6 +47,14 @@ export default class OccurrenceRepository implements IOcurrenceRepository {
         queryBuilder = queryBuilder.andWhere('users.id = :userId', {
           userId,
         });
+      }
+      if (occurrenceTypeId) {
+        queryBuilder = queryBuilder.andWhere(
+          'occurrence.occurrenceTypeId = :occurrenceTypeId',
+          {
+            occurrenceTypeId: occurrenceTypeId,
+          },
+        );
       }
 
       queryBuilder = queryBuilder

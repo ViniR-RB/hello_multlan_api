@@ -52,6 +52,7 @@ export default class OccurrenceController {
       title: dto.title,
       boxId: dto.boxId,
       description: dto.description,
+      occurrenceTypeId: dto.occurrenceTypeId,
       usersId: dto.usersId,
     });
 
@@ -72,6 +73,8 @@ export default class OccurrenceController {
       status: occurrenceFilter.status,
       boxId: occurrenceFilter.boxId,
       userId: occurrenceFilter.userId,
+      occurrenceTypeId: occurrenceFilter.occurrenceTypeId
+      
     });
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode, {

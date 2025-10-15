@@ -1,6 +1,7 @@
 import { BaseModelIdUuidCreated } from '@/core/models/base.models';
 import BoxModel from '@/modules/box/infra/models/box.model';
 import OccurrenceStatus from '@/modules/occurence/domain/entities/occurrence_status';
+import OccurrenceTypeModel from '@/modules/occurence/infra/models/occurrence_type.model';
 import UserModel from '@/modules/users/infra/models/user.model';
 import {
   Column,
@@ -40,6 +41,19 @@ export default class OccurrenceModel extends BaseModelIdUuidCreated {
     },
   })
   users: UserModel[];
+
+  @ManyToOne(() => OccurrenceTypeModel, model => model.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'occurrence_type_id' })
+  occurrenceType: OccurrenceTypeModel | null;
+
+  @Column({
+    name: 'occurrence_type_id',
+    nullable: true,
+  })
+  occurrenceTypeId: string | null;
 
   @Column({
     type: 'enum',
