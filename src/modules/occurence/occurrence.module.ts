@@ -10,6 +10,7 @@ import IOccurrenceTypeRepository from '@/modules/occurence/adapters/i_occurrence
 import IOcurrenceRepository from '@/modules/occurence/adapters/i_ocurrence.repository';
 import ApproveOccurrenceService from '@/modules/occurence/application/approve_occurrence.service';
 import CancelOccurrenceService from '@/modules/occurence/application/cancel_occurrence.service';
+import CountOccurrencesByTypeService from '@/modules/occurence/application/count_occurrences_by_type.service';
 import CreateOccurrenceTypeService from '@/modules/occurence/application/create_occurrence_type.service';
 import CreateOcurrenceService from '@/modules/occurence/application/create_ocurrence.service';
 import DeleteOccurrenceTypeService from '@/modules/occurence/application/delete_occurrence_type.service';
@@ -26,6 +27,7 @@ import OccurrenceTypeRepository from '@/modules/occurence/infra/repository/occur
 import {
   APPROVE_OCCURRENCE_SERVICE,
   CANCEL_OCCURRENCE_SERVICE,
+  COUNT_OCCURRENCES_BY_TYPE_SERVICE,
   CREATE_OCCURRENCE_SERVICE,
   CREATE_OCCURRENCE_TYPE_SERVICE,
   DELETE_OCCURRENCE_TYPE_SERVICE,
@@ -137,8 +139,14 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
       useFactory: (occurrenceTypeRepository: IOccurrenceTypeRepository) =>
         new GetOccurrenceTypeByIdService(occurrenceTypeRepository),
     },
+    {
+      inject: [OCCURRENCE_REPOSITORY],
+      provide: COUNT_OCCURRENCES_BY_TYPE_SERVICE,
+      useFactory: (occurrenceRepository: IOcurrenceRepository) =>
+        new CountOccurrencesByTypeService(occurrenceRepository),
+    },
   ],
-  exports: [],
+  exports: [OCCURRENCE_REPOSITORY, COUNT_OCCURRENCES_BY_TYPE_SERVICE],
 })
 export default class OccurrenceModule {
   constructor() {}

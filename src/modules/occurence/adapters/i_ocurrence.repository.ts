@@ -18,6 +18,17 @@ export default interface IOcurrenceRepository
     status?: OccurrenceStatus,
     boxId?: string,
     userId?: number,
-    occurrenceTypeId?: string
+    occurrenceTypeId?: string,
   ): AsyncResult<AppException, PageEntity<OccurrenceEntity>>;
+  countByTypeAndPeriod(
+    occurrenceTypeId: string,
+    startDate: Date,
+    endDate: Date,
+    boxId?: string,
+  ): AsyncResult<AppException, number>;
+  findBoxIdsWithOccurrencesByType(
+    occurrenceTypeId: string,
+    startDate: Date,
+    endDate: Date,
+  ): AsyncResult<AppException, string[]>;
 }

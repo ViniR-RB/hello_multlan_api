@@ -4,6 +4,7 @@ import IConfigRepository from '@/modules/config/adapters/i_config_repository';
 import CreateConfigService from '@/modules/config/application/create_config.service';
 import DeleteConfigService from '@/modules/config/application/delete_config.service';
 import GetConfigByIdService from '@/modules/config/application/get_config_by_id.service';
+import GetConfigByKeyService from '@/modules/config/application/get_config_by_key.service';
 import GetConfigsService from '@/modules/config/application/get_configs.service';
 import UpdateConfigService from '@/modules/config/application/update_config.service';
 import ConfigController from '@/modules/config/controller/config.controller';
@@ -14,6 +15,7 @@ import {
   CREATE_CONFIG_SERVICE,
   DELETE_CONFIG_SERVICE,
   GET_CONFIG_BY_ID_SERVICE,
+  GET_CONFIG_BY_KEY_SERVICE,
   GET_CONFIGS_SERVICE,
   UPDATE_CONFIG_SERVICE,
 } from '@/modules/config/symbols';
@@ -59,8 +61,14 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
       useFactory: (configRepository: IConfigRepository) =>
         new GetConfigByIdService(configRepository),
     },
+    {
+      inject: [CONFIG_REPOSITORY],
+      provide: GET_CONFIG_BY_KEY_SERVICE,
+      useFactory: (configRepository: IConfigRepository) =>
+        new GetConfigByKeyService(configRepository),
+    },
   ],
-  exports: [],
+  exports: [CONFIG_REPOSITORY, GET_CONFIG_BY_KEY_SERVICE],
 })
 export default class ConfigModule {
   constructor() {}

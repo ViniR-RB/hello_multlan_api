@@ -7,6 +7,7 @@ import EventsModule from '@/modules/events/events.module';
 import NotificationModule from '@/modules/notification/notification.module';
 import OccurrenceModule from '@/modules/occurence/occurrence.module';
 import RouterModule from '@/modules/routers/route.module';
+import SchedulerModule from '@/modules/scheduler/scheduler.module';
 import UsersModule from '@/modules/users/users.module';
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
@@ -54,6 +55,7 @@ import { AppService } from './app.service';
     OccurrenceModule,
     EventsModule,
     NotificationModule,
+    SchedulerModule,
     ServeStaticModule.forRootAsync({
       imports: [CoreModule],
       inject: [ConfigurationService],

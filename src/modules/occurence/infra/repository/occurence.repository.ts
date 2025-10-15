@@ -135,4 +135,75 @@ export default class OccurrenceRepository implements IOcurrenceRepository {
       );
     }
   }
+
+  async countByTypeAndPeriod(
+    occurrenceTypeId: string,
+    startDate: Date,
+    endDate: Date,
+    boxId?: string,
+  ): AsyncResult<AppException, number> {
+    try {
+      let queryBuilder =
+        this.occurenceRepository.createQueryBuilder('occurrence');
+
+      queryBuilder = queryBuilder.where(
+        'occurrence.occurrenceTypeId = :occurrenceTypeId',
+        { occurrenceTypeId },
+      );
+
+      queryBuilder = queryBuilder.andWhere(
+        'occurrence.createdAt >= :startDate AND occurrence.createdAt <= :endDate',
+        { startDate, endDate },
+      );
+
+      if (boxId) {
+        queryBuilder = queryBuilder.andWhere('occurrence.boxId = :boxId', {
+          boxId,
+        });
+      }
+
+      const count = await queryBuilder.getCount();
+      return right(count);
+    } catch (error) {
+      return left(
+        new OccurrenceRepositoryException(
+          ErrorMessages.UNEXPECTED_ERROR,
+          500,
+          error,
+        ),
+      );
+    }
+  }
+
+  async findBoxIdsWithOccurrencesByType(
+    occurrenceTypeId: string,
+    startDate: Date,
+    endDate: Date,
+  ): AsyncResult<AppException, string[]> {
+    try {
+      const result = await this.occurenceRepository
+        .createQueryBuilder('occurrence')
+        .select('DISTINCT occurrence.boxId', 'boxId')
+        .where('occurrence.occurrenceTypeId = :occurrenceTypeId', {
+          occurrenceTypeId,
+        })
+        .andWhere(
+          'occurrence.createdAt >= :startDate AND occurrence.createdAt <= :endDate',
+          { startDate, endDate },
+        )
+        .andWhere('occurrence.boxId IS NOT NULL')
+        .getRawMany();
+
+      const boxIds = result.map(row => row.boxId);
+      return right(boxIds);
+    } catch (error) {
+      return left(
+        new OccurrenceRepositoryException(
+          ErrorMessages.UNEXPECTED_ERROR,
+          500,
+          error,
+        ),
+      );
+    }
+  }
 }
