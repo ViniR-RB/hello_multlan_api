@@ -2,6 +2,7 @@ import ErrorMessages from '@/core/constants/error_messages';
 import AppException from '@/core/exceptions/app_exception';
 import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
+import { unit, Unit } from '@/core/types/unit';
 import PageEntity from '@/modules/pagination/domain/entities/page.entity';
 import PageMetaEntity from '@/modules/pagination/domain/entities/page_meta.entity';
 import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options.entity';
@@ -23,6 +24,16 @@ export default class UserRepository implements IUserRepository {
     @InjectRepository(UserModel)
     private userRepository: Repository<UserModel>,
   ) {}
+  async delete(id: number): AsyncResult<AppException, Unit> {
+    try {
+      await this.userRepository.delete(id);
+      return right(unit);
+    } catch (e) {
+      return left(
+        new UserRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
+      );
+    }
+  }
 
   async findByFilters(
     options: PageOptionsEntity,

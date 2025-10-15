@@ -4,14 +4,16 @@ import AuthGuard from '@/core/guard/auth.guard';
 import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options.entity';
 import { PageOptionsDto } from '@/modules/pagination/dto/page_options.dto';
 import UserRole from '@/modules/users/domain/entities/user_role';
+import IDeleteUserUseCase from '@/modules/users/domain/usecase/i_delete_user_use_case';
 import IFindUsersByFiltersUseCase from '@/modules/users/domain/usecase/i_find_users_by_filters_use_case';
 import IToggleUserUseCase from '@/modules/users/domain/usecase/i_toggle_user_use_case';
 import IUpdateMyPasswordUseCase from '@/modules/users/domain/usecase/i_update_my_password_use_case';
-import ToggleUserDto from '@/modules/users/dto/toggle_user.dto';
+import TargetUserReciveActionDto from '@/modules/users/dto/target_user_recive_action.dto';
 import FindUsersQueryFiltersDto from '@/modules/users/dtos/find_users_query_filters.dto';
 import UpdateMyPasswordDto from '@/modules/users/dtos/update_my_password.dto';
 import UserDto from '@/modules/users/dtos/user.dto';
 import {
+  DELETE_USER_SERVICE,
   FIND_USERS_BY_FILTERS_SERVICE,
   TOGGLE_USER_SERVICE,
   UPDATE_MY_PASSWORD_SERVICE,
@@ -19,6 +21,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Inject,
@@ -36,6 +39,8 @@ export default class UsersController {
     private readonly updateMyPasswordService: IUpdateMyPasswordUseCase,
     @Inject(TOGGLE_USER_SERVICE)
     private readonly toggleUserService: IToggleUserUseCase,
+    @Inject(DELETE_USER_SERVICE)
+    private readonly deleteUserService: IDeleteUserUseCase,
   ) {}
 
   @Get('/filters')
@@ -79,7 +84,10 @@ export default class UsersController {
   @Patch('/toggle')
   @UseGuards(AuthGuard)
   @Roles(UserRole.ADMIN)
-  async toggleUser(@User() user: UserDto, @Body() body: ToggleUserDto) {
+  async toggleUser(
+    @User() user: UserDto,
+    @Body() body: TargetUserReciveActionDto,
+  ) {
     const result = await this.toggleUserService.execute({
       targetUserId: body.targetUserId,
       requestingUserId: user.id,
@@ -90,5 +98,24 @@ export default class UsersController {
       });
     }
     return result.value.fromResponse();
+  }
+
+  @Delete('/delete')
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  async deleteUser(
+    @User() user: UserDto,
+    @Body() body: TargetUserReciveActionDto,
+  ) {
+    const result = await this.deleteUserService.execute({
+      targetUserId: body.targetUserId,
+      requestingUserId: user.id,
+    });
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value,
+      });
+    }
+    return;
   }
 }

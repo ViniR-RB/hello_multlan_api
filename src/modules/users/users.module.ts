@@ -6,6 +6,7 @@ import {
 import AuthModule from '@/modules/auth/auth.module';
 import IUserRepository from '@/modules/users/adapters/i_user.repository';
 import CreateUserService from '@/modules/users/application/create_user.service';
+import DeleteUserService from '@/modules/users/application/delete_user.service';
 import FindUsersByFiltersService from '@/modules/users/application/find_users_by_filters.service';
 import ToggleUserService from '@/modules/users/application/toggle_user.service';
 import UpdateMyPasswordService from '@/modules/users/application/update_my_password.service';
@@ -15,6 +16,7 @@ import UserModel from '@/modules/users/infra/models/user.model';
 import UserRepository from '@/modules/users/infra/repositories/user.repository';
 import {
   CREATE_USER_SERVICE,
+  DELETE_USER_SERVICE,
   FIND_USERS_BY_FILTERS_SERVICE,
   TOGGLE_USER_SERVICE,
   UPDATE_MY_PASSWORD_SERVICE,
@@ -72,6 +74,12 @@ import { Repository } from 'typeorm';
       provide: TOGGLE_USER_SERVICE,
       useFactory: (userRepository: IUserRepository) =>
         new ToggleUserService(userRepository),
+    },
+    {
+      inject: [USER_REPOSITORY],
+      provide: DELETE_USER_SERVICE,
+      useFactory: (userRepository: IUserRepository) =>
+        new DeleteUserService(userRepository),
     },
   ],
   exports: [

@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
 
-export default class ToggleUserDto {
+export default class TargetUserReciveActionDto {
   @Type(() => Number)
   @IsNumber({}, { message: 'targetUserId must be a number' })
   @IsPositive({ message: 'targetUserId must be a positive number' })
