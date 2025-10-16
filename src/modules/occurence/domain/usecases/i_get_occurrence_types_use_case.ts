@@ -8,6 +8,7 @@ export default interface IGetOccurrenceTypesUseCase
 
 export interface GetOccurrenceTypesParam {
   pageOptions: PageOptionsEntity;
+  name?: string;
 }
 
 export class GetOccurrenceTypesResponse {

@@ -100,10 +100,17 @@ export default class OccurrenceTypeRepository
 
   async findAll(
     pageOptions: PageOptionsEntity,
+    name?: string,
   ): AsyncResult<AppException, PageEntity<OccurrenceTypeEntity>> {
     try {
       const queryBuilder =
         this.occurrenceTypeRepository.createQueryBuilder('occurrence_type');
+
+      if (name) {
+        queryBuilder.where('occurrence_type.name ILIKE :name', {
+          name: `%${name}%`,
+        });
+      }
 
       queryBuilder
         .orderBy('occurrence_type.createdAt', pageOptions.order)

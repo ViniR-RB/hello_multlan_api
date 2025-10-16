@@ -5,6 +5,7 @@ import IGetOccurrenceTypeByIdUseCase from '@/modules/occurence/domain/usecases/i
 import IGetOccurrenceTypesUseCase from '@/modules/occurence/domain/usecases/i_get_occurrence_types_use_case';
 import IUpdateOccurrenceTypeUseCase from '@/modules/occurence/domain/usecases/i_update_occurrence_type_use_case';
 import CreateOccurrenceTypeDto from '@/modules/occurence/dto/create_occurrence_type.dto';
+import FilterQueryOccurrenceTypeDto from '@/modules/occurence/dto/filter_query_occurrence_type.dto';
 import UpdateOccurrenceTypeDto from '@/modules/occurence/dto/update_occurrence_type.dto';
 import {
   CREATE_OCCURRENCE_TYPE_SERVICE,
@@ -65,9 +66,13 @@ export default class OccurrenceTypeController {
 
   @Get('')
   @HttpCode(HttpStatus.OK)
-  async getOccurrenceTypes(@Query() query: PageOptionsDto) {
+  async getOccurrenceTypes(
+    @Query() query: PageOptionsDto,
+    @Query() filterQueryOccurrenceType: FilterQueryOccurrenceTypeDto,
+  ) {
     const result = await this.getOccurrenceTypesUseCase.execute({
       pageOptions: new PageOptionsEntity(query.order, query.page, query.take),
+      name: filterQueryOccurrenceType.name,
     });
 
     if (result.isLeft()) {

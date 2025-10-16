@@ -22,6 +22,7 @@ export default class GetOccurrenceTypesService
     try {
       const result = await this.occurrenceTypeRepository.findAll(
         param.pageOptions,
+        param.name,
       );
       if (result.isLeft()) {
         return left(result.value);

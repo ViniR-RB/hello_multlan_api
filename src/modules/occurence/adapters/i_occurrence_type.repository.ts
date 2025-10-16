@@ -16,6 +16,7 @@ export default interface IOccurrenceTypeRepository
   findById(id: string): AsyncResult<AppException, OccurrenceTypeEntity>;
   findAll(
     pageOptions: PageOptionsEntity,
+    name?: string,
   ): AsyncResult<AppException, PageEntity<OccurrenceTypeEntity>>;
   delete(id: string): AsyncResult<AppException, Unit>;
 }
