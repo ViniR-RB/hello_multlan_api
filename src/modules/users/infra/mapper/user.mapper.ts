@@ -29,6 +29,8 @@ export default abstract class UserMapper extends BaseMapper<
       password: entity.password,
       fcmToken: entity.fcmToken,
       role: entity.role,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     };
   }
 }

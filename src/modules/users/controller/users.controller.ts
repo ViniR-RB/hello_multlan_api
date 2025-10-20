@@ -26,6 +26,7 @@ import {
   HttpException,
   Inject,
   Patch,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -62,7 +63,7 @@ export default class UsersController {
     return result.value.fromResponse();
   }
 
-  @Get('/reset-password')
+  @Post('/reset-password')
   @UseGuards(AuthGuard)
   async updateMyPassword(
     @User() user: UserDto,
