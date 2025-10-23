@@ -15,7 +15,7 @@ export default class FileLocalStorage implements IFileStorage {
   constructor(private readonly configurationService: ConfigurationService) {}
   async store(fileData: FileEntity): AsyncResult<AppException, FileUrlEntity> {
     try {
-      const filesDir = path.resolve(__dirname, '../../../../../files');
+      const filesDir = path.resolve(process.cwd(), 'files');
 
       if (!fs.existsSync(filesDir)) {
         await fs.promises.mkdir(filesDir, { recursive: true });
@@ -35,7 +35,7 @@ export default class FileLocalStorage implements IFileStorage {
   }
   async delete(fileName: string): AsyncResult<AppException, Unit> {
     try {
-      const filesDir = path.resolve(__dirname, '../../../../../files');
+      const filesDir = path.resolve(process.cwd(), 'files');
 
       let actualFileName = fileName;
       if (fileName.includes('/')) {
@@ -61,7 +61,7 @@ export default class FileLocalStorage implements IFileStorage {
   }
   async exists(fileName: string): AsyncResult<AppException, boolean> {
     try {
-      const filesDir = path.resolve(__dirname, '../../../../../files');
+      const filesDir = path.resolve(process.cwd(), 'files');
 
       let actualFileName = fileName;
       if (fileName.includes('/')) {
@@ -79,7 +79,7 @@ export default class FileLocalStorage implements IFileStorage {
     }
   }
   getFilePath(filename: string): string {
-    const filesDir = path.resolve(__dirname, '../../../../../files');
+    const filesDir = path.resolve(process.cwd(), 'files');
     return path.resolve(filesDir, filename);
   }
   getFileStream(
