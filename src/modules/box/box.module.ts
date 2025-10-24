@@ -57,10 +57,12 @@ import { DataSource, Repository } from 'typeorm';
       ) => new CreateBoxService(boxRepository, fileRepository),
     },
     {
-      inject: [BOX_REPOSITORY],
+      inject: [BOX_REPOSITORY, FILE_REPOSITORY],
       provide: UPDATE_BOX_SERVICE,
-      useFactory: (boxRepository: BoxRepository) =>
-        new UpdateBoxService(boxRepository),
+      useFactory: (
+        boxRepository: IBoxRepository,
+        fileRepository: IFileRepository,
+      ) => new UpdateBoxService(boxRepository, fileRepository),
     },
 
     {

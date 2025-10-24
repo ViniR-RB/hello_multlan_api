@@ -138,6 +138,39 @@ export default class BoxEntity {
     return this.props.updatedAt!;
   }
 
+  edit(props: Partial<BoxEntityProps>) {
+    const cleanProps = Object.fromEntries(
+      Object.entries(props).filter(([_, value]) => value !== undefined),
+    ) as Partial<BoxEntityProps>;
+
+    if (
+      cleanProps.createdAt ||
+      cleanProps.id ||
+      cleanProps.updatedAt ||
+      cleanProps.routeId
+    ) {
+      throw new BoxDomainException(
+        'ID, createdAt, updatedAt and routeId cannot be updated',
+      );
+    }
+
+    if (cleanProps.imageUrl) {
+      throw new BoxDomainException(
+        'Image URL cannot be updated here. Use updateImageUrl method instead',
+      );
+    }
+
+    const updatedProps = {
+      ...this.props,
+      ...cleanProps,
+    };
+
+    BoxEntity.validate(updatedProps);
+
+    Object.assign(this.props, cleanProps);
+    this.toTouch();
+  }
+
   updateBox(props: Partial<BoxEntityProps>) {
     const cleanProps = Object.fromEntries(
       Object.entries(props).filter(([_, value]) => value !== undefined),

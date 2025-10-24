@@ -134,13 +134,24 @@ export default class BoxController {
     return boxResult.value.fromResponse();
   }
   @Put('/:id')
+  @UseInterceptors(FileInterceptor('file'))
   async updateBox(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateBoxDto: UpdateBoxDto,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
     const boxUpdatedResult = await this.updateBoxService.execute({
       id: id,
       ...updateBoxDto,
+      boxFile: file
+        ? {
+            buffer: file.buffer,
+            originalName: file.originalname,
+            mimetype: file.mimetype,
+            size: file.size,
+            encoding: file.encoding,
+          }
+        : undefined,
     });
 
     if (boxUpdatedResult.isLeft()) {

@@ -1,3 +1,4 @@
+import BaseFile from '@/core/interface/base_file';
 import UseCase from '@/core/interface/use_case';
 import BoxEntity from '@/modules/box/domain/entities/box.entity';
 import { BoxZone } from '@/modules/box/domain/entities/box_zone_enum';
@@ -17,6 +18,7 @@ export interface UpdateBoxParam {
   routeId?: string | null;
   note?: string | null;
   listUser?: string[];
+  boxFile?: BaseFile;
 }
 export class UpdateBoxResponse {
   constructor(public readonly boxEntity: BoxEntity) {}

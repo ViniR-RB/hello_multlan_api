@@ -7,9 +7,14 @@ import IUpdateBoxUseCase, {
   UpdateBoxParam,
   UpdateBoxResponse,
 } from '@/modules/box/domain/usecase/i_update_box_use_case';
+import IFileRepository from '@/modules/file/adapters/i_file_repository';
+import FileEntity from '@/modules/file/domain/entities/file.entity';
 
 export default class UpdateBoxService implements IUpdateBoxUseCase {
-  constructor(private readonly boxRepository: IBoxRepository) {}
+  constructor(
+    private readonly boxRepository: IBoxRepository,
+    private readonly fileRepository: IFileRepository,
+  ) {}
   async execute(
     param: UpdateBoxParam,
   ): AsyncResult<AppException, UpdateBoxResponse> {
@@ -21,15 +26,39 @@ export default class UpdateBoxService implements IUpdateBoxUseCase {
       if (boxFinder.isLeft()) {
         return left(boxFinder.value);
       }
-      const filteredId = {
-        ...param,
-        id: undefined,
-      };
-      boxFinder.value.updateBox({
-        ...filteredId,
-      });
 
-      const boxUpdated = await this.boxRepository.save(boxFinder.value);
+      const box = boxFinder.value;
+
+      if (param.boxFile) {
+        const fileName = `${box.id}.${param.boxFile.originalName.split('.').pop()}`;
+
+        if (box.imageUrl) {
+          await this.fileRepository.delete(box.imageUrl);
+        }
+
+        const boxFileSaved = await this.fileRepository.save(
+          new FileEntity({
+            buffer: param.boxFile.buffer,
+            originalName: fileName,
+            mimetype: param.boxFile.mimetype,
+            filename: fileName,
+            size: param.boxFile.size,
+            encoding: param.boxFile.encoding,
+          }),
+        );
+
+        if (boxFileSaved.isLeft()) {
+          return left(boxFileSaved.value);
+        }
+
+        box.updateImageUrl(fileName);
+      }
+
+      const { id, boxFile, ...updateData } = param;
+
+      box.edit(updateData);
+
+      const boxUpdated = await this.boxRepository.save(box);
 
       if (boxUpdated.isLeft()) {
         return left(boxUpdated.value);
