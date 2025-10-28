@@ -13,6 +13,10 @@ export default interface IBoxRepository
   extends BaseRepository<BoxModel, BoxEntity> {
   findOne(query: BoxQueryObject): AsyncResult<AppException, BoxEntity>;
   findAll(): AsyncResult<AppException, BoxEntity[]>;
+  findBoxesWithoutRouteId(): AsyncResult<
+    AppException,
+    BoxWithLabelAndLocationReadModel[]
+  >;
   findBoxesWithLabelAndLocationByLatLongMinMaxAndFilters(
     latMin: number,
     latMax: number,
@@ -21,6 +25,9 @@ export default interface IBoxRepository
     zone?: BoxZone,
   ): AsyncResult<AppException, BoxWithLabelAndLocationReadModel[]>;
   findBoxesByIds(ids: string[]): AsyncResult<AppException, BoxEntity[]>;
+  findBoxesByRouteId(
+    routeId: string,
+  ): AsyncResult<AppException, BoxWithLabelAndLocationReadModel[]>;
   deleteById(id: string): AsyncResult<AppException, Unit>;
   getSummary(): AsyncResult<AppException, BoxSummaryReadModel>;
 }

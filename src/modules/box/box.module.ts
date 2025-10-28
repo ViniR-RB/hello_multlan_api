@@ -6,7 +6,9 @@ import DeleteBoxService from '@/modules/box/application/delete_box.service';
 import FindAllBoxesService from '@/modules/box/application/find_all_boxes.service';
 import GetBoxByIdService from '@/modules/box/application/get_box_by_id.service';
 import GetBoxSummaryService from '@/modules/box/application/get_box_summary.service';
+import GetBoxesByRouteIdService from '@/modules/box/application/get_boxes_by_route_id.service';
 import GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService from '@/modules/box/application/get_boxes_with_label_and_location_by_lat_long_min_max_and_filters.service';
+import GetBoxesWithoutRouteService from '@/modules/box/application/get_boxes_without_route.service';
 import UpdateBoxService from '@/modules/box/application/update_box.service';
 import BoxController from '@/modules/box/controller/box_controller';
 import BoxModel from '@/modules/box/infra/models/box.model';
@@ -18,7 +20,9 @@ import {
   FIND_ALL_BOXES_SERVICE,
   GET_BOX_BY_ID_SERVICE,
   GET_BOX_SUMMARY_SERVICE,
+  GET_BOXES_BY_ROUTE_ID_SERVICE,
   GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS,
+  GET_BOXES_WITHOUT_ROUTE_SERVICE,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
 import IFileRepository from '@/modules/file/adapters/i_file_repository';
@@ -91,6 +95,18 @@ import { DataSource, Repository } from 'typeorm';
         new GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService(
           boxRepository,
         ),
+    },
+    {
+      inject: [BOX_REPOSITORY],
+      provide: GET_BOXES_BY_ROUTE_ID_SERVICE,
+      useFactory: (boxRepository: IBoxRepository) =>
+        new GetBoxesByRouteIdService(boxRepository),
+    },
+    {
+      inject: [BOX_REPOSITORY],
+      provide: GET_BOXES_WITHOUT_ROUTE_SERVICE,
+      useFactory: (boxRepository: IBoxRepository) =>
+        new GetBoxesWithoutRouteService(boxRepository),
     },
     {
       inject: [USER_REPOSITORY, BOX_REPOSITORY],

@@ -69,6 +69,14 @@ export default class RouterEntity {
     this.toTouch();
   }
 
+  updateData(name: string) {
+    if (!name || name.trim().length === 0) {
+      throw new RouteDomainException('Name cannot be empty');
+    }
+    this.props.name = name.trim();
+    this.toTouch();
+  }
+
   private toTouch() {
     this.props.updatedAt = new Date();
   }

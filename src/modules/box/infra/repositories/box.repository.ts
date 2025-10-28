@@ -142,6 +142,43 @@ export default class BoxRepository implements IBoxRepository {
     });
     return right(boxesModel.map(BoxMapper.toEntity));
   }
+
+  async findBoxesByRouteId(
+    routeId: string,
+  ): AsyncResult<AppException, BoxWithLabelAndLocationReadModel[]> {
+    try {
+      const boxes = await this.boxRepository
+        .createQueryBuilder('box')
+        .select(['box.id', 'box.label', 'box.latitude', 'box.longitude'])
+        .where('box.route_id = :routeId', { routeId })
+        .getMany();
+
+      return right(boxes.map(BoxMapper.toBoxWithLabelAndLocationReadModel));
+    } catch (e) {
+      return left(
+        new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
+      );
+    }
+  }
+
+  async findBoxesWithoutRouteId(): AsyncResult<
+    AppException,
+    BoxWithLabelAndLocationReadModel[]
+  > {
+    try {
+      const boxes = await this.boxRepository
+        .createQueryBuilder('box')
+        .select(['box.id', 'box.label', 'box.latitude', 'box.longitude'])
+        .where('box.route_id IS NULL')
+        .getMany();
+
+      return right(boxes.map(BoxMapper.toBoxWithLabelAndLocationReadModel));
+    } catch (e) {
+      return left(
+        new BoxRepositoryException(ErrorMessages.UNEXPECTED_ERROR, 500, e),
+      );
+    }
+  }
   async findOne(query: BoxQueryObject): AsyncResult<AppException, BoxEntity> {
     try {
       let findOneOptions: FindOneOptions<BoxModel> = {

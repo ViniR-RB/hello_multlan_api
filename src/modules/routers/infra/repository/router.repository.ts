@@ -2,6 +2,7 @@ import ErrorMessages from '@/core/constants/error_messages';
 import AppException from '@/core/exceptions/app_exception';
 import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
+import { unit, Unit } from '@/core/types/unit';
 import PageEntity from '@/modules/pagination/domain/entities/page.entity';
 import PageMetaEntity from '@/modules/pagination/domain/entities/page_meta.entity';
 import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options.entity';
@@ -106,6 +107,26 @@ export default class RouterRepository implements IRouterRepository {
       );
     }
   }
+  async deleteById(id: string): AsyncResult<AppException, Unit> {
+    try {
+      const result = await this.routeRepository.delete(id);
+      if (result.affected && result.affected > 0) {
+        return right(unit);
+      }
+      return left(
+        new RouterRepositoryException(ErrorMessages.ROUTER_NOT_FOUND, 404),
+      );
+    } catch (error) {
+      return left(
+        new RouterRepositoryException(
+          ErrorMessages.UNEXPECTED_ERROR,
+          500,
+          error,
+        ),
+      );
+    }
+  }
+
   create(entity: RouterEntity): RouterModel {
     const model = RouterMapper.toModel(entity);
     return this.routeRepository.create(model);

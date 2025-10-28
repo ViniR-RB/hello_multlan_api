@@ -6,7 +6,9 @@ import IDeleteBoxUseCase from '@/modules/box/domain/usecase/i_delete_box_use_cas
 import IFindAllBoxesUseCase from '@/modules/box/domain/usecase/i_find_all_boxes_use_case';
 import IGetBoxByIdUseCase from '@/modules/box/domain/usecase/i_get_box_by_id_use_case';
 import IGetBoxSummaryUseCase from '@/modules/box/domain/usecase/i_get_box_summary_use_case';
+import IGetBoxesByRouteIdUseCase from '@/modules/box/domain/usecase/i_get_boxes_by_route_id_use_case';
 import IGetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersUseCase from '@/modules/box/domain/usecase/i_get_boxes_with_label_and_location_by_lat_long_min_max_and_filters_use_case';
+import IGetBoxesWithoutRouteUseCase from '@/modules/box/domain/usecase/i_get_boxes_without_route_use_case';
 import IUpdateBoxUseCase from '@/modules/box/domain/usecase/i_update_box_use_case';
 import CreateBoxDto from '@/modules/box/dtos/create_box.dto';
 import GetBoxesByLatLongMinMaxAndFiltersDto from '@/modules/box/dtos/get_boxes_by_lat_long_min_max_and_filters.dto';
@@ -17,7 +19,9 @@ import {
   FIND_ALL_BOXES_SERVICE,
   GET_BOX_BY_ID_SERVICE,
   GET_BOX_SUMMARY_SERVICE,
+  GET_BOXES_BY_ROUTE_ID_SERVICE,
   GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS,
+  GET_BOXES_WITHOUT_ROUTE_SERVICE,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
 import UserRole from '@/modules/users/domain/entities/user_role';
@@ -57,6 +61,10 @@ export default class BoxController {
     private readonly getBoxSummaryService: IGetBoxSummaryUseCase,
     @Inject(GET_BOXES_WITH_LABEL_AND_LOCATION_BY_LAT_LONG_MIN_MAX_AND_FILTERS)
     private readonly getBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersService: IGetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersUseCase,
+    @Inject(GET_BOXES_BY_ROUTE_ID_SERVICE)
+    private readonly getBoxesByRouteIdService: IGetBoxesByRouteIdUseCase,
+    @Inject(GET_BOXES_WITHOUT_ROUTE_SERVICE)
+    private readonly getBoxesWithoutRouteService: IGetBoxesWithoutRouteUseCase,
     @Inject(DELETE_BOX_SERVICE)
     private readonly deleteBoxService: IDeleteBoxUseCase,
   ) {}
@@ -64,6 +72,17 @@ export default class BoxController {
   @Get('/summary')
   async getSummary() {
     const result = await this.getBoxSummaryService.execute();
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return result.value.fromResponse();
+  }
+
+  @Get('/without-route')
+  async getBoxesWithoutRoute() {
+    const result = await this.getBoxesWithoutRouteService.execute();
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode, {
         cause: result.value.cause,
@@ -180,6 +199,17 @@ export default class BoxController {
           zone: query.zone,
         },
       );
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value.cause,
+      });
+    }
+    return result.value.fromResponse();
+  }
+
+  @Get('/route/:routeId')
+  async getBoxesByRouteId(@Param('routeId', ParseUUIDPipe) routeId: string) {
+    const result = await this.getBoxesByRouteIdService.execute({ routeId });
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode, {
         cause: result.value.cause,
