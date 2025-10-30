@@ -18,6 +18,7 @@ export interface CreateBoxParam {
   boxFile: BaseFile;
   routeId: string | null;
   note: string | null;
+  createdByUserId: number;
 }
 export class CreateBoxResponse {
   constructor(public readonly boxEntity: BoxEntity) {}

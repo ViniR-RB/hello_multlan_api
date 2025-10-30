@@ -1,6 +1,7 @@
 import { BaseModelIdUuidCreated } from '@/core/models/base.models';
 import { BoxZone } from '@/modules/box/domain/entities/box_zone_enum';
 import RouterModel from '@/modules/routers/infra/models/route.model';
+import UserModel from '@/modules/users/infra/models/user.model';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('boxes')
@@ -66,4 +67,24 @@ export default class BoxModel extends BaseModelIdUuidCreated {
 
   @Column({ type: 'varchar', nullable: true })
   note: string | null;
+
+  @ManyToOne(() => UserModel, user => user.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'created_by_user_id' })
+  createdByUser: UserModel | null;
+
+  @Column({ name: 'created_by_user_id', type: 'int', nullable: true })
+  createdByUserId: number | null;
+
+  @ManyToOne(() => UserModel, user => user.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'updated_by_user_id' })
+  updatedByUser: UserModel | null;
+
+  @Column({ name: 'updated_by_user_id', type: 'int', nullable: true })
+  updatedByUserId: number | null;
 }

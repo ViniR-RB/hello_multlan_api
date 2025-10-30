@@ -107,6 +107,7 @@ export default class BoxController {
   async createBox(
     @UploadedFile() file: Express.Multer.File,
     @Body() createBoxDto: CreateBoxDto,
+    @User() user: UserDto,
   ) {
     const savedBox = await this.createBoxService.execute({
       label: createBoxDto.label,
@@ -119,6 +120,7 @@ export default class BoxController {
       listUser: createBoxDto.listUser,
       routeId: createBoxDto.routeId,
       note: createBoxDto.note,
+      createdByUserId: user.id,
       boxFile: {
         buffer: file.buffer,
         originalName: file.originalname,
@@ -157,11 +159,13 @@ export default class BoxController {
   async updateBox(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateBoxDto: UpdateBoxDto,
+    @User() user: UserDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     const boxUpdatedResult = await this.updateBoxService.execute({
       id: id,
       ...updateBoxDto,
+      updatedByUserId: user.id,
       boxFile: file
         ? {
             buffer: file.buffer,

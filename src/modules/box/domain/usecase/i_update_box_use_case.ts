@@ -19,6 +19,7 @@ export interface UpdateBoxParam {
   note?: string | null;
   listUser?: string[];
   boxFile?: BaseFile;
+  updatedByUserId: number;
 }
 export class UpdateBoxResponse {
   constructor(public readonly boxEntity: BoxEntity) {}

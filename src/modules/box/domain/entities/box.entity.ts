@@ -15,7 +15,9 @@ interface BoxEntityProps {
   routeId: string | null;
   imageUrl: string | null;
   note: string | null;
+  createdByUserId: number | null;
   createdAt: Date;
+  updatedByUserId: number | null;
   updatedAt: Date;
 }
 
@@ -34,7 +36,9 @@ export default class BoxEntity {
       routeId: props.routeId,
       imageUrl: props.imageUrl,
       note: props.note,
+      createdByUserId: props.createdByUserId,
       createdAt: props.createdAt,
+      updatedByUserId: props.updatedByUserId,
       updatedAt: props.updatedAt,
     };
   }
@@ -63,7 +67,10 @@ export default class BoxEntity {
     }
   }
   static create(
-    props: Omit<BoxEntityProps, 'id' | 'createdAt' | 'updatedAt' | 'imageUrl'>,
+    props: Omit<
+      BoxEntityProps,
+      'id' | 'createdAt' | 'updatedAt' | 'imageUrl' | 'updatedByUserId'
+    >,
     id?: string,
   ) {
     const newData: BoxEntityProps = {
@@ -72,6 +79,8 @@ export default class BoxEntity {
       imageUrl: null,
       createdAt: new Date(),
       updatedAt: new Date(),
+      createdByUserId: props.createdByUserId,
+      updatedByUserId: null,
     };
     this.validate(newData);
     return new BoxEntity(newData);
@@ -131,11 +140,18 @@ export default class BoxEntity {
   get note() {
     return this.props.note || null;
   }
+  get createdByUserId() {
+    return this.props.createdByUserId;
+  }
   get createdAt() {
     return this.props.createdAt!;
   }
   get updatedAt() {
     return this.props.updatedAt!;
+  }
+
+  get updatedByUserId() {
+    return this.props.updatedByUserId;
   }
 
   edit(props: Partial<BoxEntityProps>) {
@@ -246,7 +262,9 @@ export default class BoxEntity {
       routeId: this.props.routeId,
       imageUrl: this.props.imageUrl,
       note: this.props.note,
+      createdByUserId: this.createdByUserId,
       createdAt: this.props.createdAt,
+      updatedByUserId: this.updatedByUserId,
       updatedAt: this.props.updatedAt,
     };
   }

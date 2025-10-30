@@ -18,10 +18,12 @@ export default abstract class BoxMapper extends BaseMapper<
       signal: model.signal,
       zone: model.zone,
       routeId: model.routeId,
-      imageUrl: model.imageUrl || null,
-      note: model.note || null,
+      imageUrl: model.imageUrl,
+      note: model.note,
       listUser: model.listUser,
+      createdByUserId: model.createdByUserId,
       createdAt: model.createdAt,
+      updatedByUserId: model.updatedByUserId,
       updatedAt: model.updatedAt,
     });
   }
@@ -39,8 +41,10 @@ export default abstract class BoxMapper extends BaseMapper<
       imageUrl: entity.imageUrl || null,
       listUser: entity.listUser,
       note: entity.note || null,
+      createdByUserId: entity.createdByUserId,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
+      updatedByUserId: entity.updatedByUserId,
     };
   }
 
