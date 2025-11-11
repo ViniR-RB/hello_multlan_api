@@ -1,6 +1,6 @@
 import { BoxZone } from '@/modules/box/domain/entities/box_zone_enum';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 export default class GetBoxesByLatLongMinMaxAndFiltersDto {
   @Type(() => Number)
@@ -22,4 +22,13 @@ export default class GetBoxesByLatLongMinMaxAndFiltersDto {
   @IsOptional()
   @IsEnum(BoxZone)
   zone?: BoxZone;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  hasRouteId?: boolean;
+
+  @IsOptional()
+  @IsUUID()
+  routeId?: string;
 }

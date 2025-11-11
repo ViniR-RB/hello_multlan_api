@@ -46,18 +46,33 @@ export default class BoxRepository implements IBoxRepository {
     longMin: number,
     longMax: number,
     zone?: BoxZone,
+    hasRouteId?: boolean,
+    routeId?: string,
   ): AsyncResult<AppException, BoxWithLabelAndLocationReadModel[]> {
     try {
       const queryBuilder = this.boxRepository
         .createQueryBuilder('box')
-        .select(['box.id', 'box.label', 'box.latitude', 'box.longitude'])
-        .where('box.latitude BETWEEN :latMin AND :latMax', { latMin, latMax })
-        .andWhere('box.longitude BETWEEN :longMin AND :longMax', {
-          longMin,
-          longMax,
-        });
-      if (zone) {
-        queryBuilder.andWhere('box.zone = :zone', { zone });
+        .select(['box.id', 'box.label', 'box.latitude', 'box.longitude']);
+
+      if (routeId) {
+        queryBuilder.where('box.route_id = :routeId', { routeId });
+      } else {
+        queryBuilder
+          .where('box.latitude BETWEEN :latMin AND :latMax', { latMin, latMax })
+          .andWhere('box.longitude BETWEEN :longMin AND :longMax', {
+            longMin,
+            longMax,
+          });
+
+        if (zone) {
+          queryBuilder.andWhere('box.zone = :zone', { zone });
+        }
+
+        if (hasRouteId === true) {
+          queryBuilder.andWhere('box.route_id IS NOT NULL');
+        } else if (hasRouteId === false) {
+          queryBuilder.andWhere('box.route_id IS NULL');
+        }
       }
 
       const boxes = await queryBuilder.getMany();

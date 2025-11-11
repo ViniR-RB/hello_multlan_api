@@ -17,7 +17,8 @@ export default class GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersServic
     AppException,
     GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersResponse
   > {
-    const { latMin, latMax, lngMin, lngMax, zone } = param;
+    const { latMin, latMax, lngMin, lngMax, zone, hasRouteId, routeId } =
+      param;
 
     const boxesFinderResult =
       await this.boxRepository.findBoxesWithLabelAndLocationByLatLongMinMaxAndFilters(
@@ -26,10 +27,14 @@ export default class GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersServic
         lngMin,
         lngMax,
         zone,
+        hasRouteId,
+        routeId,
       );
+
     if (boxesFinderResult.isLeft()) {
       return left(boxesFinderResult.value);
     }
+
     return right(
       new GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersResponse(
         boxesFinderResult.value,

@@ -201,6 +201,8 @@ export default class BoxController {
           lngMax: query.lngMax,
           lngMin: query.lngMin,
           zone: query.zone,
+          hasRouteId: query.hasRouteId,
+          routeId: query.routeId,
         },
       );
     if (result.isLeft()) {

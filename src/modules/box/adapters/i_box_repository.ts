@@ -23,6 +23,8 @@ export default interface IBoxRepository
     longMin: number,
     longMax: number,
     zone?: BoxZone,
+    hasRouteId?: boolean,
+    routeId?: string,
   ): AsyncResult<AppException, BoxWithLabelAndLocationReadModel[]>;
   findBoxesByIds(ids: string[]): AsyncResult<AppException, BoxEntity[]>;
   findBoxesByRouteId(

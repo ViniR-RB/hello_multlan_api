@@ -14,6 +14,8 @@ export interface GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersParam {
   lngMin: number;
   lngMax: number;
   zone?: BoxZone;
+  hasRouteId?: boolean;
+  routeId?: string;
 }
 
 export class GetBoxesWithLabelAndLocationByLatLongMinMaxAndFiltersResponse {
