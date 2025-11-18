@@ -56,6 +56,7 @@ export default abstract class BoxMapper extends BaseMapper<
       label: model.label!,
       latitude: model.latitude!,
       longitude: model.longitude!,
+      zone: model.zone!,
     };
   }
 }

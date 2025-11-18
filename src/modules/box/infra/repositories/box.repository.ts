@@ -52,7 +52,13 @@ export default class BoxRepository implements IBoxRepository {
     try {
       const queryBuilder = this.boxRepository
         .createQueryBuilder('box')
-        .select(['box.id', 'box.label', 'box.latitude', 'box.longitude']);
+        .select([
+          'box.id',
+          'box.label',
+          'box.latitude',
+          'box.longitude',
+          'box.zone',
+        ]);
 
       if (routeId) {
         queryBuilder.where('box.route_id = :routeId', { routeId });

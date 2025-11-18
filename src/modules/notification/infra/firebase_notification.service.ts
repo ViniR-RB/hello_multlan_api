@@ -67,7 +67,7 @@ export default class FirebaseNotificationService
           return left(NotificationServiceException.invalidToken(e));
         }
       }
-      console.log('Unexpected error when sending notification');
+      console.log('Unexpected error when sending notification: ', e);
       return left(new ServiceException(ErrorMessages.UNEXPECTED_ERROR, 500, e));
     }
   }
