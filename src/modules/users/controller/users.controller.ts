@@ -5,6 +5,7 @@ import PageOptionsEntity from '@/modules/pagination/domain/entities/page_options
 import { PageOptionsDto } from '@/modules/pagination/dto/page_options.dto';
 import UserRole from '@/modules/users/domain/entities/user_role';
 import IDeleteUserUseCase from '@/modules/users/domain/usecase/i_delete_user_use_case';
+import IFindUserByIdUseCase from '@/modules/users/domain/usecase/i_find_user_by_id_use_case';
 import IFindUsersByFiltersUseCase from '@/modules/users/domain/usecase/i_find_users_by_filters_use_case';
 import IToggleUserUseCase from '@/modules/users/domain/usecase/i_toggle_user_use_case';
 import IUpdateMyPasswordUseCase from '@/modules/users/domain/usecase/i_update_my_password_use_case';
@@ -14,6 +15,7 @@ import UpdateMyPasswordDto from '@/modules/users/dtos/update_my_password.dto';
 import UserDto from '@/modules/users/dtos/user.dto';
 import {
   DELETE_USER_SERVICE,
+  FIND_USER_BY_ID_SERVICE,
   FIND_USERS_BY_FILTERS_SERVICE,
   TOGGLE_USER_SERVICE,
   UPDATE_MY_PASSWORD_SERVICE,
@@ -25,6 +27,8 @@ import {
   Get,
   HttpException,
   Inject,
+  Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -36,6 +40,8 @@ export default class UsersController {
   constructor(
     @Inject(FIND_USERS_BY_FILTERS_SERVICE)
     private readonly findUsersByFiltersService: IFindUsersByFiltersUseCase,
+    @Inject(FIND_USER_BY_ID_SERVICE)
+    private readonly findUserByIdService: IFindUserByIdUseCase,
     @Inject(UPDATE_MY_PASSWORD_SERVICE)
     private readonly updateMyPasswordService: IUpdateMyPasswordUseCase,
     @Inject(TOGGLE_USER_SERVICE)
@@ -59,6 +65,21 @@ export default class UsersController {
     if (result.isLeft()) {
       const error = result.value;
       throw error;
+    }
+    return result.value.fromResponse();
+  }
+
+  @Get('/:id')
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  async findById(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.findUserByIdService.execute({
+      userId: id,
+    });
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value,
+      });
     }
     return result.value.fromResponse();
   }

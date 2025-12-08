@@ -163,14 +163,14 @@ export default class UserEntity {
     props: Partial<
       Omit<
         UserEntityProps,
-        'id' | 'createdAt' | 'updatedAt' | 'password' | 'role' | 'isActive'
+        'id' | 'createdAt' | 'updatedAt' | 'password' | 'isActive'
       >
     >,
   ) {
     const cleanProps = Object.fromEntries(
       Object.entries(props).filter(([_, value]) => value !== undefined),
     ) as Partial<UserEntityProps>;
-
+    console.log(cleanProps);
     if (props.email !== undefined && !EmailValidator.validate(props.email)) {
       throw new UserDomainException('Invalid email');
     }

@@ -6,6 +6,8 @@ export default class Credentials extends OmitType(UserDto, [
   'id',
   'name',
   'role',
+  'fcmToken',
+  'role',
   'createdAt',
   'updatedAt',
 ]) {

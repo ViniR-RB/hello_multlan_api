@@ -155,12 +155,14 @@ export default class AuthController {
 
   @Post('update-user')
   @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
   async updateUser(@Body() dto: UpdateUserDto, @User() user: UserDto) {
     const result = await this.updateUserService.execute({
-      userId: user.id,
+      userId: dto.id,
       name: dto.name,
       email: dto.email,
       fcmToken: dto.fcmToken,
+      role: dto.role,
     });
     if (result.isLeft()) {
       throw new HttpException(result.value.message, result.value.statusCode, {

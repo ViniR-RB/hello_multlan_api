@@ -26,6 +26,7 @@ export default class UpdateUserService implements IUpdateUserUseCase {
         name: param.name,
         email: param.email,
         fcmToken: param.fcmToken,
+        role: param.role,
       });
       const userSaved = await this.userRepository.save(user);
       if (userSaved.isLeft()) {
