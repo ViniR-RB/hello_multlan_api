@@ -44,6 +44,7 @@ services:
       - redis_data:/data
 
   nest-prod:
+    container_name: hello_multlan_api_prod
     build:
       context: .
       dockerfile: Dockerfile
@@ -51,6 +52,7 @@ services:
       - '3000:3000'
     env_file:
       - .env
+    restart: unless-stopped
 
 volumes:
   pgdata:
