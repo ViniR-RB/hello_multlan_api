@@ -19,9 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "migration:create": "npm run typeorm -- migration:create ./migrations/migrations/${MIGRATION_NAME}/",
-    "migration:run": "npm run typeorm -- --dataSource=src/core/datasource.ts migration:run",
-    "migration:revert": "npm run typeorm -- --dataSource=src/core/datasource.ts migration:revert"
+    "migration:create": "pnpm run typeorm -- migration:create ./migrations/migrations/${MIGRATION_NAME}/",
+    "migration:run": "pnpm run typeorm -- --dataSource=src/core/datasource.ts migration:run",
+    "migration:revert": "pnpm run typeorm -- --dataSource=src/core/datasource.ts migration:revert"
   },
   "dependencies": {
     "@nestjs/bull": "^11.0.3",
@@ -34,6 +34,7 @@
     "@nestjs/serve-static": "^5.0.3",
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/typeorm": "^11.0.0",
+    "@supabase/supabase-js": "^2.86.2",
     "bcryptjs": "^3.0.2",
     "bull": "^4.16.5",
     "class-transformer": "^0.5.1",

@@ -3,7 +3,7 @@ import DeleteFileService from '@/modules/file/application/delete_file.service';
 import UploadFileService from '@/modules/file/application/upload_file.service';
 import { DeleteFileParam } from '@/modules/file/domain/usecase/i_delete_file_use_case';
 import { UploadFileParam } from '@/modules/file/domain/usecase/i_upload_file_use_case';
-import FileLocalRepository from '@/modules/file/infra/repositories/file_local.repository';
+import FileLocalRepository from '@/modules/file/infra/repositories/file.repository';
 import FileLocalStorage from '@/modules/file/infra/storage/file_local.storage';
 import * as fs from 'fs';
 import * as path from 'path';

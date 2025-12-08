@@ -6,7 +6,7 @@ import IFileStorage from '@/modules/file/adapters/i_file_storage';
 import FileEntity from '@/modules/file/domain/entities/file.entity';
 import FileUrlEntity from '@/modules/file/domain/entities/file.url.entity';
 
-export default class FileLocalRepository implements IFileRepository {
+export default class FileRepository implements IFileRepository {
   constructor(private readonly fileStorage: IFileStorage) {}
   async save(file: FileEntity): AsyncResult<AppException, FileUrlEntity> {
     return await this.fileStorage.store(file);

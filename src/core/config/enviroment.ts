@@ -81,6 +81,18 @@ export default class EnvironmentVariables {
   ADMIN_PASSWORD: string;
 
   @IsString()
+  @ValidateIf(o => o.NODE_ENV === 'prd')
+  SUPABASE_STORAGE_BUCKET: string;
+
+  @IsString()
+  @ValidateIf(o => o.NODE_ENV === 'prd')
+  SUPABASE_URL: string;
+
+  @IsString()
+  @ValidateIf(o => o.NODE_ENV === 'prd')
+  SUPABASE_API_KEY: string;
+
+  @IsString()
   @IsNotEmpty()
   FIREBASE_PROJECT_ID: string;
 
