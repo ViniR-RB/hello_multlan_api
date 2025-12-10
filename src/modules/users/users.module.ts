@@ -10,7 +10,7 @@ import DeleteUserService from '@/modules/users/application/delete_user.service';
 import FindUserByIdService from '@/modules/users/application/find_user_by_id.service';
 import FindUsersByFiltersService from '@/modules/users/application/find_users_by_filters.service';
 import ToggleUserService from '@/modules/users/application/toggle_user.service';
-import UpdateMyPasswordService from '@/modules/users/application/update_my_password.service';
+import UpdatePasswordService from '@/modules/users/application/update_password.service';
 import UpdateUserService from '@/modules/users/application/update_user.service';
 import UsersController from '@/modules/users/controller/users.controller';
 import UserModel from '@/modules/users/infra/models/user.model';
@@ -75,7 +75,7 @@ import { Repository } from 'typeorm';
       useFactory: (
         userRepository: IUserRepository,
         encryptionService: IEncryptionService,
-      ) => new UpdateMyPasswordService(userRepository, encryptionService),
+      ) => new UpdatePasswordService(userRepository, encryptionService),
     },
     {
       inject: [USER_REPOSITORY],
@@ -111,6 +111,7 @@ import { Repository } from 'typeorm';
       useFactory: (userRepository: IUserRepository) =>
         new UpdateUserService(userRepository),
     },
+    UPDATE_MY_PASSWORD_SERVICE,
   ],
 })
 export default class UsersModule {}

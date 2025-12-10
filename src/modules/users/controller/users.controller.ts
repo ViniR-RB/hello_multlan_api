@@ -8,10 +8,10 @@ import IDeleteUserUseCase from '@/modules/users/domain/usecase/i_delete_user_use
 import IFindUserByIdUseCase from '@/modules/users/domain/usecase/i_find_user_by_id_use_case';
 import IFindUsersByFiltersUseCase from '@/modules/users/domain/usecase/i_find_users_by_filters_use_case';
 import IToggleUserUseCase from '@/modules/users/domain/usecase/i_toggle_user_use_case';
-import IUpdateMyPasswordUseCase from '@/modules/users/domain/usecase/i_update_my_password_use_case';
+import IUpdatePasswordUseCase from '@/modules/users/domain/usecase/i_update_password_use_case';
 import TargetUserReciveActionDto from '@/modules/users/dto/target_user_recive_action.dto';
 import FindUsersQueryFiltersDto from '@/modules/users/dtos/find_users_query_filters.dto';
-import UpdateMyPasswordDto from '@/modules/users/dtos/update_my_password.dto';
+import UpdatePasswordDto from '@/modules/users/dtos/update_password.dto';
 import UserDto from '@/modules/users/dtos/user.dto';
 import {
   DELETE_USER_SERVICE,
@@ -43,7 +43,7 @@ export default class UsersController {
     @Inject(FIND_USER_BY_ID_SERVICE)
     private readonly findUserByIdService: IFindUserByIdUseCase,
     @Inject(UPDATE_MY_PASSWORD_SERVICE)
-    private readonly updateMyPasswordService: IUpdateMyPasswordUseCase,
+    private readonly updateMyPasswordService: IUpdatePasswordUseCase,
     @Inject(TOGGLE_USER_SERVICE)
     private readonly toggleUserService: IToggleUserUseCase,
     @Inject(DELETE_USER_SERVICE)
@@ -88,10 +88,11 @@ export default class UsersController {
   @UseGuards(AuthGuard)
   async updateMyPassword(
     @User() user: UserDto,
-    @Body() body: UpdateMyPasswordDto,
+    @Body() body: UpdatePasswordDto,
   ) {
     const result = await this.updateMyPasswordService.execute({
-      userId: user.id,
+      userAction: user.id,
+      userChangePassword: body.userId,
       oldPassword: body.oldPassword,
       newPassword: body.newPassword,
     });

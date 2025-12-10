@@ -5,21 +5,42 @@ import AsyncResult from '@/core/types/async_result';
 import { left, right } from '@/core/types/either';
 import { unit, Unit } from '@/core/types/unit';
 import IUserRepository from '@/modules/users/adapters/i_user.repository';
-import IUpdateMyPasswordUseCase, {
+import IUpdatePasswordUseCase, {
   UpdateMyPasswordParam,
-} from '@/modules/users/domain/usecase/i_update_my_password_use_case';
+} from '@/modules/users/domain/usecase/i_update_password_use_case';
 
-export default class UpdateMyPasswordService
-  implements IUpdateMyPasswordUseCase
-{
+export default class UpdatePasswordService implements IUpdatePasswordUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly encryptionService: IEncryptionService,
   ) {}
 
   async execute(param: UpdateMyPasswordParam): AsyncResult<AppException, Unit> {
+    const isSelfUpdate = param.userAction === param.userChangePassword;
+
+    if (!isSelfUpdate) {
+      const requestingUserResult = await this.userRepository.findOne({
+        userId: param.userAction,
+      });
+
+      if (requestingUserResult.isLeft()) {
+        return left(requestingUserResult.value);
+      }
+
+      const requestingUser = requestingUserResult.value;
+
+      if (!requestingUser.userHasAdmin()) {
+        return left(
+          new ServiceException(
+            'Only administrators can change passwords of other users',
+            403,
+          ),
+        );
+      }
+    }
+
     const userFinder = await this.userRepository.findOne({
-      userId: param.userId,
+      userId: param.userChangePassword,
       selectFields: [
         'id',
         'email',
@@ -32,26 +53,32 @@ export default class UpdateMyPasswordService
         'updatedAt',
       ],
     });
+
     if (userFinder.isLeft()) {
       return left(userFinder.value);
     }
+
     const user = userFinder.value;
 
-    const matchPasswords = await this.encryptionService.isMatch(
-      user.password,
-      param.oldPassword,
-    );
+    if (isSelfUpdate) {
+      const matchPasswords = await this.encryptionService.isMatch(
+        user.password,
+        param.oldPassword,
+      );
 
-    if (!matchPasswords) {
-      return left(new ServiceException('Old password does not match', 401));
+      if (!matchPasswords) {
+        return left(new ServiceException('Old password does not match', 401));
+      }
     }
 
+    // Hash da nova senha
     const hashedPassword = await this.encryptionService.hashString(
       param.newPassword,
     );
 
     user.updatePassword(hashedPassword);
 
+    // Salvar usuário atualizado
     const userUpdated = await this.userRepository.save(user);
     if (userUpdated.isLeft()) {
       return left(userUpdated.value);

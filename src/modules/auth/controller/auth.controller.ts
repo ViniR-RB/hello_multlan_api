@@ -11,13 +11,16 @@ import Credentials from '@/modules/auth/dtos/credentials';
 import { LOGIN_SERVICE, REFRESH_TOKEN_SERVICE } from '@/modules/auth/symbols';
 import UserRole from '@/modules/users/domain/entities/user_role';
 import ICreateUserUseCase from '@/modules/users/domain/usecase/i_create_user_use_case';
+import IUpdatePasswordUseCase from '@/modules/users/domain/usecase/i_update_password_use_case';
 import IUpdateUserUseCase from '@/modules/users/domain/usecase/i_update_user_use_case';
 import CreateUserAdminDto from '@/modules/users/dtos/create_user_admin.dto';
 import CreateUserInternalDto from '@/modules/users/dtos/create_user_internal.dto';
+import UpdatePasswordDto from '@/modules/users/dtos/update_password.dto';
 import UpdateUserDto from '@/modules/users/dtos/update_user.dto';
 import UserDto from '@/modules/users/dtos/user.dto';
 import {
   CREATE_USER_SERVICE,
+  UPDATE_MY_PASSWORD_SERVICE,
   UPDATE_USER_SERVICE,
 } from '@/modules/users/symbols';
 import {
@@ -52,6 +55,8 @@ export default class AuthController {
     private readonly refreshTokenService: IRefreshTokenUseCase,
     @Inject(UPDATE_USER_SERVICE)
     private readonly updateUserService: IUpdateUserUseCase,
+    @Inject(UPDATE_MY_PASSWORD_SERVICE)
+    private readonly updateMyPasswordService: IUpdatePasswordUseCase,
   ) {}
 
   @Post('/register/admin')
@@ -170,5 +175,25 @@ export default class AuthController {
       });
     }
     return result.value.fromResponse();
+  }
+
+  @Post('/update-my-password')
+  @UseGuards(AuthGuard)
+  async updateMyPassword(
+    @User() user: UserDto,
+    @Body() body: UpdatePasswordDto,
+  ) {
+    const result = await this.updateMyPasswordService.execute({
+      userAction: user.id,
+      userChangePassword: body.userId,
+      oldPassword: body.oldPassword,
+      newPassword: body.newPassword,
+    });
+    if (result.isLeft()) {
+      throw new HttpException(result.value.message, result.value.statusCode, {
+        cause: result.value,
+      });
+    }
+    return result.value;
   }
 }
