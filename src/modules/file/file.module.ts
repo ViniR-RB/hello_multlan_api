@@ -16,9 +16,8 @@ import { Module } from '@nestjs/common';
       useFactory: (configurationService: ConfigurationService) => {
         if (configurationService.get('NODE_ENV') === 'dev') {
           return new FileLocalStorage(configurationService);
-        } else {
-          return new SupabaseStorage(configurationService);
         }
+        return new SupabaseStorage(configurationService);
       },
     },
     {

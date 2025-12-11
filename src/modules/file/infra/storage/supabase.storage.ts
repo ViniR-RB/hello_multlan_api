@@ -2,7 +2,7 @@ import ErrorMessages from '@/core/constants/error_messages';
 import AppException from '@/core/exceptions/app_exception';
 import ConfigurationService from '@/core/services/configuration.service';
 import AsyncResult from '@/core/types/async_result';
-import { right } from '@/core/types/either';
+import { left, right } from '@/core/types/either';
 import { unit, Unit } from '@/core/types/unit';
 import IFileStorage from '@/modules/file/adapters/i_file_storage';
 import FileEntity from '@/modules/file/domain/entities/file.entity';
@@ -13,24 +13,29 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 export default class SupabaseStorage implements IFileStorage {
   private readonly supabase: SupabaseClient<any, 'public', any>;
   constructor(private readonly configurationService: ConfigurationService) {
-    this.supabase = createClient(
-      this.configurationService.get('SUPABASE_URL'),
-      this.configurationService.get('SUPABASE_API_KEY'),
-    );
+    const supabaseUrl = this.configurationService.get('SUPABASE_URL');
+    const supabaseApiKey = this.configurationService.get('SUPABASE_API_KEY');
+    this.supabase = createClient(supabaseUrl, supabaseApiKey);
   }
   async store(fileData: FileEntity): AsyncResult<AppException, FileUrlEntity> {
     try {
-      await this.supabase.storage
-        .from(this.configurationService.get('SUPABASE_STORAGE_BUCKET'))
+      const bucketName = this.configurationService.get(
+        'SUPABASE_STORAGE_BUCKET',
+      );
+      const { data: dataUpload, error } = await this.supabase.storage
+        .from(bucketName)
         .upload(fileData.filename, fileData.buffer, { upsert: true });
+      if (error) {
+        return left(
+          new FileStorageException(ErrorMessages.UNEXPECTED_ERROR, 500),
+        );
+      }
 
-      const { data } = this.supabase.storage
-        .from(this.configurationService.get('SUPABASE_STORAGE_BUCKET'))
-        .getPublicUrl(fileData.filename);
-
-      return right(new FileUrlEntity(data.publicUrl));
+      return right(new FileUrlEntity(dataUpload.path));
     } catch (error) {
-      throw new FileStorageException(ErrorMessages.UNEXPECTED_ERROR, 500);
+      return left(
+        new FileStorageException(ErrorMessages.UNEXPECTED_ERROR, 500),
+      );
     }
   }
   async delete(fileName: string): AsyncResult<AppException, Unit> {
