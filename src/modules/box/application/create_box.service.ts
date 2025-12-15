@@ -8,6 +8,7 @@ import ICreateBoxUseCase, {
   CreateBoxParam,
   CreateBoxResponse,
 } from '@/modules/box/domain/usecase/i_create_box_use_case';
+import IImageConverterWebp from '@/modules/file/adapters/i_converter_webp';
 import IFileRepository from '@/modules/file/adapters/i_file_repository';
 import FileEntity from '@/modules/file/domain/entities/file.entity';
 
@@ -15,6 +16,7 @@ export default class CreateBoxService implements ICreateBoxUseCase {
   constructor(
     private readonly boxRepository: IBoxRepository,
     private readonly fileRepository: IFileRepository,
+    private readonly imageConverterWebp: IImageConverterWebp,
   ) {}
   async execute(
     param: CreateBoxParam,
@@ -34,13 +36,20 @@ export default class CreateBoxService implements ICreateBoxUseCase {
         createdByUserId: param.createdByUserId,
       });
 
-      const fileName = `${boxEntity.id}.${param.boxFile.originalName.split('.').pop()}`;
+      const imageWebpConvertedResult = await this.imageConverterWebp.execute(
+        param.boxFile.buffer,
+      );
+
+      if (imageWebpConvertedResult.isLeft()) {
+        return left(imageWebpConvertedResult.value);
+      }
+      const fileName = `${boxEntity.id}.${imageWebpConvertedResult.value.format}`;
 
       boxEntity.updateImageUrl(fileName);
 
       const boxFileSaved = await this.fileRepository.save(
         new FileEntity({
-          buffer: param.boxFile.buffer,
+          buffer: imageWebpConvertedResult.value.fileConverted,
           originalName: fileName,
           mimetype: param.boxFile.mimetype,
           filename: fileName,

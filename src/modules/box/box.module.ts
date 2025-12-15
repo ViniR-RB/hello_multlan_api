@@ -25,9 +25,13 @@ import {
   GET_BOXES_WITHOUT_ROUTE_SERVICE,
   UPDATE_BOX_SERVICE,
 } from '@/modules/box/symbols';
+import IImageConverterWebp from '@/modules/file/adapters/i_converter_webp';
 import IFileRepository from '@/modules/file/adapters/i_file_repository';
 import FileModule from '@/modules/file/file.module';
-import { FILE_REPOSITORY } from '@/modules/file/symbols';
+import {
+  FILE_REPOSITORY,
+  IMAGE_CONVERTER_WEBP_SERVICE,
+} from '@/modules/file/symbols';
 import { USER_REPOSITORY } from '@/modules/users/symbols';
 import UsersModule from '@/modules/users/users.module';
 import { Module } from '@nestjs/common';
@@ -53,12 +57,14 @@ import { DataSource, Repository } from 'typeorm';
       ) => new BoxRepository(boxRepository, dataSource),
     },
     {
-      inject: [BOX_REPOSITORY, FILE_REPOSITORY],
+      inject: [BOX_REPOSITORY, FILE_REPOSITORY, IMAGE_CONVERTER_WEBP_SERVICE],
       provide: CREATE_BOX_SERVICE,
       useFactory: (
         boxRepository: BoxRepository,
         fileRepository: IFileRepository,
-      ) => new CreateBoxService(boxRepository, fileRepository),
+        imageConverterWebp: IImageConverterWebp,
+      ) =>
+        new CreateBoxService(boxRepository, fileRepository, imageConverterWebp),
     },
     {
       inject: [BOX_REPOSITORY, FILE_REPOSITORY],
