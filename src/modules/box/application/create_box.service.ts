@@ -51,7 +51,7 @@ export default class CreateBoxService implements ICreateBoxUseCase {
         new FileEntity({
           buffer: imageWebpConvertedResult.value.fileConverted,
           originalName: fileName,
-          mimetype: param.boxFile.mimetype,
+          mimetype: `image/${imageWebpConvertedResult.value.format}`,
           filename: fileName,
           size: param.boxFile.size,
           encoding: param.boxFile.encoding,
