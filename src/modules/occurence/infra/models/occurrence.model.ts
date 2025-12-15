@@ -22,6 +22,7 @@ export default class OccurrenceModel extends BaseModelIdUuidCreated {
 
   @ManyToOne(() => BoxModel, {
     cascade: true,
+    onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'box_id' })
   box: BoxModel;
