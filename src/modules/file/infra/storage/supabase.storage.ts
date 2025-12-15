@@ -27,7 +27,7 @@ export default class SupabaseStorage implements IFileStorage {
         .upload(fileData.filename, fileData.buffer, { upsert: true });
       if (error) {
         return left(
-          new FileStorageException(ErrorMessages.UNEXPECTED_ERROR, 500),
+          new FileStorageException(ErrorMessages.UNEXPECTED_ERROR, 500, error),
         );
       }
 
